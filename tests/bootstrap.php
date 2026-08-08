@@ -1,6 +1,6 @@
 <?php
 /**
- * PHPUnit bootstrap for memberistic-membership-solutions unit tests.
+ * PHPUnit bootstrap for the Memberistic unit tests.
  *
  * No live WordPress: WP functions are stubbed with small, deterministic,
  * resettable implementations, and the Database repository classes consumed

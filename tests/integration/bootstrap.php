@@ -61,13 +61,13 @@ require_once $memberistic_tests_dir . '/includes/functions.php';
  * handlers extend it to plugin load, which happens before the first test and
  * is where a deprecated hook signature would otherwise pass unnoticed.
  */
-$memberistic_load_notices = array();
+$GLOBALS['memberistic_load_notices'] = array();
 
 foreach ( array( 'deprecated_function_run', 'deprecated_argument_run', 'deprecated_hook_run', 'deprecated_file_included', 'doing_it_wrong_run' ) as $memberistic_hook ) {
 	tests_add_filter(
 		$memberistic_hook,
-		static function ( $thing ) use ( $memberistic_hook, &$memberistic_load_notices ) {
-			$memberistic_load_notices[] = $memberistic_hook . ': ' . ( is_string( $thing ) ? $thing : wp_json_encode( $thing ) );
+		static function ( $thing ) use ( $memberistic_hook ) {
+			$GLOBALS['memberistic_load_notices'][] = $memberistic_hook . ': ' . ( is_string( $thing ) ? $thing : wp_json_encode( $thing ) );
 		},
 		10,
 		1
@@ -106,13 +106,24 @@ if ( ! class_exists( \WordPressistic\Memberistic\Activator::class ) ) {
 
 \WordPressistic\Memberistic\Activator::activate();
 
-if ( ! empty( $memberistic_load_notices ) ) {
-	fwrite(
-		STDERR,
-		"\nWordPress reported deprecated or incorrect usage while loading the plugin:\n  - " .
-		implode( "\n  - ", $memberistic_load_notices ) . "\n\n"
-	);
-	exit( 1 );
+/**
+ * Report load-time notices, but do not exit here.
+ *
+ * The first version of this file called exit(1) on any captured notice. That
+ * was wrong in two ways. It cannot distinguish a deprecation the plugin caused
+ * from one WordPress core raised during its own bootstrap, so a core-internal
+ * notice would block the entire suite on a version that is otherwise fine. And
+ * a bootstrap that exits produces no PHPUnit output at all — the run just dies
+ * in about a second with nothing to read, which is precisely the failure mode
+ * that cost several CI rounds to diagnose.
+ *
+ * The notices are printed to stdout so they reach the build log, and
+ * LoadDeprecationsTest asserts they are empty. A named failing test with a
+ * message beats a silent exit.
+ */
+if ( ! empty( $GLOBALS['memberistic_load_notices'] ) ) {
+	echo "\nWordPress reported deprecated or incorrect usage while loading the plugin:\n  - "
+		. implode( "\n  - ", $GLOBALS['memberistic_load_notices'] ) . "\n\n";
 }
 
 require_once __DIR__ . '/class-memberistic-integration-testcase.php';

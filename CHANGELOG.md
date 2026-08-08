@@ -2,6 +2,33 @@
 
 All notable changes are tracked here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## Unreleased
+
+### Added
+- **REST authorization matrix tests** (`tests/integration/RestAuthorizationTest.php`). Anonymous and plain-subscriber callers are refused every parameterless GET route; administrators reach all of them (a positive control, so a route that rejected everybody could not pass as secure); and the PII boundary is asserted in both directions — cashier, instructor and POS staff refused, manager and staff admitted.
+- **Record-ownership tests** (`tests/integration/RestOwnershipTest.php`) for `/profile/image`, the one member-facing route gated on holding an actual membership rather than merely being logged in.
+- **Webhook security tests** (`tests/integration/WebhookSecurityTest.php`) covering missing, invalid, wrong-secret and stale-but-correctly-signed Stripe payloads, malformed JSON behind a valid signature, the unconfigured-webhook 503 path, event-id idempotency, and that a rejected webhook makes no outbound request.
+- **Dependency-manifest guard test** (`tests/unit/DependencyManifestTest.php`). Asserts that every `.php` file under `includes/` appears in `Plugin::load_dependencies()` and that every required path exists. Because there is no autoloader, an omission there is a fatal at load time that neither `php -l` nor the behavioural suites can see — each file parses perfectly alone.
+- **WordPress Plugin Check runs in CI** on every pull request, blocking, against the distributable tree rebuilt from `.distignore` rather than the repository.
+
+### Fixed
+- **Unsigned Stripe webhook POSTs logged a PHP deprecation.** `WP_REST_Request::get_header()` returns `null` for a header that was not sent, and the `'' === $header` guard in the webhook handler is strict — so `null` slipped past it into `explode()` inside `verify_webhook_signature()`. The request was still refused (the parse found no `t`/`v1` pair), but every unsigned POST to this public, unauthenticated endpoint wrote a deprecation notice to the error log, which anyone on the internet could use to flood it. Both the handler and `Stripe_Service::verify_webhook_signature()` now normalise to a string before comparing. Found by the new webhook suite on its first run.
+- **`readme.txt` compatibility and length limits.** `Tested up to` raised to 7.0 — wordpress.org accepts only major.minor, and 7.0.x is what the integration matrix now exercises; the short description trimmed to the supported 150 characters; the 2.0.0 upgrade notice trimmed to the supported 300.
+- **REST route inventory no longer asserts against WordPress core's namespace index.** `/memberistic/v1` is registered by `WP_REST_Server` for every namespace, carries no permission callback, and is public on every WordPress site; two integration tests were failing on core's behaviour rather than the plugin's.
+- **Fatal error on `init` for every install.** `includes/integrations/class-booking-adapter.php` shipped in 2.0.0 but was never added to the manual require list in `Plugin::load_dependencies()`, and nothing autoloads. `Waiver_Booking_Bridge::register()` calls `Booking_Adapter::hook()` unconditionally on `init`, and the Waiver Manager integration is on by default, so the plugin fatalled with `Class "WordPressistic\Memberistic\Integrations\Booking_Adapter" not found` as soon as it loaded. `Booking_Engine`, `POS_Bridge` and `Staff_Dashboard` consult the same adapter. The file is now required ahead of its consumers.
+
+
+### Changed
+- **The plugin directory is now `memberistic/`, was `memberistic-membership-solutions/`.** wordpress.org requires a plugin's slug — which is its directory name — to equal its Text Domain, and Plugin Check reported ~20 `TextDomainMismatch` errors because the two disagreed. The folder moved to the domain rather than the reverse: the domain appears at roughly 2,000 call sites and in every translation, the folder name appears in two workflow variables. The main PHP file keeps its longer historical name, since WordPress derives the slug from the directory, not the filename.
+
+  **Upgrading:** WordPress treats a renamed directory as a different plugin, so an existing install ends up with two copies listed. Nothing breaks — the bootstrap's duplicate-copy guard makes the second one inert — but deactivate and delete the old `memberistic-membership-solutions` entry. No data is affected; it all lives in database tables.
+- **`Licensing::build_info()` derives its slug from the installed directory** instead of hard-coding it. A literal there goes stale the moment the folder changes, which is the exact "update client that silently never offers an update" failure that method exists to prevent.
+- **Multisite uninstall no longer defines unprefixed globals.** `$site_ids` / `$site_id` in `uninstall.php` run at file scope, so they were genuine globals in WordPress's namespace; renamed to `$memberistic_site_ids` / `$memberistic_site_id`.
+- **Integration suite pinned to PHPUnit 9.6.** The WordPress test library calls `PHPUnit\Util\Test::parseTestMethodAnnotations()` from `WP_UnitTestCase::set_up()`, which PHPUnit 10 removed, so every integration test errored before its first assertion on every WordPress version including trunk. The unit suite stays on PHPUnit 10.5 — it never loads WordPress. Failing on WordPress-level deprecations is unaffected: that comes from `WP_UnitTestCase` and the bootstrap hooks, not from PHPUnit's `failOnDeprecation`.
+- Unit suite now runs on PHP 8.2, 8.3 and 8.4 in CI instead of 8.3 alone.
+- Coverage `<source>` in `phpunit.xml` widened from a single file to `includes/` plus the bootstrap and uninstaller.
+- Integration compatibility matrix targets WordPress 7.0.3 (was 7.0.2), matching the documented support target. The `readme.txt` header says 7.0 because wordpress.org accepts only major.minor there.
+
 ## 2.0.0 - Public release (2026-08-08)
 
 Brand-neutral packaging, security and privacy hardening, and safe defaults.

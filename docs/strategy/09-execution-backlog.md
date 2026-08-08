@@ -25,11 +25,25 @@ files load under it. See [`03-quality-and-release.md`](03-quality-and-release.md
 never had a backlog item, so the dependency surfaces on the first day someone
 picks up P0-5 instead of before.
 
+**The PHPUnit constraint.** The WordPress test library cannot run on PHPUnit 10.
+`WP_UnitTestCase::set_up()` calls `expectDeprecated()`, which reads
+`@expectedDeprecated` docblocks via `PHPUnit\Util\Test::parseTestMethodAnnotations()`
+— a method PHPUnit 10 removed. Every integration test errors before its first
+assertion, identically on WordPress 6.8, 6.9, 7.0 and trunk, so this is not
+something a newer WordPress resolves. The integration suite is therefore pinned
+to PHPUnit 9.6 in CI while the unit suite stays on 10.5; the unit suite never
+loads WordPress, so it is unaffected. Anything added to `tests/integration/`
+must be PHPUnit 9-compatible.
+
 **Acceptance**
 - [ ] A real WordPress test environment (`wp-env` or equivalent) runs locally
       and in CI
-- [ ] `integration` testsuite added to `phpunit.xml` alongside `unit`; both
-      independently runnable
+- [x] Integration suite independently runnable — `phpunit-integration.xml`,
+      separate from `phpunit.xml` by necessity, not preference: the WordPress
+      core test library still calls
+      `PHPUnit\Util\Test::parseTestMethodAnnotations()`, which PHPUnit 10
+      removed, so the two suites cannot share a PHPUnit major. Verified on
+      6.8, 6.9, 7.0.3 and trunk. Merge them if WordPress adopts PHPUnit 10+
 - [ ] The existing `unit` suite still runs **without** WordPress and is
       unchanged — it is fast, it works, and the two guard tests depend on
       scanning source rather than booting anything
@@ -39,9 +53,12 @@ picks up P0-5 instead of before.
       the six roles in `Capabilities::assign_capabilities()`
 - [ ] An HTTP interception layer so no test reaches the network — prerequisite
       for the Stripe suites (P1-9) and for the P0-10 network-silence assertion
-- [ ] `phpunit.xml` `<source>` widened beyond `class-entitlement-service.php`,
-      so coverage describes the plugin rather than one file
-- [ ] Both suites blocking in CI
+- [x] `phpunit.xml` `<source>` widened beyond `class-entitlement-service.php`,
+      so coverage describes the plugin rather than one file — now `includes/`
+      plus the bootstrap and uninstaller
+- [x] Both suites blocking in CI — `ci.yml` runs the unit suite on PHP 8.2 /
+      8.3 / 8.4, `integration.yml` runs the integration suite on the full
+      matrix; neither is `continue-on-error`
 
 ---
 
@@ -58,7 +75,7 @@ declared compatibility.
 - [ ] PHP 8.2, 8.3, 8.4 all pass
 - [x] A real WordPress integration harness exists — `bin/install-wp-tests.sh`,
       `tests/integration/`, `phpunit-integration.xml`, and a CI matrix in
-      `.github/workflows/integration.yml` covering WP 6.8 / 6.9 / 7.0.2 ×
+      `.github/workflows/integration.yml` covering WP 6.8 / 6.9 / 7.0.3 ×
       PHP 8.2 / 8.3 / 8.4, plus a non-blocking trunk canary
 - [x] Deprecation notices fail the suite, so incompatibilities surface without
       maintaining a per-release deprecation list
@@ -117,47 +134,97 @@ release once the integration suites exist.
 ---
 
 ### P0-4 · WordPress Plugin Check
-**Status:** open · **Workstream:** WS-1 · **Milestone:** M0 · **Finding:** F-06
+**Status:** in progress · **Workstream:** WS-1 · **Milestone:** M0 · **Finding:** F-06
 
 Blocks the WordPress.org listing, which blocks the primary acquisition channel.
 
+The job checks the **distributable tree**, not the repository: it rebuilds the
+release layout from `.distignore` the way `release.yml` does, so the check sees
+what a reviewer sees rather than reporting on `tests/`, `bin/` and
+`docs/strategy/`, none of which ship.
+
 **Acceptance**
-- [ ] Plugin Check runs in CI on every PR
+- [x] Plugin Check runs in CI on every PR — `plugin-check` job in `ci.yml`
 - [ ] All errors resolved
 - [ ] Every remaining warning documented with a reason, in-repo
-- [ ] Job is blocking
+- [x] Job is blocking — no `continue-on-error`, unlike the advisory `phpcs` job
 
 ---
 
 ### P0-5 · REST authorization and IDOR coverage
-**Status:** blocked by P0-0 · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-03
+**Status:** in progress · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-03
 
 The single highest-value security item. Invariant I6.
 
+**The IDOR shape does not match this REST surface, and that changes the work.**
+The audit assumed member-owned resources reachable by id. In practice every
+`/memberships/{id}/*` route is gated on a *staff capability* —
+`pii_permissions_check`, `manage_members_permissions_check`,
+`manage_payments_permissions_check` — never on ownership of `{id}`. A member
+never reaches the ownership question because they never clear the capability
+gate; a user who does clear it is staff, who are meant to read every member.
+
+So "member A cannot read member B's payments" passes today, but for the wrong
+reason, and would keep passing if ownership scoping were removed entirely. It
+is recorded as capability enforcement in `RestOwnershipTest`, not as an
+isolation guarantee the code does not make. The only genuinely ownership-scoped
+member-facing route is `/profile/image` (`member_self_permissions_check`), and
+that one is tested properly, in both directions.
+
+There are also no `/documents` or `/waivers` sub-routes — the audit's list was
+wrong about those. Tests written against them would have 404'd, and a 404
+satisfies "expected a rejection", so they would have been permanent false
+passes. Every route this suite names is asserted to exist first.
+
 **Acceptance**
-- [ ] Every route (38 observed `register_rest_route` calls) enumerated in a
-      table: method, path, auth type, capability, owned resource
-- [ ] Positive and negative authorization tests for anonymous, member, staff and
-      administrator on every route
-- [ ] IDOR test per member-owned resource — people, payments, documents,
-      waivers, notes, account — proving a member cannot reach another's record
-      by changing an ID
-- [ ] A test asserting no route uses `__return_true`
-- [ ] Blocking in CI
+- [x] Every route enumerated with method, path and permission callback —
+      `RestRouteInventoryTest`, plus a live inventory artifact per CI run
+- [x] Negative authorization tests for anonymous and plain-subscriber callers
+      across every parameterless GET route
+- [x] Positive control: administrator reaches every one of those routes, so a
+      route that rejected everybody could not pass as secure
+- [x] The PII boundary asserted in both directions — cashier / instructor /
+      POS staff refused, manager / staff admitted
+- [x] Ownership tested where ownership exists (`/profile/image`), and the
+      absence of other member-facing read routes recorded rather than faked
+- [x] A test asserting no route uses `__return_true`
+- [ ] Per-record IDOR tests for member-facing read routes — **blocked until
+      such routes exist**; add here when a real "my membership" endpoint lands
+- [ ] Parameterised-route coverage for staff roles (a staff user reading a
+      specific member) once fixtures for the full record graph exist
+- [x] Blocking in CI
 
 ---
 
 ### P0-6 · Webhook fuzzing and rate limits
-**Status:** blocked by P0-0 · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-05
+**Status:** in progress · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-05
+
+`WebhookSecurityTest` constructs **valid** signatures as well as bad ones. A
+negative-only suite cannot tell "the signature check works" from "the endpoint
+rejects everything", and the second would pass every negative test while
+breaking every real payment.
 
 **Acceptance**
-- [ ] Stripe webhook rejects: invalid signature, stale timestamp beyond the
-      300-second window, duplicate event, reordered events, malformed JSON
-- [ ] WooCommerce webhook rejects an unconfigured shared secret and a bad HMAC
-- [ ] Both verify **before** parsing the payload — asserted, not assumed
+- [x] Stripe rejects: missing signature, invalid signature, a signature made
+      with the wrong secret, a correctly-signed payload outside the 300-second
+      window, and malformed JSON behind a *valid* signature
+- [x] Positive control: a correctly signed, in-window payload is accepted
+- [x] An unconfigured Stripe webhook returns 503 rather than processing
+- [x] Both verify **before** parsing the payload — proven by the malformed-JSON
+      case needing a valid signature to reach the parser at all
+- [x] Idempotency: the processed-event store recognises a replayed event id
+- [x] A rejected webhook makes no outbound HTTP request
+- [ ] WooCommerce HMAC path — **cannot run in the current matrix.**
+      `WooCommerce_Bridge::is_enabled()` requires `class_exists( 'WooCommerce' )`,
+      so with WooCommerce absent the handler returns 503 before reaching the
+      comparison. Covered today only by asserting no configuration lets an
+      unsigned POST succeed. Real coverage needs WooCommerce installed in
+      `integration.yml`
+- [ ] Reordered-event handling
 - [ ] Rate-limit tests for public/token endpoints, sign-in and guest flows
-- [ ] Idempotency proven: a replayed payment event does not double-charge or
-      double-credit
+- [ ] End-to-end idempotency: a replayed *payment* event does not create a
+      second payment row or a second receipt email (needs Stripe test-mode
+      fixtures, P1-9)
 
 ---
 

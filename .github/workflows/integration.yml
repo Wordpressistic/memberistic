@@ -55,8 +55,8 @@ jobs:
           print('\n'.join('- ' + k for k in ks[-12:]))
           "
             echo ''
-            echo 'Requested by this matrix: 6.8, 6.9, 7.0.2'
-            for want in 6.8 6.9 7.0.2; do
+            echo 'Requested by this matrix: 6.8, 6.9, 7.0.3'
+            for want in 6.8 6.9 7.0.3; do
               if python3 -c "
           import json, sys
           d = json.load(open('/tmp/stable.json'))
@@ -77,7 +77,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        wordpress: ['6.8', '6.9', '7.0.2']
+        wordpress: ['6.8', '6.9', '7.0.3']
         php: ['8.2', '8.3', '8.4']
 
     services:
@@ -104,8 +104,22 @@ jobs:
           coverage: none
           tools: composer
 
-      - name: Install PHPUnit
-        run: composer install --prefer-dist --no-progress --no-interaction
+      # PHPUnit 9.6, not the 10.5 the unit suite pins. The WordPress core test
+      # library still calls PHPUnit\Util\Test::parseTestMethodAnnotations(),
+      # which PHPUnit 10 removed, so every test errors under 10.x — on 6.8,
+      # 6.9, 7.0.3 and trunk alike. Installed over the top here so the
+      # integration job's vendor/ is internally consistent; composer.lock and
+      # the unit suite are untouched.
+      # The polyfills constraint is pinned alongside PHPUnit rather than left
+      # to resolve: composer.json allows ^1.1 || ^2.0, and the combination the
+      # matrix was actually verified green on is 9.6 with polyfills 1.x. 2.x
+      # declares support for PHPUnit 9, so it would very likely work too — but
+      # "very likely" is not what a compatibility matrix is for.
+      - name: Downgrade to PHPUnit 9.6 for the WordPress test library
+        run: |
+          composer require --dev --no-interaction --no-progress \
+            --with-all-dependencies 'phpunit/phpunit:^9.6' 'yoast/phpunit-polyfills:^1.1'
+          vendor/bin/phpunit --version
 
       - name: Install WordPress ${{ matrix.wordpress }} and the test library
         run: |
@@ -116,7 +130,19 @@ jobs:
         env:
           WP_TESTS_DIR: /tmp/wordpress-tests-lib
           MEMBERISTIC_ROUTE_INVENTORY: ${{ github.workspace }}/route-inventory.json
-        run: vendor/bin/phpunit -c phpunit-integration.xml --testdox
+        run: |
+          set -o pipefail
+          vendor/bin/phpunit -c phpunit-integration.xml --testdox 2>&1 | tee /tmp/phpunit.log
+
+      # The failing output otherwise sits in the middle of the log, above forty
+      # lines of MySQL container chatter, where it is awkward to reach through
+      # the API. Repeating it in a step of its own puts it at the end.
+      - name: Suite output (on failure)
+        if: failure()
+        run: |
+          echo '=========== INTEGRATION SUITE OUTPUT ==========='
+          tail -120 /tmp/phpunit.log || echo 'No output captured — the run died before PHPUnit produced any.'
+          echo '==============================================='
 
       - name: Upload REST route inventory
         if: always() && matrix.php == '8.3'
@@ -160,7 +186,15 @@ jobs:
           coverage: none
           tools: composer
 
-      - run: composer install --prefer-dist --no-progress --no-interaction
+      # The polyfills constraint is pinned alongside PHPUnit rather than left
+      # to resolve: composer.json allows ^1.1 || ^2.0, and the combination the
+      # matrix was actually verified green on is 9.6 with polyfills 1.x. 2.x
+      # declares support for PHPUnit 9, so it would very likely work too — but
+      # "very likely" is not what a compatibility matrix is for.
+      - name: Downgrade to PHPUnit 9.6 for the WordPress test library
+        run: |
+          composer require --dev --no-interaction --no-progress \
+            --with-all-dependencies 'phpunit/phpunit:^9.6' 'yoast/phpunit-polyfills:^1.1'
 
       - name: Install WordPress trunk
         run: |
@@ -170,7 +204,16 @@ jobs:
       - name: Run integration suite against trunk
         env:
           WP_TESTS_DIR: /tmp/wordpress-tests-lib
-        run: vendor/bin/phpunit -c phpunit-integration.xml --testdox
+        run: |
+          set -o pipefail
+          vendor/bin/phpunit -c phpunit-integration.xml --testdox 2>&1 | tee /tmp/phpunit.log
+
+      - name: Suite output (on failure)
+        if: failure()
+        run: |
+          echo '=========== CANARY SUITE OUTPUT ==========='
+          tail -120 /tmp/phpunit.log || echo 'No output captured.'
+          echo '==========================================='
 
       - name: Note the canary result
         if: always()

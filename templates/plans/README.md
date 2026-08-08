@@ -34,7 +34,7 @@ only runs on first install, and it skips any slug that already exists:
 
 ```php
 add_filter( 'memberistic_default_plans', function ( $plans ) {
-    $file = WP_PLUGIN_DIR . '/memberistic-membership-solutions/templates/plans/gym.json';
+    $file = WP_PLUGIN_DIR . '/memberistic/templates/plans/gym.json';
 
     if ( ! is_readable( $file ) ) {
         return $plans;
