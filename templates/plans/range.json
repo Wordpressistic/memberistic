@@ -1,0 +1,62 @@
+{
+  "id": "range",
+  "label": "Shooting range",
+  "description": "Individual, couple, and family tiers for an indoor range. Pair with the FFL Checkout integration only if you also run a firearms retail storefront.",
+  "template_version": 1,
+  "currency": "USD",
+  "status_on_import": "inactive",
+  "notice": "Example pricing and copy. Review every price, benefit, and included-people count against your own business before activating. Plans import as 'inactive' so nothing is offered for sale until you publish it.",
+  "plans": [
+    {
+      "name": "Individual",
+      "slug": "individual",
+      "description": "Range membership for one person.",
+      "monthly_price": 29.0,
+      "annual_price": 299.0,
+      "included_people": 1,
+      "benefits": [
+        "Included lane time for the primary member",
+        "Member rate on instruction",
+        "Priority booking window",
+        "Waiver kept on file"
+      ],
+      "is_featured": 0,
+      "sort_order": 10,
+      "status": "inactive"
+    },
+    {
+      "name": "Couple",
+      "slug": "couple",
+      "description": "Range membership for two people.",
+      "monthly_price": 39.0,
+      "annual_price": 449.0,
+      "included_people": 2,
+      "benefits": [
+        "Included lane time for both members",
+        "Primary member + 1 linked member",
+        "Independent waiver per person",
+        "Shared front-desk history"
+      ],
+      "is_featured": 1,
+      "sort_order": 20,
+      "status": "inactive"
+    },
+    {
+      "name": "Family",
+      "slug": "family",
+      "description": "Household range membership for up to four people.",
+      "monthly_price": 59.0,
+      "annual_price": 649.0,
+      "included_people": 4,
+      "benefits": [
+        "Included lane time for the household",
+        "Primary member + up to 3 linked members",
+        "Per-person waivers and check-in history",
+        "Best per-person value"
+      ],
+      "is_featured": 0,
+      "sort_order": 30,
+      "status": "inactive"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "id": "studio",
+  "label": "Studio (yoga / pilates / dance)",
+  "description": "Class-pack and unlimited tiers for a studio teaching scheduled classes.",
+  "template_version": 1,
+  "currency": "USD",
+  "status_on_import": "inactive",
+  "notice": "Example pricing and copy. Review every price, benefit, and included-people count against your own business before activating. Plans import as 'inactive' so nothing is offered for sale until you publish it.",
+  "plans": [
+    {
+      "name": "Starter",
+      "slug": "starter",
+      "description": "A limited number of classes each month.",
+      "monthly_price": 45.0,
+      "annual_price": 459.0,
+      "included_people": 1,
+      "benefits": [
+        "Four classes per month",
+        "Book up to 7 days ahead",
+        "Mat and prop use included"
+      ],
+      "is_featured": 0,
+      "sort_order": 10,
+      "status": "inactive"
+    },
+    {
+      "name": "Unlimited",
+      "slug": "unlimited",
+      "description": "Every class on the timetable, no monthly cap.",
+      "monthly_price": 99.0,
+      "annual_price": 999.0,
+      "included_people": 1,
+      "benefits": [
+        "Unlimited classes",
+        "Priority booking window",
+        "Member rate on workshops",
+        "Mat and prop use included"
+      ],
+      "is_featured": 1,
+      "sort_order": 20,
+      "status": "inactive"
+    },
+    {
+      "name": "Duo",
+      "slug": "duo",
+      "description": "Unlimited classes for two people on one account.",
+      "monthly_price": 169.0,
+      "annual_price": 1699.0,
+      "included_people": 2,
+      "benefits": [
+        "Everything in Unlimited, for two",
+        "Primary member + 1 linked member",
+        "Independent booking per person"
+      ],
+      "is_featured": 0,
+      "sort_order": 30,
+      "status": "inactive"
+    }
+  ]
+}

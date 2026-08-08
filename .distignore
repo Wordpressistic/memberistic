@@ -1,0 +1,16 @@
+# Files excluded from the distributable plugin zip.
+# Everything here is development tooling, not product.
+.git
+.gitattributes
+.gitignore
+.distignore
+.github
+.phpunit.cache
+composer.json
+composer.lock
+phpunit.xml
+tests
+vendor
+node_modules
+build
+*.zip
