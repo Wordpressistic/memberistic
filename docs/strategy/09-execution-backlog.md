@@ -148,34 +148,79 @@ what a reviewer sees rather than reporting on `tests/`, `bin/` and
 ---
 
 ### P0-5 · REST authorization and IDOR coverage
-**Status:** blocked by P0-0 · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-03
+**Status:** in progress · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-03
 
 The single highest-value security item. Invariant I6.
 
+**The IDOR shape does not match this REST surface, and that changes the work.**
+The audit assumed member-owned resources reachable by id. In practice every
+`/memberships/{id}/*` route is gated on a *staff capability* —
+`pii_permissions_check`, `manage_members_permissions_check`,
+`manage_payments_permissions_check` — never on ownership of `{id}`. A member
+never reaches the ownership question because they never clear the capability
+gate; a user who does clear it is staff, who are meant to read every member.
+
+So "member A cannot read member B's payments" passes today, but for the wrong
+reason, and would keep passing if ownership scoping were removed entirely. It
+is recorded as capability enforcement in `RestOwnershipTest`, not as an
+isolation guarantee the code does not make. The only genuinely ownership-scoped
+member-facing route is `/profile/image` (`member_self_permissions_check`), and
+that one is tested properly, in both directions.
+
+There are also no `/documents` or `/waivers` sub-routes — the audit's list was
+wrong about those. Tests written against them would have 404'd, and a 404
+satisfies "expected a rejection", so they would have been permanent false
+passes. Every route this suite names is asserted to exist first.
+
 **Acceptance**
-- [ ] Every route (38 observed `register_rest_route` calls) enumerated in a
-      table: method, path, auth type, capability, owned resource
-- [ ] Positive and negative authorization tests for anonymous, member, staff and
-      administrator on every route
-- [ ] IDOR test per member-owned resource — people, payments, documents,
-      waivers, notes, account — proving a member cannot reach another's record
-      by changing an ID
-- [ ] A test asserting no route uses `__return_true`
-- [ ] Blocking in CI
+- [x] Every route enumerated with method, path and permission callback —
+      `RestRouteInventoryTest`, plus a live inventory artifact per CI run
+- [x] Negative authorization tests for anonymous and plain-subscriber callers
+      across every parameterless GET route
+- [x] Positive control: administrator reaches every one of those routes, so a
+      route that rejected everybody could not pass as secure
+- [x] The PII boundary asserted in both directions — cashier / instructor /
+      POS staff refused, manager / staff admitted
+- [x] Ownership tested where ownership exists (`/profile/image`), and the
+      absence of other member-facing read routes recorded rather than faked
+- [x] A test asserting no route uses `__return_true`
+- [ ] Per-record IDOR tests for member-facing read routes — **blocked until
+      such routes exist**; add here when a real "my membership" endpoint lands
+- [ ] Parameterised-route coverage for staff roles (a staff user reading a
+      specific member) once fixtures for the full record graph exist
+- [x] Blocking in CI
 
 ---
 
 ### P0-6 · Webhook fuzzing and rate limits
-**Status:** blocked by P0-0 · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-05
+**Status:** in progress · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-05
+
+`WebhookSecurityTest` constructs **valid** signatures as well as bad ones. A
+negative-only suite cannot tell "the signature check works" from "the endpoint
+rejects everything", and the second would pass every negative test while
+breaking every real payment.
 
 **Acceptance**
-- [ ] Stripe webhook rejects: invalid signature, stale timestamp beyond the
-      300-second window, duplicate event, reordered events, malformed JSON
-- [ ] WooCommerce webhook rejects an unconfigured shared secret and a bad HMAC
-- [ ] Both verify **before** parsing the payload — asserted, not assumed
+- [x] Stripe rejects: missing signature, invalid signature, a signature made
+      with the wrong secret, a correctly-signed payload outside the 300-second
+      window, and malformed JSON behind a *valid* signature
+- [x] Positive control: a correctly signed, in-window payload is accepted
+- [x] An unconfigured Stripe webhook returns 503 rather than processing
+- [x] Both verify **before** parsing the payload — proven by the malformed-JSON
+      case needing a valid signature to reach the parser at all
+- [x] Idempotency: the processed-event store recognises a replayed event id
+- [x] A rejected webhook makes no outbound HTTP request
+- [ ] WooCommerce HMAC path — **cannot run in the current matrix.**
+      `WooCommerce_Bridge::is_enabled()` requires `class_exists( 'WooCommerce' )`,
+      so with WooCommerce absent the handler returns 503 before reaching the
+      comparison. Covered today only by asserting no configuration lets an
+      unsigned POST succeed. Real coverage needs WooCommerce installed in
+      `integration.yml`
+- [ ] Reordered-event handling
 - [ ] Rate-limit tests for public/token endpoints, sign-in and guest flows
-- [ ] Idempotency proven: a replayed payment event does not double-charge or
-      double-credit
+- [ ] End-to-end idempotency: a replayed *payment* event does not create a
+      second payment row or a second receipt email (needs Stripe test-mode
+      fixtures, P1-9)
 
 ---
 
