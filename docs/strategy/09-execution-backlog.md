@@ -38,8 +38,12 @@ must be PHPUnit 9-compatible.
 **Acceptance**
 - [ ] A real WordPress test environment (`wp-env` or equivalent) runs locally
       and in CI
-- [ ] `integration` testsuite added to `phpunit.xml` alongside `unit`; both
-      independently runnable
+- [x] Integration suite independently runnable — `phpunit-integration.xml`,
+      separate from `phpunit.xml` by necessity, not preference: the WordPress
+      core test library still calls
+      `PHPUnit\Util\Test::parseTestMethodAnnotations()`, which PHPUnit 10
+      removed, so the two suites cannot share a PHPUnit major. Verified on
+      6.8, 6.9, 7.0.3 and trunk. Merge them if WordPress adopts PHPUnit 10+
 - [ ] The existing `unit` suite still runs **without** WordPress and is
       unchanged — it is fast, it works, and the two guard tests depend on
       scanning source rather than booting anything

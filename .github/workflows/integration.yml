@@ -117,6 +117,18 @@ jobs:
             "phpunit/phpunit:^9.6" "yoast/phpunit-polyfills:^1.1"
           vendor/bin/phpunit --version
 
+      # PHPUnit 9.6, not the 10.5 the unit suite pins. The WordPress core test
+      # library still calls PHPUnit\Util\Test::parseTestMethodAnnotations(),
+      # which PHPUnit 10 removed, so every test errors under 10.x — on 6.8,
+      # 6.9, 7.0.3 and trunk alike. Installed over the top here so the
+      # integration job's vendor/ is internally consistent; composer.lock and
+      # the unit suite are untouched.
+      - name: Downgrade to PHPUnit 9.6 for the WordPress test library
+        run: |
+          composer require --dev --no-interaction --no-progress \
+            --with-all-dependencies 'phpunit/phpunit:^9.6'
+          vendor/bin/phpunit --version
+
       - name: Install WordPress ${{ matrix.wordpress }} and the test library
         run: |
           chmod +x bin/install-wp-tests.sh
@@ -126,7 +138,19 @@ jobs:
         env:
           WP_TESTS_DIR: /tmp/wordpress-tests-lib
           MEMBERISTIC_ROUTE_INVENTORY: ${{ github.workspace }}/route-inventory.json
-        run: vendor/bin/phpunit -c phpunit-integration.xml --testdox
+        run: |
+          set -o pipefail
+          vendor/bin/phpunit -c phpunit-integration.xml --testdox 2>&1 | tee /tmp/phpunit.log
+
+      # The failing output otherwise sits in the middle of the log, above forty
+      # lines of MySQL container chatter, where it is awkward to reach through
+      # the API. Repeating it in a step of its own puts it at the end.
+      - name: Suite output (on failure)
+        if: failure()
+        run: |
+          echo '=========== INTEGRATION SUITE OUTPUT ==========='
+          tail -120 /tmp/phpunit.log || echo 'No output captured — the run died before PHPUnit produced any.'
+          echo '==============================================='
 
       - name: Upload REST route inventory
         if: always() && matrix.php == '8.3'
@@ -176,6 +200,11 @@ jobs:
           composer require --dev --no-progress --no-interaction --update-with-all-dependencies \
             "phpunit/phpunit:^9.6" "yoast/phpunit-polyfills:^1.1"
 
+      - name: Downgrade to PHPUnit 9.6 for the WordPress test library
+        run: |
+          composer require --dev --no-interaction --no-progress \
+            --with-all-dependencies 'phpunit/phpunit:^9.6'
+
       - name: Install WordPress trunk
         run: |
           chmod +x bin/install-wp-tests.sh
@@ -184,7 +213,16 @@ jobs:
       - name: Run integration suite against trunk
         env:
           WP_TESTS_DIR: /tmp/wordpress-tests-lib
-        run: vendor/bin/phpunit -c phpunit-integration.xml --testdox
+        run: |
+          set -o pipefail
+          vendor/bin/phpunit -c phpunit-integration.xml --testdox 2>&1 | tee /tmp/phpunit.log
+
+      - name: Suite output (on failure)
+        if: failure()
+        run: |
+          echo '=========== CANARY SUITE OUTPUT ==========='
+          tail -120 /tmp/phpunit.log || echo 'No output captured.'
+          echo '==========================================='
 
       - name: Note the canary result
         if: always()

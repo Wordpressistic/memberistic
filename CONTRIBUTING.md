@@ -38,8 +38,21 @@ a real database:
 ```bash
 # needs a MySQL/MariaDB server; the DB is dropped and recreated
 bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1:3306 latest
+
+# the WP test library requires PHPUnit 9.x — see below
+composer require --dev --with-all-dependencies 'phpunit/phpunit:^9.6'
 WP_TESTS_DIR=/tmp/wordpress-tests-lib vendor/bin/phpunit -c phpunit-integration.xml
+
+# restore the unit suite's PHPUnit when you are done
+composer install
 ```
+
+**The two suites run on different PHPUnit majors, and cannot be merged.** The
+WordPress core test library still calls
+`PHPUnit\Util\Test::parseTestMethodAnnotations()`, which PHPUnit 10 removed, so
+every integration test errors under 10.x — verified on WordPress 6.8, 6.9,
+7.0.3 and trunk. The unit suite stays on 10.5; the integration suite runs on
+9.6. Revisit if WordPress adopts PHPUnit 10+ in core.
 
 Pass a WordPress version as the fifth argument (`6.8`, `7.0.2`, `latest`,
 `nightly`). `6.8` resolves to the newest 6.8.x; an unpublished version fails
