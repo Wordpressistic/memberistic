@@ -51,7 +51,7 @@ outranks every other item on this page.
 ## P0 — before serious public promotion
 
 ### P0-11 · The published 2.0.0 fatals on `init` — start here
-**Status:** open · **Workstream:** WS-1 · **Milestone:** M0
+**Status:** **done** (PR #4, merged) · **Workstream:** WS-1 · **Milestone:** M0
 
 `includes/integrations/class-booking-adapter.php` shipped in 2.0.0 but was
 never added to the manual require list in `Plugin::load_dependencies()`, and
@@ -79,18 +79,18 @@ every file parses perfectly on its own, and nothing in the unit suite boots the
 plugin.
 
 **Acceptance**
-- [ ] `class-booking-adapter.php` required ahead of its consumers
-- [ ] A guard test that fails if *any* file under `includes/` is missing from
+- [x] `class-booking-adapter.php` required ahead of its consumers
+- [x] A guard test that fails if *any* file under `includes/` is missing from
       `load_dependencies()`, so the class of bug cannot recur — not just this
       instance of it
-- [ ] Guard test blocking in CI
-- [ ] Fix verified against the real `init` sequence, not only the guard test
+- [x] Guard test blocking in CI
+- [x] Fix verified against the real `init` sequence, not only the guard test
 - [ ] Released as `v2.0.1` (P0-1, P0-2)
 
 ---
 
 ### P0-0 · WordPress integration test harness
-**Status:** open · **Workstream:** WS-2 · **Milestone:** M0 · **Finding:** F-15
+**Status:** in progress · **Workstream:** WS-2 · **Milestone:** M0 · **Finding:** F-15
 
 Blocks P0-5, P0-6, P0-7, P0-8, P0-10 and P1-9 — every suite that needs a real
 WordPress. `tests/bootstrap.php` stubs WordPress rather than loading it, which
