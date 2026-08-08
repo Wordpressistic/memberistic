@@ -19,6 +19,10 @@ All notable changes are tracked here. The format follows [Keep a Changelog](http
 
 
 ### Changed
+- **The plugin directory is now `memberistic/`, was `memberistic-membership-solutions/`.** wordpress.org requires a plugin's slug — which is its directory name — to equal its Text Domain, and Plugin Check reported ~20 `TextDomainMismatch` errors because the two disagreed. The folder moved to the domain rather than the reverse: the domain appears at roughly 2,000 call sites and in every translation, the folder name appears in two workflow variables. The main PHP file keeps its longer historical name, since WordPress derives the slug from the directory, not the filename.
+
+  **Upgrading:** WordPress treats a renamed directory as a different plugin, so an existing install ends up with two copies listed. Nothing breaks — the bootstrap's duplicate-copy guard makes the second one inert — but deactivate and delete the old `memberistic-membership-solutions` entry. No data is affected; it all lives in database tables.
+- **`Licensing::build_info()` derives its slug from the installed directory** instead of hard-coding it. A literal there goes stale the moment the folder changes, which is the exact "update client that silently never offers an update" failure that method exists to prevent.
 - **Multisite uninstall no longer defines unprefixed globals.** `$site_ids` / `$site_id` in `uninstall.php` run at file scope, so they were genuine globals in WordPress's namespace; renamed to `$memberistic_site_ids` / `$memberistic_site_id`.
 - **Integration suite pinned to PHPUnit 9.6.** The WordPress test library calls `PHPUnit\Util\Test::parseTestMethodAnnotations()` from `WP_UnitTestCase::set_up()`, which PHPUnit 10 removed, so every integration test errored before its first assertion on every WordPress version including trunk. The unit suite stays on PHPUnit 10.5 — it never loads WordPress. Failing on WordPress-level deprecations is unaffected: that comes from `WP_UnitTestCase` and the bootstrap hooks, not from PHPUnit's `failOnDeprecation`.
 - Unit suite now runs on PHP 8.2, 8.3 and 8.4 in CI instead of 8.3 alone.

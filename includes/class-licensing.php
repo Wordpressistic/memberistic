@@ -147,8 +147,17 @@ final class Licensing {
 	 * @return array{slug:string,basename:string,version:string,php:string,wp:string}
 	 */
 	public static function build_info() {
+		// Derived from the installed directory rather than hard-coded. The
+		// slug IS the directory name, and a literal here silently goes stale
+		// the moment the folder changes — which is exactly the "update client
+		// that never offers an update" failure this method exists to prevent.
+		$basename = defined( 'MEMBERISTIC_BASENAME' ) ? MEMBERISTIC_BASENAME : '';
+		$slug     = '' !== $basename && str_contains( $basename, '/' )
+			? dirname( $basename )
+			: 'memberistic';
+
 		return array(
-			'slug'     => 'memberistic-membership-solutions',
+			'slug'     => $slug,
 			'basename' => defined( 'MEMBERISTIC_BASENAME' ) ? MEMBERISTIC_BASENAME : '',
 			'version'  => defined( 'MEMBERISTIC_VERSION' ) ? MEMBERISTIC_VERSION : '',
 			'php'      => defined( 'MEMBERISTIC_MIN_PHP' ) ? MEMBERISTIC_MIN_PHP : '',

@@ -7,7 +7,21 @@ This guide walks through getting Memberistic Membership Solutions installed and 
 
 ## 1. Upload and activate
 
-1. Copy `memberistic-membership-solutions/` into `wp-content/plugins/`.
+> **Upgrading from 2.0.0 or earlier?** The plugin directory is now
+> `memberistic/`; it was `memberistic-membership-solutions/`. WordPress treats a
+> directory rename as a different plugin, so unzipping the new package leaves
+> **two** copies side by side, both listed under Plugins.
+>
+> Nothing breaks if that happens — the bootstrap's duplicate-copy guard makes
+> whichever copy loads second completely inert, rather than letting it emit
+> warnings that would break check-in, checkout and waiver flows. But you should
+> still tidy up: **deactivate and delete the old
+> `memberistic-membership-solutions` entry**, then confirm `memberistic` is
+> active. Your data is untouched either way — memberships, plans, people,
+> payments, waivers and settings all live in database tables, not in the plugin
+> folder.
+
+1. Copy `memberistic/` into `wp-content/plugins/`.
 2. Activate the plugin from the WordPress admin (Plugins → Installed Plugins).
 3. On activation Memberistic will:
    - Create its custom tables.
