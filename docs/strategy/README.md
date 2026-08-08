@@ -42,11 +42,15 @@ its assumptions written down, not as a prediction.
 
 ## Shareable summary
 
-A designed, self-contained web version of the master plan — executive summary,
-milestone timeline, workstream dependency diagram, pricing ladder, risk
-register — is published as a private artifact:
+A designed, self-contained web version of the master plan — the decision it
+rests on, invariants, workstream dependency diagram, milestones M0–M5, the
+commercial ladder and the risk register — is published as a private artifact:
 
-<!-- ARTIFACT-URL -->
+**https://claude.ai/code/artifact/17985cb6-3d5f-46e2-b49b-412f72387f99**
+
+Private by default; shareable from the page's own share menu. It is a summary,
+not a replacement — [`00-master-plan.md`](00-master-plan.md) is authoritative,
+and the artifact is regenerated from it rather than edited separately.
 
 ## Maintaining these documents
 
