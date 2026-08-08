@@ -2,12 +2,21 @@
 
 All notable changes are tracked here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## Unreleased
+## 2.0.1 - Compatibility and the init fatal (2026-08-08)
+
+First release cut through the automated release pipeline, and the first whose
+`Tested up to` is a statement about what was tested rather than what shipped.
 
 ### Fixed
 - **Fatal error on `init` for every install.** `includes/integrations/class-booking-adapter.php` shipped in 2.0.0 but was never added to the manual require list in `Plugin::load_dependencies()`, and nothing autoloads. `Waiver_Booking_Bridge::register()` calls `Booking_Adapter::hook()` as its first statement and runs on `init` priority 4 whenever the Waiver Manager integration is enabled — and that integration's default is `'yes'`. So a stock install with no configuration at all fatalled on `init` with `Class "WordPressistic\Memberistic\Integrations\Booking_Adapter" not found`. `Booking_Engine`, `POS_Bridge` and `Staff_Dashboard` reach the same class. The file is now required ahead of every consumer.
 
+### Changed
+- **`Tested up to` raised from 6.8 to 7.0**, on evidence. The integration matrix exercises WordPress 6.8, 6.9 and 7.0.3 against PHP 8.2, 8.3 and 8.4 — nine jobs, each installing a real WordPress against a real MySQL and running the suite — plus a non-blocking trunk canary. `readme.txt` says 7.0 because wordpress.org accepts only major.minor there. A green canary is never a claim of support for an unreleased version.
+
 ### Added
+- **WordPress integration test harness** (`bin/install-wp-tests.sh`, `phpunit-integration.xml`, `tests/integration/`). The unit suite stubs WordPress; nothing before this loaded it, which is how the `init` fatal below survived a green CI for the whole life of 2.0.0. Pinned to PHPUnit 9.6 because the WordPress core test library still calls `PHPUnit\Util\Test::parseTestMethodAnnotations()`, removed in PHPUnit 10; the unit suite stays on 10.5 and never loads WordPress.
+- **Compatibility matrix in CI** (`.github/workflows/integration.yml`), covering activation, schema creation, DB version, capabilities, roles, scheduled tasks, fresh-install defaults, and a deprecation check that asserts WordPress reported nothing about the plugin during load or activation. A further test asserts the running WordPress matches the version the job installed, so the matrix cannot report green for a version it never exercised.
+- **Release automation** (`.github/workflows/release.yml`): verifies the version string across its homes against the tag, lints, builds the distributable from `.distignore`, asserts no dev or internal files leaked in, computes SHA-256, and drafts — never publishes — the GitHub Release.
 - **Dependency-manifest guard test** (`tests/unit/DependencyManifestTest.php`). Asserts that every `.php` file under `includes/` appears in `Plugin::load_dependencies()`, that every listed path exists, that the list has no duplicates, and that `Booking_Adapter` precedes its consumers. Because there is no autoloader, an omission there is a fatal at load time that no existing check can see — `php -l` proves each file parses, and it does parse perfectly on its own, while the unit suite never boots the plugin. CI was green for the whole life of the 2.0.0 release.
 
 ## 2.0.0 - Public release (2026-08-08)
