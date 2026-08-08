@@ -2,6 +2,14 @@
 
 All notable changes are tracked here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## Unreleased
+
+### Fixed
+- **Fatal error on `init` for every install.** `includes/integrations/class-booking-adapter.php` shipped in 2.0.0 but was never added to the manual require list in `Plugin::load_dependencies()`, and nothing autoloads. `Waiver_Booking_Bridge::register()` calls `Booking_Adapter::hook()` as its first statement and runs on `init` priority 4 whenever the Waiver Manager integration is enabled — and that integration's default is `'yes'`. So a stock install with no configuration at all fatalled on `init` with `Class "WordPressistic\Memberistic\Integrations\Booking_Adapter" not found`. `Booking_Engine`, `POS_Bridge` and `Staff_Dashboard` reach the same class. The file is now required ahead of every consumer.
+
+### Added
+- **Dependency-manifest guard test** (`tests/unit/DependencyManifestTest.php`). Asserts that every `.php` file under `includes/` appears in `Plugin::load_dependencies()`, that every listed path exists, that the list has no duplicates, and that `Booking_Adapter` precedes its consumers. Because there is no autoloader, an omission there is a fatal at load time that no existing check can see — `php -l` proves each file parses, and it does parse perfectly on its own, while the unit suite never boots the plugin. CI was green for the whole life of the 2.0.0 release.
+
 ## 2.0.0 - Public release (2026-08-08)
 
 Brand-neutral packaging, security and privacy hardening, and safe defaults.
