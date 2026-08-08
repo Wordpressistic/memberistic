@@ -145,9 +145,41 @@ what a reviewer sees rather than reporting on `tests/`, `bin/` and
 
 **Acceptance**
 - [x] Plugin Check runs in CI on every PR — `plugin-check` job in `ci.yml`
-- [ ] All errors resolved
-- [ ] Every remaining warning documented with a reason, in-repo
+- [x] All errors resolved — **0 errors**, down from 70. Nothing was added to the
+      action's ignore list and no severity was downgraded: the warning count is
+      unchanged at 266 across the same two runs, which is what distinguishes
+      fixing the errors from reclassifying them
+- [ ] Every remaining warning documented with a reason, in-repo — **266
+      outstanding.** Dominated by `PrefixAllGlobals.NonPrefixedVariableFound` in
+      templates and `NonceVerification` in admin form handlers. Neither is
+      obviously a defect and neither blocks the .org listing, but both need a
+      decision recorded rather than left implicit
 - [x] Job is blocking — no `continue-on-error`, unlike the advisory `phpcs` job
+
+> **The 70, and what they turned out to be (2026-08-09).** 44 i18n (41 missing
+> `translators:` comments, 3 unordered placeholders); 15 escaping; 10 filesystem;
+> 1 heredoc. Two findings are worth remembering because they were not what they
+> looked like:
+>
+> - Two `readfile()` calls already carried `phpcs:ignore` comments naming
+>   `file_system_read_readfile`. WPCS renamed the sniff to
+>   `file_system_operations_readfile`, so the suppressions matched nothing and
+>   the calls were reported anyway. The sibling call in `class-documents.php`
+>   uses the current code and was never reported — that mismatch is what
+>   surfaced it. **A stale sniff code is a silent suppression failure**; it does
+>   not warn, it just stops working.
+> - Ten of the fifteen escaping findings were the booking CSS prefix in
+>   `templates/account.php`, hard-sanitised to `[a-z0-9_-]` fifteen lines above
+>   the output. `esc_attr()` there is a no-op, added so the escaping is visible
+>   at the point of output. Five were real, including three unescaped `wp_die()`
+>   arguments in the Stripe service.
+>
+> Bulk-inserting the translators comments put five of them into inline HTML in
+> the corporate module, where a bare `/* ... */` line is text rather than a
+> comment and would have rendered on the group admin screens. Found by
+> tokenising each file and asserting every `translators:` line is a real
+> `T_COMMENT`. **Anything that inserts comments into this codebase by line
+> number needs that check** — the diff looks correct either way.
 
 ---
 
