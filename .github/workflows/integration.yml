@@ -32,38 +32,42 @@ jobs:
           set -euo pipefail
           curl -sSL --retry 3 https://api.wordpress.org/core/stable-check/1.0/ -o /tmp/stable.json
 
-          echo "### WordPress versions available" >> "$GITHUB_STEP_SUMMARY"
-          echo '' >> "$GITHUB_STEP_SUMMARY"
+          # Written to stdout as well as the step summary. The summary is only
+          # readable in the web UI, and this job exists precisely so the answer
+          # is available from the logs — including to whoever is reading them
+          # through an API rather than a browser.
+          {
+            echo "### WordPress versions available"
+            echo ''
 
-          latest=$(python3 -c "
+            latest=$(python3 -c "
           import json
           d = json.load(open('/tmp/stable.json'))
           print(next((k for k, v in d.items() if v == 'latest'), 'unknown'))
           ")
-          echo "Latest: **$latest**" >> "$GITHUB_STEP_SUMMARY"
-
-          echo '' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Newest 12 releases:' >> "$GITHUB_STEP_SUMMARY"
-          python3 -c "
+            echo "Latest published: **$latest**"
+            echo ''
+            echo 'Newest 12 releases:'
+            python3 -c "
           import json
           d = json.load(open('/tmp/stable.json'))
           ks = sorted(d, key=lambda s: [int(x) for x in s.split('.')])
           print('\n'.join('- ' + k for k in ks[-12:]))
-          " >> "$GITHUB_STEP_SUMMARY"
-
-          echo '' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Requested by this matrix: 6.8, 6.9, 7.0.2' >> "$GITHUB_STEP_SUMMARY"
-          for want in 6.8 6.9 7.0.2; do
-            if python3 -c "
+          "
+            echo ''
+            echo 'Requested by this matrix: 6.8, 6.9, 7.0.2'
+            for want in 6.8 6.9 7.0.2; do
+              if python3 -c "
           import json, sys
           d = json.load(open('/tmp/stable.json'))
           sys.exit(0 if any(k == '$want' or k.startswith('$want.') for k in d) else 1)
           "; then
-              echo "- \`$want\` — available" >> "$GITHUB_STEP_SUMMARY"
-            else
-              echo "- \`$want\` — **NOT PUBLISHED**" >> "$GITHUB_STEP_SUMMARY"
-            fi
-          done
+                echo "- \`$want\` — available"
+              else
+                echo "- \`$want\` — **NOT PUBLISHED — the matrix needs correcting**"
+              fi
+            done
+          } | tee -a "$GITHUB_STEP_SUMMARY"
 
   integration:
     name: WP ${{ matrix.wordpress }} · PHP ${{ matrix.php }}

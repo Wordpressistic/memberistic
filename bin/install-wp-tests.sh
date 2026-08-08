@@ -129,21 +129,45 @@ install_test_suite() {
 
 	mkdir -p "$WP_TESTS_DIR"
 
-	local ref
+	# wordpress-develop does not tag every release the way wordpress.org
+	# publishes them — 6.8 has no `refs/tags/6.8`, for instance — so try a
+	# short list of candidates rather than assuming one naming scheme. The
+	# minor-line branch (6.8, 7.0) is the reliable fallback: it always exists
+	# and always carries a test library compatible with that line.
+	local candidates=()
+
 	if [ "$RESOLVED_VERSION" = "trunk" ]; then
-		ref="trunk"
+		candidates=( "refs/heads/trunk" )
 	else
-		ref="$RESOLVED_VERSION"
+		local minor
+		minor="$(echo "$RESOLVED_VERSION" | cut -d. -f1,2)"
+
+		candidates=(
+			"refs/tags/${RESOLVED_VERSION}"
+			"refs/heads/${minor}"
+			"refs/tags/${minor}"
+			"refs/heads/trunk"
+		)
 	fi
 
-	echo "Fetching wordpress-develop@$ref for the PHPUnit test library"
-	if ! download "https://github.com/WordPress/wordpress-develop/archive/refs/tags/${ref}.tar.gz" /tmp/wp-develop.tar.gz; then
-		# Point releases sometimes ship without their own develop tag; fall
-		# back to the branch head, which carries the same test library.
-		local branch="${ref%.*}"
-		echo "No develop tag for $ref — falling back to branch $branch"
-		download "https://github.com/WordPress/wordpress-develop/archive/refs/heads/${branch}.tar.gz" /tmp/wp-develop.tar.gz
+	local fetched=""
+
+	for candidate in "${candidates[@]}"; do
+		echo "Trying wordpress-develop ${candidate}"
+
+		if download "https://github.com/WordPress/wordpress-develop/archive/${candidate}.tar.gz" /tmp/wp-develop.tar.gz; then
+			fetched="$candidate"
+			break
+		fi
+	done
+
+	if [ -z "$fetched" ]; then
+		echo "ERROR: no WordPress test library found for ${RESOLVED_VERSION}. Tried:" >&2
+		printf '  %s\n' "${candidates[@]}" >&2
+		exit 1
 	fi
+
+	echo "Using test library from wordpress-develop ${fetched}"
 
 	mkdir -p /tmp/wp-develop
 	tar --strip-components=1 -zxmf /tmp/wp-develop.tar.gz -C /tmp/wp-develop
