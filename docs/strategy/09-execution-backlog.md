@@ -54,7 +54,7 @@ declared compatibility.
 
 **Acceptance**
 - [ ] Full activation, onboarding, plan creation, join/pay, check-in, waiver and
-      import flows exercised on WordPress 6.8.x, 6.9.x and 7.0.2
+      import flows exercised on WordPress 6.8.x, 6.9.x and 7.0.3
 - [ ] PHP 8.2, 8.3, 8.4 all pass
 - [ ] Multisite activation, uninstall and privacy export/erase pass
 - [ ] Any incompatibility fixed, with a regression test
