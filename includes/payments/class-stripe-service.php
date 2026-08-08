@@ -717,8 +717,8 @@ final class Stripe_Service {
 				array(
 					'response'  => 403,
 					'back_link' => true,
-					'link_url'  => $back ?: home_url( '/' ),
-					'link_text' => __( 'Go back and verify', 'memberistic' ),
+					'link_url'  => esc_url( $back ?: home_url( '/' ) ),
+					'link_text' => esc_html__( 'Go back and verify', 'memberistic' ),
 				)
 			);
 		}
@@ -923,7 +923,7 @@ final class Stripe_Service {
 			esc_html( $message ),
 			esc_html( $title ),
 			array(
-				'response'  => $status,
+				'response'  => (int) $status,
 				'back_link' => true,
 			)
 		);

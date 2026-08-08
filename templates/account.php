@@ -160,7 +160,12 @@ $lane_url    = memberistic_get_page_url( 'booking_page_id', 'book', home_url( '/
 				</span>
 				<div>
 					<strong><?php echo esc_html( $display ); ?></strong>
-					<span><?php printf( esc_html__( 'Member since %s', 'memberistic' ), esc_html( $since ) ); ?></span>
+					<span>
+					<?php
+					/* translators: %s: date the member joined. */
+					printf( esc_html__( 'Member since %s', 'memberistic' ), esc_html( $since ) );
+					?>
+				</span>
 					<div class="memberistic-acct-photo-actions" style="margin-top:6px;">
 						<button type="button" class="memberistic-acct-photo-btn" data-mem-photo-trigger><?php echo $photo_id ? esc_html__( 'Change photo', 'memberistic' ) : esc_html__( 'Add photo', 'memberistic' ); ?></button>
 						<?php if ( $photo_id ) : ?>
@@ -192,7 +197,12 @@ $lane_url    = memberistic_get_page_url( 'booking_page_id', 'book', home_url( '/
 			<!-- DASHBOARD -->
 			<section class="memberistic-acct-view is-active" data-panel="dashboard">
 				<header class="memberistic-acct-welcome">
-					<h2><?php printf( esc_html__( 'Welcome back, %s.', 'memberistic' ), esc_html( $first ) ); ?></h2>
+					<h2>
+					<?php
+					/* translators: %s: member's first name. */
+					printf( esc_html__( 'Welcome back, %s.', 'memberistic' ), esc_html( $first ) );
+					?>
+				</h2>
 					<p><?php esc_html_e( 'Your range access is active and your member card is ready. Lane availability is good for today.', 'memberistic' ); ?></p>
 				</header>
 				<div class="memberistic-acct-stats">
@@ -283,7 +293,12 @@ $lane_url    = memberistic_get_page_url( 'booking_page_id', 'book', home_url( '/
 					<div class="memberistic-acct-charge">
 						<div>
 							<span class="memberistic-acct-amount"><?php echo esc_html( memberistic_format_price( $price, $currency ) ); ?></span>
-							<span class="memberistic-acct-muted"><?php printf( esc_html__( 'on %s', 'memberistic' ), esc_html( $renew ) ); ?></span>
+							<span class="memberistic-acct-muted">
+								<?php
+								/* translators: %s: date the membership next renews. */
+								printf( esc_html__( 'on %s', 'memberistic' ), esc_html( $renew ) );
+								?>
+							</span>
 						</div>
 						<div>
 							<span class="memberistic-acct-mini"><?php esc_html_e( 'Method', 'memberistic' ); ?></span>
@@ -914,22 +929,27 @@ body.memberistic-modal-open{ overflow:hidden; }
 $booking_css_prefix = \WordPressistic\Memberistic\Integrations\Booking_Adapter::css_prefix();
 
 if ( '' !== $booking_css_prefix ) :
+	// The prefix is interpolated into a CSS selector, not an attribute, so the
+	// real defence is the character class: anything outside [a-z0-9_-] is
+	// dropped here and cannot close the rule or open a <script>. esc_attr()
+	// below is therefore a no-op on the resulting value, and is present so the
+	// escaping is visible at the point of output rather than 15 lines above it.
 	$bp = preg_replace( '/[^a-z0-9_-]/', '', $booking_css_prefix );
 	?>
-.memberistic-acct-modal .<?php echo $bp; ?>-shell{
+.memberistic-acct-modal .<?php echo esc_attr( $bp ); ?>-shell{
   display:grid !important;
   grid-template-columns:1fr !important;
   gap:18px !important;
 }
-.memberistic-acct-modal .<?php echo $bp; ?>-aside,
-.memberistic-acct-modal .<?php echo $bp; ?>-stage{ width:100%; min-width:0; }
-.memberistic-acct-modal .<?php echo $bp; ?>-aside__card{ height:auto; }
-.memberistic-acct-modal .<?php echo $bp; ?>-aside__features{ display:flex; flex-wrap:wrap; gap:14px 22px; margin-top:10px; }
-.memberistic-acct-modal .<?php echo $bp; ?>-aside__features li{ flex:0 0 auto; }
-.memberistic-acct-modal .<?php echo $bp; ?>-stage__panel{ min-width:0; }
-.memberistic-acct-modal .<?php echo $bp; ?>-stage table,
-.memberistic-acct-modal .<?php echo $bp; ?>-stage [class*="calendar"],
-.memberistic-acct-modal .<?php echo $bp; ?>-stage [class*="cal-"]{ width:100% !important; max-width:100% !important; }
+.memberistic-acct-modal .<?php echo esc_attr( $bp ); ?>-aside,
+.memberistic-acct-modal .<?php echo esc_attr( $bp ); ?>-stage{ width:100%; min-width:0; }
+.memberistic-acct-modal .<?php echo esc_attr( $bp ); ?>-aside__card{ height:auto; }
+.memberistic-acct-modal .<?php echo esc_attr( $bp ); ?>-aside__features{ display:flex; flex-wrap:wrap; gap:14px 22px; margin-top:10px; }
+.memberistic-acct-modal .<?php echo esc_attr( $bp ); ?>-aside__features li{ flex:0 0 auto; }
+.memberistic-acct-modal .<?php echo esc_attr( $bp ); ?>-stage__panel{ min-width:0; }
+.memberistic-acct-modal .<?php echo esc_attr( $bp ); ?>-stage table,
+.memberistic-acct-modal .<?php echo esc_attr( $bp ); ?>-stage [class*="calendar"],
+.memberistic-acct-modal .<?php echo esc_attr( $bp ); ?>-stage [class*="cal-"]{ width:100% !important; max-width:100% !important; }
 <?php endif; ?>
 
 @media (max-width:760px){

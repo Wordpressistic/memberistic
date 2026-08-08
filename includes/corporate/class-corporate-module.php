@@ -511,7 +511,7 @@ final class Corporate_Admin {
 	 * width and rendered as a broken bar).
 	 */
 	private static function admin_css() {
-		return <<<CSS
+		return '
 		/* ===== Palette + shell ===== */
 		.memberistic-corp-wrap{--memberistic-corp-ink:#0F1115;--memberistic-corp-panel:#161A21;--memberistic-corp-line:#E2E1E4;--memberistic-corp-brass:#C9A84C;--memberistic-corp-brass-d:#A8862F;--memberistic-corp-ember:#E8802F;--memberistic-corp-ok:#5a8a2c;--memberistic-corp-okbg:rgba(157,224,91,.16);--memberistic-corp-warnbg:rgba(232,128,47,.14);--memberistic-corp-nobg:rgba(232,80,80,.12);--memberistic-corp-muted:#646970;max-width:1180px;}
 		.memberistic-corp-wrap h1{font-size:26px;font-weight:700;letter-spacing:-.01em;color:var(--memberistic-corp-ink);display:flex;align-items:center;gap:12px;}
@@ -590,7 +590,7 @@ final class Corporate_Admin {
 		@media (prefers-reduced-motion: reduce){
 			.memberistic-corp-wrap *{animation:none!important;transition:none!important;}
 		}
-CSS;
+';
 	}
 
 	/**
@@ -660,6 +660,7 @@ CSS;
 								</div>
 							</td>
 							<td><?php echo $payer ? esc_html( $payer->display_name . ' (' . $payer->user_email . ')' ) : '&mdash;'; ?></td>
+							<?php /* translators: %d: the highest number of seats the group may grow to. */ ?>
 							<td><?php echo esc_html( (int) $g->seats_used . ' / ' . (int) $g->seats_total ); ?><?php if ( (int) $g->max_future_seats > (int) $g->seats_total ) : ?> <span class="description">(<?php echo esc_html( sprintf( __( 'up to %d', 'memberistic' ), (int) $g->max_future_seats ) ); ?>)</span><?php endif; ?></td>
 							<td>$<?php echo esc_html( number_format( $paid, 2 ) ); ?><?php if ( (float) $g->custom_price > 0 ) : ?> <span class="description">/ $<?php echo esc_html( number_format( (float) $g->custom_price, 2 ) ); ?></span><?php endif; ?></td>
 							<td><span class="memberistic-corp-badge <?php echo esc_attr( $g->payment_status ); ?>"><?php echo esc_html( ucfirst( $g->payment_status ) ); ?></span></td>
@@ -704,6 +705,7 @@ CSS;
 				<?php if ( $from_count > 0 ) : ?>
 					<input type="hidden" name="from_members" value="<?php echo esc_attr( implode( ',', $from_members ) ); ?>">
 					<div class="notice notice-info inline" style="margin:0 0 16px;border-radius:8px;">
+						<?php /* translators: %d: number of members selected for the move. */ ?>
 						<p><strong><?php echo esc_html( sprintf( _n( '%d selected member', '%d selected members', $from_count, 'memberistic' ), $from_count ) ); ?></strong> <?php esc_html_e( 'will be added to this group once you create it. Their existing accounts, waivers, and QR codes are kept — they are simply linked into the group. Make sure “Seats Purchased” is at least this number.', 'memberistic' ); ?></p>
 					</div>
 				<?php endif; ?>
@@ -952,6 +954,7 @@ CSS;
 				<h3><?php esc_html_e( 'Generate payment link', 'memberistic' ); ?></h3>
 				<p class="description"><?php esc_html_e( 'Enter ANY amount — fully custom per link. Send it to the customer to pay online.', 'memberistic' ); ?></p>
 				<p class="memberistic-corp-field"><label><?php esc_html_e( 'Amount ($)', 'memberistic' ); ?></label><input type="number" step="0.01" min="0.01" name="amount" required value="<?php echo esc_attr( $balance > 0 ? number_format( $balance, 2, '.', '' ) : '600.00' ); ?>"></p>
+				<?php /* translators: %s: current group description. */ ?>
 				<p class="memberistic-corp-field"><label><?php esc_html_e( 'Description', 'memberistic' ); ?></label><input type="text" name="description" value="<?php echo esc_attr( sprintf( __( '%s group membership', 'memberistic' ), $group->group_name ) ); ?>"></p>
 				<p class="memberistic-corp-field"><label><?php esc_html_e( 'Send to email (optional)', 'memberistic' ); ?></label><input type="email" name="recipient_email"></p>
 				<p class="memberistic-corp-field"><label><?php esc_html_e( 'Expires in (days, 0 = never)', 'memberistic' ); ?></label><input type="number" min="0" name="expiry_days" value="14"></p>
@@ -1065,7 +1068,8 @@ CSS;
 		$skipped  = isset( $_GET['m_skipped'] ) ? (int) $_GET['m_skipped'] : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		?>
 		<?php if ( $notice >= 0 ) : ?>
-			<div class="notice notice-success is-dismissible"><p><?php printf( esc_html__( '%1$d member(s) added. %2$d skipped.', 'memberistic' ), $notice, $skipped ); ?></p></div>
+			<?php /* translators: 1: number of members added. 2: number of members skipped. */ ?>
+			<div class="notice notice-success is-dismissible"><p><?php printf( esc_html__( '%1$d member(s) added. %2$d skipped.', 'memberistic' ), (int) $notice, (int) $skipped ); ?></p></div>
 		<?php endif; ?>
 
 		<p style="margin-top:16px;"><strong><?php echo esc_html( $used ); ?></strong> / <?php echo esc_html( $seats ); ?> <?php esc_html_e( 'seats used.', 'memberistic' ); ?>
@@ -1491,6 +1495,7 @@ final class Corporate_Member_Service {
 		$phone = sanitize_text_field( (string) $phone );
 
 		if ( ! $email || ! is_email( $email ) || '' === $name ) {
+			/* translators: %s: member name, or email when no name was given. */
 			return array( 'status' => 'invalid', 'message' => sprintf( __( 'Skipped "%s": a valid name and email are required.', 'memberistic' ), $name ?: $email ) );
 		}
 
@@ -1517,6 +1522,7 @@ final class Corporate_Member_Service {
 		$group = Corporate_Groups_Repository::get( $group_id ) ?: $group;
 		$used  = Corporate_Members_Repository::active_count( $group_id );
 		if ( $used >= (int) $group->seats_total ) {
+			/* translators: %d: the group's seat limit. */
 			return array( 'status' => 'seat_full', 'message' => sprintf( __( 'Seat limit reached (%d). Increase seats to add more.', 'memberistic' ), (int) $group->seats_total ) );
 		}
 
@@ -1535,7 +1541,8 @@ final class Corporate_Member_Service {
 				'role'         => 'subscriber',
 			) );
 			if ( is_wp_error( $user_id ) ) {
-				return array( 'status' => 'error', 'message' => sprintf( __( 'Could not create user for %s: %s', 'memberistic' ), $email, $user_id->get_error_message() ) );
+				/* translators: 1: member email address. 2: reason the user account could not be created. */
+				return array( 'status' => 'error', 'message' => sprintf( __( 'Could not create user for %1$s: %2$s', 'memberistic' ), $email, $user_id->get_error_message() ) );
 			}
 			$user        = get_user_by( 'id', $user_id );
 			$is_new_user = true;
@@ -1544,6 +1551,7 @@ final class Corporate_Member_Service {
 		// Already in this group? Reactivate or report.
 		$existing = Corporate_Members_Repository::find( $group_id, $user->ID );
 		if ( $existing && 'removed' !== $existing->status ) {
+			/* translators: %s: member email address. */
 			return array( 'status' => 'exists', 'message' => sprintf( __( '%s is already in this group.', 'memberistic' ), $email ) );
 		}
 
@@ -1559,10 +1567,12 @@ final class Corporate_Member_Service {
 			'status'          => 'active',
 			'start_date'      => current_time( 'mysql' ),
 			'payment_source'  => 'corporate_group',
-			'notes'           => sprintf( __( 'Member of corporate group #%d (%s).', 'memberistic' ), (int) $group_id, $group->group_name ),
+			/* translators: 1: corporate group id. 2: corporate group name. */
+			'notes'           => sprintf( __( 'Member of corporate group #%1$d (%2$s).', 'memberistic' ), (int) $group_id, $group->group_name ),
 			'created_by'      => get_current_user_id(),
 		) );
 		if ( ! $membership_id ) {
+			/* translators: %s: member email address. */
 			return array( 'status' => 'error', 'message' => sprintf( __( 'Could not create membership for %s.', 'memberistic' ), $email ) );
 		}
 
@@ -1610,6 +1620,7 @@ final class Corporate_Member_Service {
 
 		return array(
 			'status'    => 'added',
+			/* translators: %s: member email address. */
 			'message'   => sprintf( __( 'Added %s.', 'memberistic' ), $email ),
 			'member_id' => $member_id,
 			'user_id'   => $user->ID,
@@ -1918,6 +1929,7 @@ final class Corporate_Emails {
 		}
 		if ( 'group_owner_summary' === $template ) {
 			return sprintf(
+				/* translators: %s: corporate group name. */
 				__( 'Your %s group is set up', 'memberistic' ),
 				$context['{brand_label}'] ?? get_bloginfo( 'name' )
 			);
@@ -2139,6 +2151,7 @@ final class Corporate_Payment_Service {
 		}
 
 		Corporate_Groups_Repository::log_activity( $group_id, 'payment_link_created', sprintf(
+			/* translators: %s: payment amount, already formatted. */
 			__( 'Payment link created for $%s.', 'memberistic' ),
 			number_format( $amount, 2 )
 		) );
@@ -2184,6 +2197,7 @@ final class Corporate_Payment_Service {
 		) );
 		self::sync_status( (int) $link->group_id );
 		Corporate_Groups_Repository::log_activity( (int) $link->group_id, 'payment_link_paid', sprintf(
+			/* translators: %s: payment amount, already formatted. */
 			__( 'Payment link paid: $%s.', 'memberistic' ),
 			number_format( (float) $link->amount, 2 )
 		) );
@@ -2254,14 +2268,19 @@ final class Corporate_Payment_Service {
 		);
 		$body  = sprintf( __( "Hello,\n\n%1\$s has sent you a secure payment request.\n\n", 'memberistic' ), $brand );
 		if ( $link->description ) {
+			/* translators: %s: what the payment link is for. */
 			$body .= sprintf( __( "For: %s\n", 'memberistic' ), $link->description );
 		}
+		/* translators: %s: amount due, already formatted. */
 		$body .= sprintf( __( "Amount due: \$%s\n\n", 'memberistic' ), $amount );
+		/* translators: %s: the payment link URL. */
 		$body .= sprintf( __( "Pay securely here:\n%s\n\n", 'memberistic' ), $url );
 		if ( $link->expires_at ) {
+			/* translators: %s: date the payment link expires. */
 			$body .= sprintf( __( "This link expires on %s.\n\n", 'memberistic' ), mysql2date( get_option( 'date_format' ), $link->expires_at ) );
 		}
 		if ( $phone ) {
+			/* translators: %s: the business phone number. */
 			$body .= sprintf( __( "Questions? Call %s.\n\n", 'memberistic' ), $phone );
 		}
 		$body .= $brand;
@@ -2554,6 +2573,7 @@ final class Corporate_Pay {
       </form>
       <div class="inv__secure">🔒 <?php esc_html_e( 'Secure payment via Stripe', 'memberistic' ); ?></div>
     <?php else : ?>
+      <?php /* translators: %s: the business phone number. */ ?>
       <p style="color:#8A95A5;text-align:center;margin-top:18px;"><?php echo esc_html( $phone ? sprintf( __( 'To pay, please call us at %s.', 'memberistic' ), $phone ) : __( 'To pay, please contact us.', 'memberistic' ) ); ?></p>
     <?php endif; ?>
   </div>
@@ -2684,7 +2704,8 @@ final class Corporate_Waiver_Service {
 			? \WordPressistic\Memberistic\memberistic_get_brand_label()
 			: get_bloginfo( 'name' );
 		$default = sprintf(
-			__( 'I acknowledge that the use of firearms and the shooting range at %s involves inherent risks. I confirm I am legally permitted to handle firearms, will follow all posted range rules and staff instructions at all times, and assume responsibility for my own safety and conduct on the premises. I release %s, its owners, staff, and affiliates from liability for injury or loss arising from my voluntary participation, to the extent permitted by law.', 'memberistic' ),
+			/* translators: 1: business name where the activity takes place. 2: business name released from liability. */
+			__( 'I acknowledge that the use of firearms and the shooting range at %1$s involves inherent risks. I confirm I am legally permitted to handle firearms, will follow all posted range rules and staff instructions at all times, and assume responsibility for my own safety and conduct on the premises. I release %2$s, its owners, staff, and affiliates from liability for injury or loss arising from my voluntary participation, to the extent permitted by law.', 'memberistic' ),
 			$brand,
 			$brand
 		);
@@ -2969,6 +2990,7 @@ final class Corporate_Checkin {
 			'person_id'           => (int) $person['id'],
 			'activity_type'       => 'checkin_created',
 			'title'               => __( 'QR check-in', 'memberistic' ),
+			/* translators: %s: display name of the staff member who scanned the QR code. */
 			'description'         => sprintf( __( 'Checked in at the range desk via QR by %s.', 'memberistic' ), wp_get_current_user()->display_name ),
 		) );
 		// Flag so the panel shows a confirmation banner.
@@ -3444,6 +3466,7 @@ final class Corporate_Portal {
 					? \WordPressistic\Memberistic\memberistic_get_brand_label() : get_bloginfo( 'name' );
 				wp_mail(
 					$admin,
+					/* translators: %s: the site's Memberistic brand label. */
 					sprintf( __( '[%s] Group seat request', 'memberistic' ), $brand ),
 					sprintf(
 						__( "%1\$s (owner of group \"%2\$s\", #%3\$d) has requested more seats.\nCurrent: %4\$d seats / max %5\$d.\nReview in Memberistic → Corporate Groups.", 'memberistic' ),

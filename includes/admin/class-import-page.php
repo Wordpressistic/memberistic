@@ -610,13 +610,19 @@ final class Import_Page {
 	 */
 	private static function parse_csv( $path ) {
 		$rows = array();
-		$fh   = fopen( $path, 'r' );
+		// Read the upload as a stream rather than through WP_Filesystem. There
+		// is no WP_Filesystem streaming API and no CSV parser in it:
+		// get_contents_array() pulls the whole file into memory and still
+		// splits on newlines, which corrupts any quoted field containing one —
+		// a real case here, because member notes and addresses do. fgetcsv()
+		// is the only correct reader, and it needs a handle.
+		$fh = fopen( $path, 'r' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- see above.
 		if ( ! $fh ) {
 			return $rows;
 		}
 		$header = fgetcsv( $fh );
 		if ( ! is_array( $header ) ) {
-			fclose( $fh );
+			fclose( $fh ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- closing the stream opened above.
 			return $rows;
 		}
 		$header = array_map(
@@ -636,7 +642,7 @@ final class Import_Page {
 				break; // safety cap
 			}
 		}
-		fclose( $fh );
+		fclose( $fh ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- closing the stream opened above.
 		return $rows;
 	}
 
@@ -968,6 +974,7 @@ final class Import_Page {
 				$slug = 'no-plan';
 			}
 			if ( ! $plan ) {
+				/* translators: 1: CSV row number. 2: member email, or name when no email was given. */
 				$errors[] = sprintf( __( 'Row %1$d (%2$s): no plan available and the No-Plan sentinel could not be created.', 'memberistic' ), $i + 2, $m['email'] ?: $m['name'] );
 				$skipped++;
 				continue;
@@ -985,6 +992,7 @@ final class Import_Page {
 
 			$membership_id = self::create_membership( $m, $plan );
 			if ( ! $membership_id ) {
+				/* translators: 1: CSV row number. 2: member email, or name when no email was given. */
 				$errors[] = sprintf( __( 'Row %1$d (%2$s): could not create membership.', 'memberistic' ), $i + 2, $m['email'] ?: $m['name'] );
 				$skipped++;
 				continue;
@@ -1025,6 +1033,7 @@ final class Import_Page {
 						'phone'         => $m['phone'],
 						'wp_user_id'    => self::wp_user_id_for( $m['email'] ),
 						'status'        => 'active',
+						/* translators: %s: membership level name from the legacy export. */
 						'notes'         => sprintf( __( 'Imported linked member (legacy level: %s).', 'memberistic' ), $m['level'] ),
 					)
 				);
@@ -1032,6 +1041,7 @@ final class Import_Page {
 					$pool[ $slug ][ $target ]--;
 					$linked++;
 				} else {
+					/* translators: %s: member email, or name when no email was given. */
 					$errors[] = sprintf( __( 'Linked member %s could not be attached.', 'memberistic' ), $m['email'] ?: $m['name'] );
 				}
 			} else {
@@ -1045,6 +1055,7 @@ final class Import_Page {
 				if ( $mid ) {
 					$linked++;
 				} else {
+					/* translators: %s: member email, or name when no email was given. */
 					$errors[] = sprintf( __( 'Linked member %s could not be imported.', 'memberistic' ), $m['email'] ?: $m['name'] );
 				}
 			}
@@ -1079,6 +1090,7 @@ final class Import_Page {
 		$plan_slug = isset( $plan['slug'] ) ? (string) $plan['slug'] : '';
 		$status    = self::status_for_row( $end, $plan_slug );
 
+		/* translators: 1: member id in the legacy system. 2: legacy membership level name. */
 		$notes = trim( sprintf( __( 'Imported from PMPro (legacy ID %1$s, level %2$s).', 'memberistic' ), $m['legacy_id'] ?: '—', $m['level'] ?: '—' ) . ( $note ? ' ' . $note : '' ) );
 
 		$display_name = $m['name'] ?: ( $m['email'] ?: __( 'Imported member', 'memberistic' ) );
@@ -1149,6 +1161,7 @@ final class Import_Page {
 					$no_plan = self::ensure_no_plan();
 				}
 				if ( ! $no_plan ) {
+					/* translators: %1$d: CSV row number. */
 					$errors[] = sprintf( __( 'Row %1$d: could not create No-Plan sentinel.', 'memberistic' ), $i + 2 );
 					continue;
 				}
@@ -1170,6 +1183,7 @@ final class Import_Page {
 						)
 					);
 					if ( ! $mid ) {
+						/* translators: 1: CSV row number. 2: member email address. */
 						$errors[] = sprintf( __( 'Row %1$d (%2$s): could not create stub Instore member.', 'memberistic' ), $i + 2, $email );
 						continue;
 					}
@@ -1193,6 +1207,7 @@ final class Import_Page {
 						$walkin_membership = self::ensure_walkin_membership( $no_plan );
 					}
 					if ( ! $walkin_membership ) {
+						/* translators: %1$d: CSV row number. */
 						$errors[] = sprintf( __( 'Row %1$d: could not create Instore Walk-in membership.', 'memberistic' ), $i + 2 );
 						continue;
 					}
@@ -1238,6 +1253,7 @@ final class Import_Page {
 			if ( $ok ) {
 				$imported++;
 			} else {
+				/* translators: 1: CSV row number. 2: member email address, or a placeholder when absent. */
 				$errors[] = sprintf( __( 'Row %1$d (%2$s): payment could not be saved.', 'memberistic' ), $i + 2, $email ?: __( '(no email)', 'memberistic' ) );
 			}
 		}

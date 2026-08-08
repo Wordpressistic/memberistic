@@ -185,7 +185,7 @@ final class Waiver_Archive_Admin {
 					header( 'Content-Type: ' . ( ! empty( $type['type'] ) ? $type['type'] : 'application/pdf' ) );
 					header( 'Content-Disposition: inline; filename="waiver.' . ( ! empty( $type['ext'] ) ? $type['ext'] : 'pdf' ) . '"' );
 					header( 'Content-Length: ' . filesize( $att ) );
-					readfile( $att ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
+					readfile( $att ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile -- streaming a PDF to the browser; WP_Filesystem has no streaming read and buffering the whole file would regress memory use.
 					exit;
 				}
 			}
@@ -205,7 +205,7 @@ final class Waiver_Archive_Admin {
 		header( 'Content-Type: application/pdf' );
 		header( 'Content-Disposition: inline; filename="waiver.pdf"' );
 		header( 'Content-Length: ' . filesize( $real ) );
-		readfile( $real ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
+		readfile( $real ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile -- streaming a PDF to the browser; WP_Filesystem has no streaming read and buffering the whole file would regress memory use.
 		exit;
 	}
 }
