@@ -75,7 +75,11 @@ final class Content_Restrictions {
 			}
 			$names  = self::plan_names( $plans );
 			$teaser = $names
-				? sprintf( __( 'Members-only content. Available for: %s.', 'memberistic' ), implode( ', ', $names ) )
+				? sprintf(
+					/* translators: %s: comma-separated list of membership plan names. */
+					__( 'Members-only content. Available for: %s.', 'memberistic' ),
+					implode( ', ', $names )
+				)
 				: __( 'Members-only content. Available for active members only.', 'memberistic' );
 			$posts[ $i ]->post_content = $teaser;
 			$posts[ $i ]->post_excerpt = $teaser;
@@ -172,7 +176,19 @@ final class Content_Restrictions {
 		<div class="memberistic-restriction-overlay" role="dialog" aria-modal="true">
 			<div class="memberistic-restriction-modal">
 				<h2><?php esc_html_e( 'Membership Required', 'memberistic' ); ?></h2>
-				<p><?php echo esc_html( $plans ? sprintf( __( 'This content is available for: %s.', 'memberistic' ), implode( ', ', $plans ) ) : __( 'This content is available for active members only.', 'memberistic' ) ); ?></p>
+				<p>
+					<?php
+					echo esc_html(
+						$plans
+							? sprintf(
+								/* translators: %s: comma-separated list of membership plan names. */
+								__( 'This content is available for: %s.', 'memberistic' ),
+								implode( ', ', $plans )
+							)
+							: __( 'This content is available for active members only.', 'memberistic' )
+					);
+					?>
+				</p>
 				<a href="<?php echo esc_url( $url ); ?>"><?php esc_html_e( 'View Membership Plans', 'memberistic' ); ?></a>
 			</div>
 		</div>
@@ -208,7 +224,11 @@ final class Content_Restrictions {
 		$url = memberistic_get_page_url( 'plans_page_id', 'memberships', home_url( '/memberships/' ) );
 		$names = self::plan_names( $plans );
 		$detail = $names
-			? sprintf( __( 'This content is available for: %s.', 'memberistic' ), implode( ', ', $names ) )
+			? sprintf(
+				/* translators: %s: comma-separated list of membership plan names. */
+				__( 'This content is available for: %s.', 'memberistic' ),
+				implode( ', ', $names )
+			)
 			: __( 'This content is available for active members only.', 'memberistic' );
 		ob_start();
 		?>
