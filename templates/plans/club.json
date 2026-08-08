@@ -1,0 +1,60 @@
+{
+  "id": "club",
+  "label": "Club (social / sports)",
+  "description": "Individual, couple, and family club memberships with a joining structure.",
+  "template_version": 1,
+  "currency": "USD",
+  "status_on_import": "inactive",
+  "notice": "Example pricing and copy. Review every price, benefit, and included-people count against your own business before activating. Plans import as 'inactive' so nothing is offered for sale until you publish it.",
+  "plans": [
+    {
+      "name": "Individual",
+      "slug": "individual",
+      "description": "Full club membership for one person.",
+      "monthly_price": 35.0,
+      "annual_price": 360.0,
+      "included_people": 1,
+      "benefits": [
+        "Full use of club facilities",
+        "Member rate on events",
+        "Vote at the AGM",
+        "Digital membership card"
+      ],
+      "is_featured": 0,
+      "sort_order": 10,
+      "status": "inactive"
+    },
+    {
+      "name": "Couple",
+      "slug": "couple",
+      "description": "Club membership for two people at one address.",
+      "monthly_price": 60.0,
+      "annual_price": 620.0,
+      "included_people": 2,
+      "benefits": [
+        "Everything in Individual, for two",
+        "Primary member + 1 linked member",
+        "One event booking account"
+      ],
+      "is_featured": 1,
+      "sort_order": 20,
+      "status": "inactive"
+    },
+    {
+      "name": "Family",
+      "slug": "family",
+      "description": "Household club membership for up to four people.",
+      "monthly_price": 85.0,
+      "annual_price": 880.0,
+      "included_people": 4,
+      "benefits": [
+        "Everything in Couple",
+        "Primary member + up to 3 linked members",
+        "Junior member access"
+      ],
+      "is_featured": 0,
+      "sort_order": 30,
+      "status": "inactive"
+    }
+  ]
+}

@@ -1,0 +1,1294 @@
+.memberistic-frontend {
+	box-sizing: border-box;
+}
+
+.memberistic-frontend *,
+.memberistic-frontend *::before,
+.memberistic-frontend *::after {
+	box-sizing: border-box;
+}
+
+.memberistic-plans-grid-wrap {
+	--memberistic-brand: var(--memberistic-primary);
+	color: var(--memberistic-text);
+	font-family: var(--memberistic-font-body);
+	margin: 32px auto;
+	max-width: 1180px;
+	width: 100%;
+}
+
+.memberistic-billing-toggle {
+	align-items: center;
+	display: flex;
+	gap: 6px;
+	justify-content: center;
+	margin-bottom: 22px;
+}
+
+.memberistic-billing-toggle button {
+	background: var(--memberistic-surface-alt);
+	border: 1px solid var(--memberistic-border);
+	border-radius: 6px;
+	color: var(--memberistic-text-soft);
+	cursor: pointer;
+	font-weight: 700;
+	line-height: 1;
+	padding: 10px 14px;
+}
+
+.memberistic-billing-toggle button.is-active {
+	/* Solid brand fill: use the CTA token, not the primary accent. Light
+	   text on a saturated CTA fill can fall below 4.5:1, so this pairs with
+	   the dark ink token reserved for text on solid fills. */
+	background: var(--memberistic-cta);
+	border-color: var(--memberistic-cta);
+	color: var(--memberistic-primary-ink);
+}
+
+.memberistic-plan-grid {
+	display: grid;
+	gap: 18px;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.memberistic-plan-card {
+	background: var(--memberistic-surface);
+	border: 1px solid var(--memberistic-border);
+	border-radius: 8px;
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+	display: flex;
+	flex-direction: column;
+	min-height: 100%;
+	padding: 24px;
+	position: relative;
+	transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+	overflow: hidden;
+}
+
+.memberistic-plan-card::before {
+	background: linear-gradient(90deg, var(--memberistic-success), var(--memberistic-brand));
+	content: "";
+	height: 3px;
+	left: 0;
+	position: absolute;
+	right: 0;
+	top: 0;
+	transform: scaleX(.28);
+	transform-origin: left center;
+	transition: transform .2s ease;
+}
+
+.memberistic-plan-card:hover {
+	border-color: var(--memberistic-brand);
+	box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
+	transform: translateY(-3px);
+}
+
+.memberistic-plan-card:hover::before {
+	transform: scaleX(1);
+}
+
+.memberistic-plan-card.is-featured {
+	border-color: var(--memberistic-brand);
+	box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.memberistic-featured-badge {
+	background: var(--memberistic-success);
+	border-radius: 999px;
+	color: var(--memberistic-primary-ink);
+	font-size: 12px;
+	font-weight: 800;
+	padding: 6px 10px;
+	position: absolute;
+	right: 18px;
+	top: 18px;
+}
+
+.memberistic-plan-card h3 {
+	color: var(--memberistic-brand);
+	font-family: var(--memberistic-font-display);
+	font-size: 26px;
+	line-height: 1.2;
+	margin: 0 0 10px;
+	padding-right: 90px;
+}
+
+.memberistic-plan-description {
+	color: var(--memberistic-muted);
+	margin: 0 0 16px;
+	min-height: 48px;
+}
+
+.memberistic-plan-price {
+	align-items: baseline;
+	display: flex;
+	gap: 6px;
+	margin: 4px 0 10px;
+}
+
+.memberistic-price-value {
+	color: var(--memberistic-text);
+	font-family: var(--memberistic-font-display);
+	font-size: 34px;
+	font-weight: 900;
+	line-height: 1;
+}
+
+.memberistic-price-cycle {
+	color: var(--memberistic-muted);
+	font-weight: 700;
+}
+
+.memberistic-included-people {
+	color: var(--memberistic-text-soft);
+	font-weight: 700;
+	margin: 8px 0 12px;
+}
+
+.memberistic-benefits {
+	display: grid;
+	gap: 8px;
+	list-style: none;
+	margin: 0 0 20px;
+	padding: 0;
+}
+
+.memberistic-benefits li {
+	color: var(--memberistic-text-soft);
+	padding-left: 22px;
+	position: relative;
+}
+
+.memberistic-benefits li::before {
+	color: var(--memberistic-success);
+	content: "+";
+	font-weight: 900;
+	left: 0;
+	position: absolute;
+	top: 0;
+}
+
+.memberistic-plan-button {
+	/* Same CTA-fill reasoning as .memberistic-billing-toggle button.is-active. */
+	background: var(--memberistic-cta) !important;
+	border: 1px solid var(--memberistic-cta) !important;
+	border-radius: 6px;
+	color: var(--memberistic-primary-ink) !important;
+	cursor: pointer;
+	display: block;
+	font-family: var(--memberistic-font-condensed);
+	font-weight: 800;
+	margin-top: auto;
+	padding: 12px 16px;
+	text-align: center;
+	text-decoration: none;
+}
+
+.memberistic-plan-button:hover,
+.memberistic-plan-button:focus {
+	color: var(--memberistic-text);
+	filter: brightness(1.08);
+}
+
+.memberistic-placeholder {
+	background: var(--memberistic-surface);
+	border: 1px solid var(--memberistic-border);
+	border-radius: 8px;
+	margin: 32px auto;
+	max-width: 780px;
+	padding: 24px;
+}
+
+.memberistic-account {
+	color: var(--memberistic-text);
+	margin: 32px auto;
+	max-width: 980px;
+}
+
+.memberistic-account-summary {
+	align-items: center;
+	background: var(--memberistic-surface-alt);
+	border: 1px solid var(--memberistic-border);
+	border-radius: 8px;
+	display: flex;
+	justify-content: space-between;
+	margin: 0 0 18px;
+	padding: 18px;
+}
+
+.memberistic-account-summary h3 {
+	color: var(--memberistic-primary);
+	font-family: var(--memberistic-font-display);
+	margin: 4px 0 0;
+}
+
+.memberistic-account-nav {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 0 0 18px;
+}
+
+.memberistic-account-nav a {
+	background: var(--memberistic-cta);
+	border-radius: 6px;
+	color: var(--memberistic-primary-ink);
+	font-weight: 800;
+	padding: 9px 12px;
+	text-decoration: none;
+}
+
+.memberistic-account-section {
+	border-top: 1px solid var(--memberistic-border);
+	margin-top: 20px;
+	padding-top: 18px;
+}
+
+.memberistic-account table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.memberistic-account th,
+.memberistic-account td {
+	border-bottom: 1px solid var(--memberistic-border);
+	padding: 10px;
+	text-align: left;
+}
+
+.memberistic-checkout {
+	margin: 32px auto;
+	max-width: 760px;
+}
+
+.memberistic-checkout h2 {
+	color: var(--memberistic-brand, var(--memberistic-primary));
+	font-family: var(--memberistic-font-display);
+	font-size: 30px;
+	line-height: 1.2;
+	margin: 0 0 18px;
+}
+
+.memberistic-checkout-form {
+	background: var(--memberistic-surface);
+	border: 1px solid var(--memberistic-border);
+	border-radius: 8px;
+	display: grid;
+	gap: 14px;
+	padding: 24px;
+}
+
+.memberistic-checkout-form label {
+	display: grid;
+	gap: 6px;
+}
+
+.memberistic-checkout-form label span {
+	color: var(--memberistic-text-soft);
+	font-weight: 800;
+}
+
+.memberistic-checkout-form input,
+.memberistic-checkout-form select,
+.memberistic-checkout-form textarea {
+	background: var(--memberistic-bg);
+	border: 1px solid var(--memberistic-input-border);
+	border-radius: 6px;
+	color: var(--memberistic-text);
+	font-size: 16px;
+	min-height: 44px;
+	padding: 10px 12px;
+	width: 100%;
+}
+
+.memberistic-checkbox-line {
+	align-items: start;
+	display: grid !important;
+	gap: 10px !important;
+	grid-template-columns: 18px minmax(0, 1fr);
+}
+
+.memberistic-checkbox-line input {
+	min-height: auto;
+	margin-top: 4px;
+	width: auto;
+}
+
+.memberistic-login-card,
+.memberistic-result {
+	background: var(--memberistic-surface);
+	border: 1px solid var(--memberistic-border);
+	border-radius: 8px;
+	box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+	color: var(--memberistic-text);
+	margin: 34px auto;
+	max-width: 720px;
+	padding: 32px;
+}
+
+.memberistic-login-card h2,
+.memberistic-result h2 {
+	color: var(--memberistic-primary);
+	font-family: var(--memberistic-font-display);
+	font-size: 30px;
+	line-height: 1.15;
+	margin: 8px 0 10px;
+}
+
+.memberistic-login-card p,
+.memberistic-result p {
+	color: var(--memberistic-muted);
+	font-size: 16px;
+	margin: 0 0 18px;
+}
+
+.memberistic-result-icon {
+	align-items: center;
+	background: var(--memberistic-cta);
+	border-radius: 8px;
+	color: var(--memberistic-primary-ink);
+	display: inline-flex;
+	font-weight: 900;
+	height: 48px;
+	justify-content: center;
+	width: 48px;
+}
+
+.memberistic-result--success .memberistic-result-icon {
+	/* --color-active is a bright/light green in dark mode — pair it
+	   with ink (not white) so the glyph stays legible. */
+	background: var(--memberistic-success);
+	color: var(--memberistic-primary-ink);
+}
+
+.memberistic-result--failed .memberistic-result-icon {
+	background: var(--memberistic-danger);
+}
+
+.memberistic-login-card .login-username,
+.memberistic-login-card .login-password {
+	display: grid;
+	gap: 7px;
+	margin: 0 0 14px;
+}
+
+.memberistic-login-card label {
+	color: var(--memberistic-text-soft);
+	font-weight: 800;
+}
+
+.memberistic-login-card input[type="text"],
+.memberistic-login-card input[type="password"] {
+	background: var(--memberistic-bg);
+	border: 1px solid var(--memberistic-input-border);
+	border-radius: 6px;
+	color: var(--memberistic-text);
+	font-size: 16px;
+	min-height: 44px;
+	padding: 10px 12px;
+	width: 100%;
+}
+
+.memberistic-login-card .button,
+.memberistic-login-card input[type="submit"] {
+	background: var(--memberistic-cta) !important;
+	border: 0 !important;
+	border-radius: 6px !important;
+	color: var(--memberistic-primary-ink) !important;
+	cursor: pointer;
+	font-weight: 800;
+	min-height: 44px;
+	padding: 10px 18px !important;
+}
+
+.memberistic-result-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.memberistic-secondary-button {
+	background: var(--memberistic-surface-alt);
+	border: 1px solid var(--memberistic-input-border);
+	border-radius: 6px;
+	color: var(--memberistic-primary);
+	font-weight: 800;
+	padding: 12px 16px;
+	text-decoration: none;
+}
+
+.memberistic-staff-dashboard {
+	--memberistic-brand: var(--memberistic-primary);
+	color: var(--memberistic-text);
+	font-family: var(--memberistic-font-body);
+	margin: 28px auto;
+	max-width: 1220px;
+	width: 100%;
+}
+
+.memberistic-staff-header {
+	align-items: center;
+	/* CTA fill (see .memberistic-plan-button note) rather than the local
+	   --memberistic-brand var, which this scope also uses for plain accent
+	   text and borders below. */
+	background: var(--memberistic-cta);
+	border-radius: 8px;
+	color: var(--memberistic-primary-ink);
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 18px;
+	padding: 22px 24px;
+}
+
+.memberistic-staff-header p {
+	/* Must NOT use --memberistic-success here: a saturated status colour on
+	   the CTA-filled header computed to ~1.6:1 contrast, essentially
+	   illegible. The header background is already the accent colour, so the
+	   eyebrow label just needs the header's own light text colour. */
+	color: var(--memberistic-text);
+	font-family: var(--memberistic-font-mono);
+	font-weight: 800;
+	letter-spacing: 0;
+	margin: 0 0 4px;
+	text-transform: uppercase;
+}
+
+.memberistic-staff-header h2 {
+	color: var(--memberistic-text);
+	font-family: var(--memberistic-font-display);
+	font-size: 30px;
+	line-height: 1.15;
+	margin: 0;
+}
+
+.memberistic-staff-user {
+	background: color-mix(in srgb, var(--memberistic-text) 12%, transparent);
+	border: 1px solid color-mix(in srgb, var(--memberistic-text) 22%, transparent);
+	border-radius: 6px;
+	font-weight: 800;
+	padding: 10px 12px;
+}
+
+.memberistic-staff-notice {
+	border-radius: 6px;
+	font-weight: 800;
+	margin-bottom: 14px;
+	padding: 12px 14px;
+}
+
+.memberistic-staff-notice--success {
+	background: color-mix(in srgb, var(--memberistic-success) 16%, transparent);
+	color: var(--memberistic-success);
+}
+
+.memberistic-staff-notice--error {
+	background: color-mix(in srgb, var(--memberistic-danger) 16%, transparent);
+	color: var(--memberistic-danger-bright);
+}
+
+.memberistic-staff-kpis {
+	display: grid;
+	gap: 12px;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	margin-bottom: 18px;
+}
+
+.memberistic-staff-kpis div,
+.memberistic-staff-panel {
+	background: var(--memberistic-surface);
+	border: 1px solid var(--memberistic-border);
+	border-radius: 8px;
+	box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+}
+
+.memberistic-staff-kpis div {
+	padding: 18px;
+}
+
+.memberistic-staff-kpis span {
+	color: var(--memberistic-muted);
+	display: block;
+	font-family: var(--memberistic-font-mono);
+	font-size: 13px;
+	font-weight: 800;
+	margin-bottom: 8px;
+}
+
+.memberistic-staff-kpis strong {
+	color: var(--memberistic-brand);
+	display: block;
+	font-family: var(--memberistic-font-display);
+	font-size: 30px;
+	line-height: 1;
+}
+
+.memberistic-staff-grid {
+	display: grid;
+	gap: 18px;
+	grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+}
+
+.memberistic-staff-grid--bottom {
+	margin-top: 18px;
+}
+
+.memberistic-staff-panel {
+	padding: 20px;
+}
+
+.memberistic-staff-panel h3 {
+	color: var(--memberistic-brand);
+	font-family: var(--memberistic-font-display);
+	font-size: 20px;
+	line-height: 1.2;
+	margin: 0 0 14px;
+}
+
+.memberistic-staff-form {
+	display: grid;
+	gap: 12px;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.memberistic-staff-form label,
+.memberistic-staff-search {
+	display: grid;
+	gap: 6px;
+}
+
+.memberistic-staff-form span {
+	color: var(--memberistic-text-soft);
+	font-weight: 800;
+}
+
+.memberistic-staff-form input,
+.memberistic-staff-form select,
+.memberistic-staff-form textarea,
+.memberistic-staff-search input,
+.memberistic-staff-search select {
+	background: var(--memberistic-bg);
+	border: 1px solid var(--memberistic-input-border);
+	border-radius: 6px;
+	color: var(--memberistic-text);
+	min-height: 42px;
+	padding: 9px 10px;
+	width: 100%;
+}
+
+.memberistic-staff-wide,
+.memberistic-staff-form button {
+	grid-column: 1 / -1;
+}
+
+.memberistic-staff-search {
+	grid-template-columns: minmax(0, 1fr) 160px 90px;
+	margin-bottom: 14px;
+}
+
+.memberistic-staff-search button,
+.memberistic-staff-member button {
+	background: var(--memberistic-cta);
+	border: 0;
+	border-radius: 6px;
+	color: var(--memberistic-primary-ink);
+	cursor: pointer;
+	font-weight: 800;
+	min-height: 42px;
+	padding: 9px 12px;
+}
+
+.memberistic-staff-list {
+	display: grid;
+	gap: 10px;
+}
+
+.memberistic-staff-member {
+	align-items: center;
+	border: 1px solid var(--memberistic-border);
+	border-radius: 8px;
+	display: flex;
+	gap: 12px;
+	justify-content: space-between;
+	padding: 12px;
+}
+
+.memberistic-staff-member strong,
+.memberistic-staff-member span,
+.memberistic-staff-member small {
+	display: block;
+}
+
+.memberistic-staff-member strong {
+	color: var(--memberistic-brand);
+}
+
+.memberistic-staff-member span,
+.memberistic-staff-member small {
+	color: var(--memberistic-muted);
+}
+
+.memberistic-staff-empty {
+	background: var(--memberistic-surface-alt);
+	border-radius: 6px;
+	color: var(--memberistic-muted);
+	margin: 0;
+	padding: 16px;
+}
+
+.memberistic-staff-table-wrap {
+	overflow-x: auto;
+}
+
+.memberistic-staff-panel table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.memberistic-staff-panel th,
+.memberistic-staff-panel td {
+	border-bottom: 1px solid var(--memberistic-border);
+	padding: 10px;
+	text-align: left;
+	vertical-align: top;
+}
+
+.memberistic-staff-panel th {
+	color: var(--memberistic-text-soft);
+	font-family: var(--memberistic-font-mono);
+	font-size: 13px;
+	text-transform: uppercase;
+}
+
+.memberistic-staff-panel small {
+	color: var(--memberistic-muted);
+}
+
+.memberistic-toast {
+	align-items: center;
+	background: var(--memberistic-surface);
+	border: 1px solid var(--memberistic-border);
+	border-left: 5px solid var(--memberistic-success);
+	border-radius: 8px;
+	box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+	display: flex;
+	gap: 18px;
+	justify-content: space-between;
+	opacity: 0;
+	padding: 16px 18px;
+	position: fixed;
+	right: 24px;
+	top: 92px;
+	transform: translateY(-10px);
+	transition: opacity .18s ease, transform .18s ease;
+	width: min(420px, calc(100% - 32px));
+	z-index: 99999;
+}
+
+.memberistic-toast.is-visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.memberistic-toast[data-memberistic-toast="error"] {
+	border-left-color: var(--memberistic-danger);
+}
+
+.memberistic-toast strong {
+	color: var(--memberistic-primary);
+	display: block;
+	margin-bottom: 4px;
+}
+
+.memberistic-toast p {
+	color: var(--memberistic-text-soft);
+	margin: 0;
+}
+
+.memberistic-toast button {
+	background: var(--memberistic-cta);
+	border: 0;
+	border-radius: 6px;
+	color: var(--memberistic-primary-ink);
+	cursor: pointer;
+	font-weight: 800;
+	padding: 9px 12px;
+}
+
+@media (max-width: 900px) {
+	.memberistic-plan-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.memberistic-plan-description {
+		min-height: 0;
+	}
+
+	.memberistic-account-summary {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.memberistic-account table {
+		display: block;
+		overflow-x: auto;
+	}
+
+	.memberistic-staff-header {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.memberistic-staff-kpis,
+	.memberistic-staff-grid,
+	.memberistic-staff-form,
+	.memberistic-staff-search {
+		grid-template-columns: 1fr;
+	}
+
+	.memberistic-staff-wide,
+	.memberistic-staff-form button {
+		grid-column: auto;
+	}
+
+	.memberistic-staff-member {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+}
+
+/* ── Checkout price summary ── */
+.memberistic-price-summary {
+	align-items: center;
+	background: color-mix(in srgb, var(--memberistic-primary) 8%, var(--memberistic-surface-alt));
+	border: 1px solid var(--memberistic-border);
+	border-radius: 6px;
+	display: flex;
+	justify-content: space-between;
+	padding: 12px 14px;
+}
+
+.memberistic-price-summary strong {
+	color: var(--memberistic-primary);
+	font-size: 16px;
+}
+
+.memberistic-summary-price {
+	color: var(--memberistic-primary);
+	font-size: 18px;
+	font-weight: 900;
+}
+
+.memberistic-summary-placeholder {
+	color: var(--memberistic-muted);
+	font-style: italic;
+}
+
+/* ── Membership status badge (shortcode) ── */
+.memberistic-status-badge {
+	border-radius: 999px;
+	display: inline-block;
+	font-size: 13px;
+	font-weight: 800;
+	padding: 5px 10px;
+}
+
+.memberistic-status-none {
+	background: var(--memberistic-surface-alt);
+	color: var(--memberistic-muted);
+}
+
+/* ── Expiring notice ── */
+.memberistic-expiring-notice {
+	background: color-mix(in srgb, var(--memberistic-warning) 14%, transparent);
+	border: 1px solid var(--memberistic-cta);
+	border-radius: 6px;
+	color: var(--memberistic-cta);
+	font-weight: 700;
+	margin: 12px 0;
+	padding: 12px 16px;
+}
+
+.memberistic-expiring-notice p {
+	margin: 0;
+}
+
+.memberistic-expiring-notice a {
+	color: var(--memberistic-primary);
+	font-weight: 800;
+	margin-left: 8px;
+	text-decoration: underline;
+}
+
+/* ── Account tab people table empty state ── */
+.memberistic-account-empty {
+	color: var(--memberistic-muted);
+	font-style: italic;
+	padding: 12px 0;
+}
+
+/* ── Plan card annual savings badge ── */
+.memberistic-annual-savings {
+	background: color-mix(in srgb, var(--memberistic-success) 18%, transparent);
+	border-radius: 999px;
+	color: var(--memberistic-success);
+	display: inline-block;
+	font-size: 12px;
+	font-weight: 800;
+	margin-bottom: 10px;
+	padding: 4px 10px;
+}
+
+/* ── Account alert banners ── */
+.memberistic-account-alert {
+	border-radius: 6px;
+	font-weight: 700;
+	margin-bottom: 16px;
+	padding: 12px 16px;
+}
+
+.memberistic-account-alert--warning {
+	background: color-mix(in srgb, var(--memberistic-warning) 14%, transparent);
+	border: 1px solid var(--memberistic-warning);
+	color: var(--memberistic-warning);
+}
+
+.memberistic-account-alert--info {
+	background: color-mix(in srgb, var(--memberistic-info) 10%, transparent);
+	border: 1px solid var(--memberistic-info);
+	color: var(--memberistic-info);
+}
+
+.memberistic-account-alert a {
+	color: inherit;
+	font-weight: 800;
+	margin-left: 8px;
+	text-decoration: underline;
+}
+
+.memberistic-account-summary small {
+	color: var(--memberistic-muted);
+}
+
+/* ── Placeholder with button ── */
+.memberistic-placeholder a.memberistic-plan-button {
+	display: inline-block;
+	margin-top: 12px;
+}
+
+/* Login / lost-password / reset shell. */
+.memberistic-auth-shell {
+	background: radial-gradient(circle at 30% 20%, var(--memberistic-glow-primary), transparent 50%), radial-gradient(circle at 70% 80%, var(--memberistic-glow-cta), transparent 50%), var(--memberistic-bg);
+	margin: 24px auto;
+	max-width: 760px;
+	padding: 26px;
+	position: relative;
+}
+
+/*
+ * Optional background imagery behind the auth shell. Ships with no image:
+ * a plugin must never hotlink an asset from someone else's site, and
+ * bundling a stock photo would just be a different site's brand. Set
+ * --memberistic-auth-image to a url() (theme CSS, or the
+ * memberistic_inline_styles filter) to layer one in; the scrim gradient
+ * above it is already tuned to keep form text legible over photography.
+ */
+.memberistic-auth-shell::after {
+	background-image: linear-gradient(180deg, var(--memberistic-scrim), var(--memberistic-scrim-deep)), var(--memberistic-auth-image, none);
+	background-position: center;
+	background-size: cover;
+	content: "";
+	inset: 0;
+	opacity: 0.55;
+	position: absolute;
+	z-index: 0;
+}
+
+.memberistic-auth-card {
+	background: var(--memberistic-surface-glass);
+	border: 1px solid color-mix(in srgb, var(--memberistic-primary) 35%, transparent);
+	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+	margin: 0 auto;
+	max-width: 540px;
+	padding: 30px;
+	position: relative;
+	z-index: 1;
+}
+
+.memberistic-auth-logo {
+	color: var(--memberistic-muted);
+	font-family: var(--memberistic-font-mono);
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.18em;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+.memberistic-auth-mark {
+	background: var(--memberistic-primary);
+	display: inline-block;
+	height: 10px;
+	margin-right: 8px;
+	width: 10px;
+}
+
+.memberistic-auth-title {
+	color: var(--memberistic-text);
+	font-family: var(--memberistic-font-display);
+	font-size: 44px;
+	letter-spacing: 0.04em;
+	line-height: 1;
+	margin: 14px 0 6px;
+	text-align: center;
+}
+
+.memberistic-auth-sub {
+	color: var(--memberistic-text-soft);
+	font-size: 14px;
+	margin: 0 0 24px;
+	text-align: center;
+}
+
+.memberistic-auth-form {
+	display: grid;
+	gap: 8px;
+}
+
+.memberistic-auth-label {
+	color: var(--memberistic-muted);
+	font-family: var(--memberistic-font-mono);
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+}
+
+.memberistic-auth-field {
+	background: var(--memberistic-bg);
+	border: 1px solid var(--memberistic-input-border);
+	color: var(--memberistic-text);
+	font-size: 15px;
+	min-height: 46px;
+	padding: 10px 12px;
+	width: 100%;
+}
+
+.memberistic-auth-field:focus {
+	border-color: var(--memberistic-primary);
+	outline: none;
+}
+
+.memberistic-auth-row {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	margin: 8px 0 16px;
+}
+
+.memberistic-auth-check,
+.memberistic-auth-check input {
+	color: var(--memberistic-text-soft);
+	font-size: 13px;
+}
+
+.memberistic-auth-forgot {
+	color: var(--memberistic-primary-strong);
+	font-family: var(--memberistic-font-mono);
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+.memberistic-auth-forgot:hover {
+	color: var(--memberistic-text);
+}
+
+.memberistic-auth-btn {
+	border: 1px solid transparent;
+	display: block;
+	font-family: var(--memberistic-font-condensed);
+	font-size: 13px;
+	font-weight: 800;
+	letter-spacing: 0.12em;
+	padding: 13px 14px;
+	text-align: center;
+	text-decoration: none;
+	text-transform: uppercase;
+	width: 100%;
+}
+
+.memberistic-auth-btn--primary {
+	background: var(--memberistic-cta);
+	border-color: var(--memberistic-cta);
+	color: var(--memberistic-primary-ink);
+}
+
+.memberistic-auth-btn--primary:hover {
+	filter: brightness(1.08);
+}
+
+.memberistic-auth-btn--secondary {
+	background: var(--memberistic-primary);
+	border-color: var(--memberistic-primary);
+	color: var(--memberistic-primary-ink);
+}
+
+.memberistic-auth-divider {
+	color: var(--memberistic-muted);
+	font-family: var(--memberistic-font-mono);
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.24em;
+	margin: 18px 0 12px;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+.memberistic-auth-alt {
+	color: var(--memberistic-muted);
+	font-family: var(--memberistic-font-mono);
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.18em;
+	margin-top: 8px;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+/* Auth feedback notices + secondary links (forgot-password / reset flows). */
+.memberistic-auth-notice {
+	border: 1px solid transparent;
+	border-radius: 4px;
+	font-size: 13.5px;
+	line-height: 1.5;
+	margin: 0 0 18px;
+	padding: 12px 14px;
+}
+
+.memberistic-auth-notice--success {
+	background: color-mix(in srgb, var(--memberistic-success) 12%, transparent);
+	border-color: color-mix(in srgb, var(--memberistic-success) 40%, transparent);
+	color: var(--memberistic-success);
+}
+
+.memberistic-auth-notice--error {
+	background: color-mix(in srgb, var(--memberistic-danger) 12%, transparent);
+	border-color: color-mix(in srgb, var(--memberistic-danger) 40%, transparent);
+	color: var(--memberistic-danger-bright);
+}
+
+.memberistic-auth-back {
+	color: var(--memberistic-muted);
+	display: inline-block;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	margin-top: 12px;
+	text-align: center;
+	text-decoration: none;
+}
+
+.memberistic-auth-back:hover {
+	color: var(--memberistic-text);
+}
+
+/* Checkout page. */
+.memberistic-co-shell {
+	color: var(--memberistic-text);
+	margin: 0 auto;
+	max-width: 760px;
+	padding: 100px 24px 70px;
+}
+
+.memberistic-co-step-pip {
+	align-items: center;
+	color: var(--memberistic-muted);
+	display: flex;
+	font-family: var(--memberistic-font-mono);
+	font-size: 11px;
+	font-weight: 700;
+	gap: 8px;
+	justify-content: center;
+	letter-spacing: 0.2em;
+	margin-bottom: 14px;
+	text-transform: uppercase;
+}
+
+.memberistic-co-step-pip .dot {
+	background: var(--memberistic-input-border);
+	border-radius: 50%;
+	height: 8px;
+	width: 8px;
+}
+
+.memberistic-co-step-pip .dot.cur {
+	background: var(--memberistic-primary);
+}
+
+.memberistic-co-title {
+	color: var(--memberistic-text);
+	font-family: var(--memberistic-font-display);
+	font-size: clamp(36px, 6vw, 54px);
+	letter-spacing: 0.04em;
+	line-height: 1;
+	margin: 0 0 8px;
+	text-align: center;
+}
+
+.memberistic-co-sub {
+	color: var(--memberistic-text-soft);
+	font-size: 15px;
+	margin: 0 auto 34px;
+	max-width: 50ch;
+	text-align: center;
+}
+
+.memberistic-co-summary,
+.memberistic-co-section {
+	background: var(--memberistic-surface);
+	border: 1px solid var(--memberistic-border);
+	padding: 24px;
+}
+
+.memberistic-co-summary {
+	margin-bottom: 20px;
+}
+
+.memberistic-co-summary .row {
+	align-items: center;
+	display: flex;
+	gap: 14px;
+	justify-content: space-between;
+}
+
+.memberistic-co-summary .name {
+	color: var(--memberistic-text);
+	font-size: 30px;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	line-height: 1;
+}
+
+.memberistic-co-summary .tag {
+	color: var(--memberistic-primary-strong);
+	font-family: var(--memberistic-font-mono);
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.2em;
+	margin-top: 4px;
+	text-transform: uppercase;
+}
+
+.memberistic-co-summary .price {
+	color: var(--memberistic-primary-strong);
+	font-family: var(--memberistic-font-display);
+	font-size: 36px;
+	font-weight: 800;
+}
+
+.memberistic-co-summary .price span {
+	color: var(--memberistic-muted);
+	font-size: 13px;
+	font-weight: 600;
+	margin-left: 4px;
+}
+
+.memberistic-co-form {
+	display: grid;
+	gap: 14px;
+}
+
+.memberistic-co-section h3 {
+	align-items: center;
+	color: var(--memberistic-text);
+	display: flex;
+	font-family: var(--memberistic-font-display);
+	font-size: 20px;
+	font-weight: 700;
+	gap: 12px;
+	letter-spacing: 0.06em;
+	margin: 0 0 16px;
+	text-transform: uppercase;
+}
+
+.memberistic-co-section h3 .n {
+	border: 1px solid var(--memberistic-primary);
+	color: var(--memberistic-primary-strong);
+	display: inline-grid;
+	height: 28px;
+	place-items: center;
+	width: 28px;
+}
+
+.memberistic-co-label {
+	color: var(--memberistic-muted);
+	display: block;
+	font-family: var(--memberistic-font-mono);
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.16em;
+	margin-bottom: 6px;
+	margin-top: 8px;
+	text-transform: uppercase;
+}
+
+.memberistic-co-form input,
+.memberistic-co-form select {
+	background: var(--memberistic-bg);
+	border: 1px solid var(--memberistic-input-border);
+	color: var(--memberistic-text);
+	min-height: 46px;
+	padding: 10px 12px;
+}
+
+.memberistic-co-form input:focus,
+.memberistic-co-form select:focus {
+	border-color: var(--memberistic-primary);
+	outline: none;
+}
+
+.memberistic-co-note {
+	color: var(--memberistic-muted);
+	margin: 0;
+}
+
+.memberistic-co-section--terms {
+	background: color-mix(in srgb, var(--memberistic-primary) 6%, transparent);
+	border-color: color-mix(in srgb, var(--memberistic-primary) 35%, transparent);
+}
+
+.memberistic-co-submit-wrap {
+	padding: 20px 0 6px;
+}
+
+@media (max-width: 768px) {
+	.memberistic-auth-card {
+		padding: 22px;
+	}
+
+	.memberistic-auth-title {
+		font-size: 34px;
+	}
+
+	.memberistic-co-shell {
+		padding: 72px 14px 54px;
+	}
+
+	.memberistic-co-summary .row {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
+	.memberistic-co-summary .name {
+		font-size: 24px;
+	}
+
+	.memberistic-co-summary .price {
+		font-size: 30px;
+	}
+}

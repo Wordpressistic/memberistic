@@ -1,0 +1,62 @@
+{
+  "id": "generic-tiered",
+  "label": "Generic tiered",
+  "description": "Three-tier individual / couple / family structure that fits most membership businesses. Start here if none of the industry templates match.",
+  "template_version": 1,
+  "currency": "USD",
+  "status_on_import": "inactive",
+  "notice": "Example pricing and copy. Review every price, benefit, and included-people count against your own business before activating. Plans import as 'inactive' so nothing is offered for sale until you publish it.",
+  "plans": [
+    {
+      "name": "Standard",
+      "slug": "standard",
+      "description": "Individual membership with full access.",
+      "monthly_price": 29.0,
+      "annual_price": 299.0,
+      "included_people": 1,
+      "benefits": [
+        "Full access for one member",
+        "Member rate on add-on services",
+        "Digital membership card",
+        "Waiver kept on file"
+      ],
+      "is_featured": 0,
+      "sort_order": 10,
+      "status": "inactive"
+    },
+    {
+      "name": "Plus",
+      "slug": "plus",
+      "description": "Two-person membership for couples and partners.",
+      "monthly_price": 49.0,
+      "annual_price": 499.0,
+      "included_people": 2,
+      "benefits": [
+        "Everything in Standard",
+        "Primary member + 1 linked member",
+        "Independent waiver per person",
+        "Shared visit history"
+      ],
+      "is_featured": 1,
+      "sort_order": 20,
+      "status": "inactive"
+    },
+    {
+      "name": "Family",
+      "slug": "family",
+      "description": "Household membership covering up to four people.",
+      "monthly_price": 79.0,
+      "annual_price": 799.0,
+      "included_people": 4,
+      "benefits": [
+        "Everything in Plus",
+        "Primary member + up to 3 linked members",
+        "Best per-person value",
+        "Per-person waivers and visit history"
+      ],
+      "is_featured": 0,
+      "sort_order": 30,
+      "status": "inactive"
+    }
+  ]
+}

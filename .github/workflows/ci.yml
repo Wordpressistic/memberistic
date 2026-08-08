@@ -1,0 +1,130 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  php-lint:
+    name: PHP syntax lint (${{ matrix.php-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.2', '8.3', '8.4']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+
+      - name: php -l every file
+        run: find . -name '*.php' -not -path './vendor/*' -not -path './node_modules/*' -print0 | xargs -0 -n1 php -l
+
+  phpunit:
+    name: PHPUnit (unit suite)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      # Composer is the primary install path; the phar is a fallback so a
+      # Packagist outage can't hide a real test regression behind a red
+      # infrastructure step.
+      - name: Install PHPUnit (composer, phar fallback)
+        run: |
+          if composer install --prefer-dist --no-progress --no-interaction; then
+            echo "PHPUNIT=vendor/bin/phpunit" >> "$GITHUB_ENV"
+          else
+            mkdir -p tests/bin
+            curl -sSLo tests/bin/phpunit-10.phar https://phar.phpunit.de/phpunit-10.phar
+            echo "PHPUNIT=php tests/bin/phpunit-10.phar" >> "$GITHUB_ENV"
+          fi
+
+      - name: Run unit tests
+        run: $PHPUNIT -c phpunit.xml
+
+  js-lint:
+    name: JS syntax check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: node --check every asset script
+        run: |
+          set -e
+          found=0
+          while IFS= read -r -d '' f; do
+            found=1
+            echo "checking $f"
+            node --check "$f"
+          done < <(find assets -name '*.js' -not -path '*/node_modules/*' -print0)
+          if [ "$found" -eq 0 ]; then
+            echo "no JS files found under assets/ — nothing to check"
+          fi
+
+  phpcs:
+    name: PHPCS PSR-12 (new services only, advisory)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Legacy plugin code predates the standard — style findings on the NEW
+    # entitlement service are advisory and must not block merges.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer
+
+      - name: Install PHP_CodeSniffer
+        run: composer require --dev squizlabs/php_codesniffer --no-interaction --no-progress
+
+      - name: phpcs PSR-12 on the new entitlement service
+        run: |
+          set +e
+          vendor/bin/phpcs --standard=PSR12 --report=full includes/integrations/class-entitlement-service.php
+          code=$?
+          set -e
+          # Advisory only: the plugin's existing style (tabs) predates PSR-12
+          # and is out of scope here. Findings are printed above for anyone
+          # who wants them; the job always exits 0 so this shows green
+          # instead of a permanent, meaningless red X on every PR.
+          if [ "$code" -ne 0 ]; then
+            echo "::warning::PSR-12 findings above are advisory only (this plugin's existing style predates PSR-12) and never block merges."
+          fi
+          exit 0

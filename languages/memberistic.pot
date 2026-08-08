@@ -1,0 +1,6573 @@
+# Copyright (C) 2026 WordPressistic
+# This file is distributed under the GPL-2.0-or-later license.
+msgid ""
+msgstr ""
+"Project-Id-Version: Memberistic Membership Solutions 2.0.0\n"
+"Report-Msgid-Bugs-To: https://memberistic.com/support\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-08-08 13:39+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Domain: memberistic\n"
+
+#: assets/admin-activity.js:118
+msgid "No activity matches these filters."
+msgstr ""
+
+#: assets/admin-activity.js:25
+#: assets/admin-dashboard.js:51
+msgid "just now"
+msgstr ""
+
+#: assets/admin-activity.js:26
+#: assets/admin-dashboard.js:52
+msgid "%dm ago"
+msgstr ""
+
+#: assets/admin-activity.js:27
+#: assets/admin-dashboard.js:53
+msgid "%dh ago"
+msgstr ""
+
+#: assets/admin-activity.js:28
+#: assets/admin-dashboard.js:54
+msgid "%dd ago"
+msgstr ""
+
+#: assets/admin-activity.js:70
+msgid "Could not load activity."
+msgstr ""
+
+#: assets/admin-activity.js:82
+msgid "Every membership, payment, check-in, and staff event logged on the system."
+msgstr ""
+
+#: assets/admin-activity.js:87
+msgid "Search by title, description, or member ID"
+msgstr ""
+
+#: assets/admin-activity.js:89
+msgid "All Activity"
+msgstr ""
+
+#: assets/admin-activity.js:95
+#: assets/admin-checkins.js:126
+#: assets/admin-emails.js:306
+#: assets/admin-members.js:1416
+#: assets/admin-payments.js:261
+msgid "%s shown"
+msgstr ""
+
+#: assets/admin-checkins.js:102
+msgid "Records"
+msgstr ""
+
+#: assets/admin-checkins.js:106
+#: assets/admin-dashboard.js:413
+msgid "Today"
+msgstr ""
+
+#: assets/admin-checkins.js:110
+msgid "Distinct members"
+msgstr ""
+
+#: assets/admin-checkins.js:114
+msgid "Top type"
+msgstr ""
+
+#: assets/admin-checkins.js:120
+msgid "Search by member or ID"
+msgstr ""
+
+#: assets/admin-checkins.js:122
+msgid "All Types"
+msgstr ""
+
+#: assets/admin-checkins.js:149
+msgid "No check-ins match these filters."
+msgstr ""
+
+#: assets/admin-checkins.js:154
+#: assets/admin-members.js:283
+#: assets/admin-members.js:1032
+msgid "Person"
+msgstr ""
+
+#: assets/admin-checkins.js:171
+#: assets/admin-emails.js:349
+#: assets/admin-payments.js:310
+msgid "Open member"
+msgstr ""
+
+#: assets/admin-checkins.js:64
+msgid "Could not load check-ins."
+msgstr ""
+
+#: assets/admin-checkins.js:95
+#: assets/admin-members.js:703
+msgid "Check-ins"
+msgstr ""
+
+#: assets/admin-checkins.js:96
+msgid "Every walk-in and booking recorded across the front desk and POS bridge."
+msgstr ""
+
+#: assets/admin-dashboard.js:171
+msgid "Revenue trend"
+msgstr ""
+
+#: assets/admin-dashboard.js:199
+msgid "No revenue split yet."
+msgstr ""
+
+#: assets/admin-dashboard.js:268
+msgid "Request failed."
+msgstr ""
+
+#: assets/admin-dashboard.js:299
+#: assets/admin-members.js:1519
+msgid "Unknown"
+msgstr ""
+
+#: assets/admin-dashboard.js:317
+msgid "Memberistic Dashboard"
+msgstr ""
+
+#: assets/admin-dashboard.js:318
+msgid "Live overview of memberships, revenue, and operations. Refreshes every 30 seconds."
+msgstr ""
+
+#: assets/admin-dashboard.js:331
+msgid "%s new this month"
+msgstr ""
+
+#: assets/admin-dashboard.js:336
+msgid "Monthly Revenue"
+msgstr ""
+
+#: assets/admin-dashboard.js:338
+msgid "Annual: %s"
+msgstr ""
+
+#: assets/admin-dashboard.js:344
+msgid "Expiring in 30d"
+msgstr ""
+
+#: assets/admin-dashboard.js:346
+msgid "Schedule a renewal nudge"
+msgstr ""
+
+#: assets/admin-dashboard.js:351
+#: assets/admin-members.js:1345
+msgid "Past Due"
+msgstr ""
+
+#: assets/admin-dashboard.js:353
+msgid "%s failed payments"
+msgstr ""
+
+#: assets/admin-dashboard.js:358
+msgid "Check-ins Today"
+msgstr ""
+
+#: assets/admin-dashboard.js:360
+msgid "Front desk activity"
+msgstr ""
+
+#: assets/admin-dashboard.js:365
+msgid "Waivers Missing"
+msgstr ""
+
+#: assets/admin-dashboard.js:367
+msgid "Across all active members"
+msgstr ""
+
+#: assets/admin-dashboard.js:376
+msgid "Revenue — last 12 months"
+msgstr ""
+
+#: assets/admin-dashboard.js:378
+#: assets/admin-emails.js:314
+#: assets/admin-members.js:688
+msgid "Loading…"
+msgstr ""
+
+#: assets/admin-dashboard.js:387
+msgid "Revenue by Plan"
+msgstr ""
+
+#: assets/admin-dashboard.js:396
+msgid "Renewals in next 30 days"
+msgstr ""
+
+#: assets/admin-dashboard.js:397
+msgid "View members →"
+msgstr ""
+
+#: assets/admin-dashboard.js:402
+msgid "No memberships renewing in the next 30 days."
+msgstr ""
+
+#: assets/admin-dashboard.js:409
+#: assets/admin-members.js:1518
+#: assets/admin-payments.js:303
+msgid "Not assigned"
+msgstr ""
+
+#: assets/admin-dashboard.js:413
+msgid "in %dd"
+msgstr ""
+
+#: assets/admin-dashboard.js:422
+msgid "Recent Activity"
+msgstr ""
+
+#: assets/admin-dashboard.js:423
+msgid "Full log →"
+msgstr ""
+
+#: assets/admin-dashboard.js:428
+#: assets/admin-members.js:948
+msgid "No activity logged yet."
+msgstr ""
+
+#: assets/admin-dashboard.js:91
+msgid "No revenue data yet."
+msgstr ""
+
+#: assets/admin-emails.js:157
+msgid "Could not load directory."
+msgstr ""
+
+#: assets/admin-emails.js:209
+msgid "Membership ID"
+msgstr ""
+
+#: assets/admin-emails.js:211
+msgid "Membership Status"
+msgstr ""
+
+#: assets/admin-emails.js:213
+msgid "Renewal Date"
+msgstr ""
+
+#: assets/admin-emails.js:214
+#: assets/admin-members.js:160
+msgid "Waiver Status"
+msgstr ""
+
+#: assets/admin-emails.js:215
+msgid "Waiver Signed"
+msgstr ""
+
+#: assets/admin-emails.js:216
+msgid "Waiver Expires"
+msgstr ""
+
+#: assets/admin-emails.js:241
+msgid "Export failed."
+msgstr ""
+
+#: assets/admin-emails.js:249
+msgid "Sent today"
+msgstr ""
+
+#: assets/admin-emails.js:250
+msgid "Sent this week"
+msgstr ""
+
+#: assets/admin-emails.js:251
+msgid "Sent this month"
+msgstr ""
+
+#: assets/admin-emails.js:253
+msgid "Delivery rate"
+msgstr ""
+
+#: assets/admin-emails.js:255
+msgid "%1$d sent · %2$d failed"
+msgstr ""
+
+#: assets/admin-emails.js:259
+msgid "People with email"
+msgstr ""
+
+#: assets/admin-emails.js:261
+msgid "%d missing"
+msgstr ""
+
+#: assets/admin-emails.js:270
+msgid "Member Email Directory"
+msgstr ""
+
+#: assets/admin-emails.js:271
+msgid "A clean export-ready list of primary and linked member contacts for campaigns, staff follow-up, renewals, and waiver operations."
+msgstr ""
+
+#: assets/admin-emails.js:277
+msgid "Download CSV"
+msgstr ""
+
+#: assets/admin-emails.js:277
+msgid "Exporting…"
+msgstr ""
+
+#: assets/admin-emails.js:291
+#: assets/admin-members.js:1386
+msgid "Search by name, email, phone, or member ID"
+msgstr ""
+
+#: assets/admin-emails.js:295
+msgid "All Member Statuses"
+msgstr ""
+
+#: assets/admin-emails.js:298
+msgid "All Waiver Statuses"
+msgstr ""
+
+#: assets/admin-emails.js:302
+#: assets/admin-members.js:1412
+#: assets/admin-payments.js:257
+msgid "Showing %1$d–%2$d of %3$d"
+msgstr ""
+
+#: assets/admin-emails.js:316
+msgid "No contacts match these filters."
+msgstr ""
+
+#: assets/admin-emails.js:325
+msgid "Member Status"
+msgstr ""
+
+#: assets/admin-emails.js:327
+#: assets/admin-members.js:1494
+msgid "Renewal"
+msgstr ""
+
+#: assets/admin-emails.js:79
+#: assets/admin-members.js:1092
+#: assets/admin-payments.js:75
+msgid "Pagination"
+msgstr ""
+
+#: assets/admin-emails.js:81
+#: assets/admin-members.js:1094
+#: assets/admin-payments.js:77
+msgid "Page %1$d of %2$d · %3$d total"
+msgstr ""
+
+#: assets/admin-emails.js:85
+#: assets/admin-members.js:1098
+#: assets/admin-payments.js:81
+msgid "Prev"
+msgstr ""
+
+#: assets/admin-emails.js:87
+#: assets/admin-members.js:1100
+#: assets/admin-payments.js:83
+msgid "Next"
+msgstr ""
+
+#: assets/admin-emails.js:94
+#: assets/admin-members.js:1107
+#: assets/admin-payments.js:90
+msgid "Rows per page"
+msgstr ""
+
+#: assets/admin-members.js:1000
+msgid "Send to primary member"
+msgstr ""
+
+#: assets/admin-members.js:1000
+msgid "Sending…"
+msgstr ""
+
+#: assets/admin-members.js:1005
+msgid "Recent emails sent"
+msgstr ""
+
+#: assets/admin-members.js:1007
+msgid "No emails have been sent to this member yet."
+msgstr ""
+
+#: assets/admin-members.js:1013
+msgid "Email sent"
+msgstr ""
+
+#: assets/admin-members.js:1027
+msgid "No check-ins recorded."
+msgstr ""
+
+#: assets/admin-members.js:112
+#: assets/admin-saved-views.js:97
+msgid "Save"
+msgstr ""
+
+#: assets/admin-members.js:112
+#: assets/admin-plans.js:266
+#: assets/admin-settings.js:194
+msgid "Saving…"
+msgstr ""
+
+#: assets/admin-members.js:1184
+msgid "Could not load members."
+msgstr ""
+
+#: assets/admin-members.js:1271
+msgid "Set waiver status to %1$s for %2$d membership(s)? All people on each selected membership will be updated."
+msgstr ""
+
+#: assets/admin-members.js:1275
+msgid "Updating waivers…"
+msgstr ""
+
+#: assets/admin-members.js:1287
+msgid "Updated waiver status on %1$d membership(s) (%2$d people)."
+msgstr ""
+
+#: assets/admin-members.js:1292
+msgid "Bulk waiver update failed."
+msgstr ""
+
+#: assets/admin-members.js:1298
+msgid "cancel"
+msgstr ""
+
+#: assets/admin-members.js:1298
+msgid "renew"
+msgstr ""
+
+#: assets/admin-members.js:1299
+msgid "Are you sure you want to %1$s %2$d membership(s)? This cannot be undone."
+msgstr ""
+
+#: assets/admin-members.js:1303
+msgid "Processing 0 of %d…"
+msgstr ""
+
+#: assets/admin-members.js:1313
+#: assets/admin-members.js:1318
+msgid "Processing %1$d of %2$d…"
+msgstr ""
+
+#: assets/admin-members.js:1317
+msgid "failed"
+msgstr ""
+
+#: assets/admin-members.js:1330
+msgid "Bulk %1$s finished with %2$d failure(s). First error: %3$s"
+msgstr ""
+
+#: assets/admin-members.js:1339
+msgid "vs %d last month"
+msgstr ""
+
+#: assets/admin-members.js:1342
+msgid "Total Members"
+msgstr ""
+
+#: assets/admin-members.js:1347
+msgid "Cancelled"
+msgstr ""
+
+#: assets/admin-members.js:1349
+msgid "New this month"
+msgstr ""
+
+#: assets/admin-members.js:1355
+msgid "Waiver missing"
+msgstr ""
+
+#: assets/admin-members.js:1363
+msgid "Search, filter, and triage memberships without leaving this page."
+msgstr ""
+
+#: assets/admin-members.js:1369
+msgid "Add New Member"
+msgstr ""
+
+#: assets/admin-members.js:1395
+#: assets/admin-payments.js:251
+msgid "All Statuses"
+msgstr ""
+
+#: assets/admin-members.js:1403
+msgid "All Plans"
+msgstr ""
+
+#: assets/admin-members.js:1409
+msgid "Refresh"
+msgstr ""
+
+#: assets/admin-members.js:141
+msgid "Could not add person."
+msgstr ""
+
+#: assets/admin-members.js:1439
+msgid "%d selected"
+msgstr ""
+
+#: assets/admin-members.js:1446
+msgid "Choose bulk action…"
+msgstr ""
+
+#: assets/admin-members.js:1447
+msgid "Renew memberships"
+msgstr ""
+
+#: assets/admin-members.js:1448
+msgid "Cancel memberships"
+msgstr ""
+
+#: assets/admin-members.js:1449
+msgid "Change waiver status…"
+msgstr ""
+
+#: assets/admin-members.js:1450
+msgid "Create corporate group from selected"
+msgstr ""
+
+#: assets/admin-members.js:1451
+msgid "Export to CSV"
+msgstr ""
+
+#: assets/admin-members.js:1468
+msgid "Apply"
+msgstr ""
+
+#: assets/admin-members.js:1468
+msgid "Working…"
+msgstr ""
+
+#: assets/admin-members.js:1469
+msgid "Clear"
+msgstr ""
+
+#: assets/admin-members.js:1477
+msgid "No members match these filters."
+msgstr ""
+
+#: assets/admin-members.js:1486
+msgid "Select all on page"
+msgstr ""
+
+#: assets/admin-members.js:1490
+#: assets/admin-payments.js:290
+msgid "Primary Member"
+msgstr ""
+
+#: assets/admin-members.js:1514
+msgid "Select membership %s"
+msgstr ""
+
+#: assets/admin-members.js:158
+#: assets/admin-members.js:367
+msgid "e.g. Spouse, Child"
+msgstr ""
+
+#: assets/admin-members.js:166
+msgid "Add person"
+msgstr ""
+
+#: assets/admin-members.js:183
+msgid "Enter a positive amount."
+msgstr ""
+
+#: assets/admin-members.js:191
+msgid "Could not record payment."
+msgstr ""
+
+#: assets/admin-members.js:201
+#: assets/admin-settings.js:225
+msgid "Currency"
+msgstr ""
+
+#: assets/admin-members.js:204
+msgid "Payment method"
+msgstr ""
+
+#: assets/admin-members.js:214
+msgid "Paid on"
+msgstr ""
+
+#: assets/admin-members.js:218
+msgid "Record payment"
+msgstr ""
+
+#: assets/admin-members.js:230
+msgid "Please enter a note."
+msgstr ""
+
+#: assets/admin-members.js:238
+msgid "Could not save note."
+msgstr ""
+
+#: assets/admin-members.js:244
+msgid "Staff-only note"
+msgstr ""
+
+#: assets/admin-members.js:247
+msgid "Save note"
+msgstr ""
+
+#: assets/admin-members.js:268
+msgid "Select a person to check in."
+msgstr ""
+
+#: assets/admin-members.js:276
+msgid "Could not record check-in."
+msgstr ""
+
+#: assets/admin-members.js:285
+msgid "Select a person"
+msgstr ""
+
+#: assets/admin-members.js:299
+msgid "Record check-in"
+msgstr ""
+
+#: assets/admin-members.js:343
+msgid "Could not update person."
+msgstr ""
+
+#: assets/admin-members.js:367
+#: assets/admin-members.js:541
+msgid "Primary member"
+msgstr ""
+
+#: assets/admin-members.js:376
+msgid "Waiver signed on"
+msgstr ""
+
+#: assets/admin-members.js:379
+msgid "Waiver expires on"
+msgstr ""
+
+#: assets/admin-members.js:382
+msgid "Member status"
+msgstr ""
+
+#: assets/admin-members.js:388
+msgid "Save person"
+msgstr ""
+
+#: assets/admin-members.js:423
+msgid "Could not update membership."
+msgstr ""
+
+#: assets/admin-members.js:441
+msgid "Renewal date"
+msgstr ""
+
+#: assets/admin-members.js:448
+#: assets/admin-plans.js:267
+#: assets/admin-settings.js:194
+msgid "Save changes"
+msgstr ""
+
+#: assets/admin-members.js:477
+msgid "Choose a plan."
+msgstr ""
+
+#: assets/admin-members.js:478
+msgid "Primary member name is required."
+msgstr ""
+
+#: assets/admin-members.js:494
+msgid "Could not create membership."
+msgstr ""
+
+#: assets/admin-members.js:504
+msgid "New Membership"
+msgstr ""
+
+#: assets/admin-members.js:505
+msgid "Create a new member"
+msgstr ""
+
+#: assets/admin-members.js:507
+msgid "Saves immediately. You can add people, payments, and notes after."
+msgstr ""
+
+#: assets/admin-members.js:511
+#: assets/admin-members.js:736
+#: assets/admin-plans.js:210
+msgid "Close panel"
+msgstr ""
+
+#: assets/admin-members.js:521
+msgid "Select a plan"
+msgstr ""
+
+#: assets/admin-members.js:537
+msgid "Start date"
+msgstr ""
+
+#: assets/admin-members.js:561
+msgid "Create membership"
+msgstr ""
+
+#: assets/admin-members.js:593
+msgid "Could not load membership."
+msgstr ""
+
+#: assets/admin-members.js:627
+msgid "Email sent."
+msgstr ""
+
+#: assets/admin-members.js:632
+msgid "Email failed."
+msgstr ""
+
+#: assets/admin-members.js:654
+msgid "Remove %s from this membership? This cannot be undone."
+msgstr ""
+
+#: assets/admin-members.js:664
+msgid "Could not remove person."
+msgstr ""
+
+#: assets/admin-members.js:678
+msgid "Action failed."
+msgstr ""
+
+#: assets/admin-members.js:699
+#: assets/admin-members.js:1495
+msgid "People"
+msgstr ""
+
+#: assets/admin-members.js:711
+msgid "Unassigned"
+msgstr ""
+
+#: assets/admin-members.js:716
+msgid "Unknown plan"
+msgstr ""
+
+#: assets/admin-members.js:718
+msgid "Renews %s"
+msgstr ""
+
+#: assets/admin-members.js:725
+msgid "Discard edit"
+msgstr ""
+
+#: assets/admin-members.js:725
+msgid "Edit basics"
+msgstr ""
+
+#: assets/admin-members.js:730
+msgid "Renew"
+msgstr ""
+
+#: assets/admin-members.js:730
+msgid "Renewing…"
+msgstr ""
+
+#: assets/admin-members.js:734
+msgid "Cancel this membership? This cannot be undone."
+msgstr ""
+
+#: assets/admin-members.js:735
+msgid "Cancelling…"
+msgstr ""
+
+#: assets/admin-members.js:788
+msgid "Add Person"
+msgstr ""
+
+#: assets/admin-members.js:791
+msgid "Add Note"
+msgstr ""
+
+#: assets/admin-members.js:792
+msgid "Record Check-in"
+msgstr ""
+
+#: assets/admin-members.js:802
+msgid "Plan capacity reached."
+msgstr ""
+
+#: assets/admin-members.js:811
+msgid "Close form"
+msgstr ""
+
+#: assets/admin-members.js:839
+msgid "No people linked to this membership yet."
+msgstr ""
+
+#: assets/admin-members.js:871
+msgid "exp. %s"
+msgstr ""
+
+#: assets/admin-members.js:893
+msgid "Removing…"
+msgstr ""
+
+#: assets/admin-members.js:920
+msgid "No payments recorded."
+msgstr ""
+
+#: assets/admin-members.js:965
+msgid "No notes yet."
+msgstr ""
+
+#: assets/admin-members.js:986
+msgid "No email templates available."
+msgstr ""
+
+#: assets/admin-payments.js:134
+msgid "Could not load payments."
+msgstr ""
+
+#: assets/admin-payments.js:190
+msgid "Search and audit every recorded payment across members, gateways, and dates."
+msgstr ""
+
+#: assets/admin-payments.js:192
+msgid "Export CSV"
+msgstr ""
+
+#: assets/admin-payments.js:201
+msgid "Lifetime revenue"
+msgstr ""
+
+#: assets/admin-payments.js:203
+msgid "%d completed payments"
+msgstr ""
+
+#: assets/admin-payments.js:208
+msgid "Revenue this month"
+msgstr ""
+
+#: assets/admin-payments.js:210
+msgid "vs %s last month"
+msgstr ""
+
+#: assets/admin-payments.js:216
+msgid "New-member payments"
+msgstr ""
+
+#: assets/admin-payments.js:218
+msgid "First completed payment per membership"
+msgstr ""
+
+#: assets/admin-payments.js:223
+msgid "Renewal payments"
+msgstr ""
+
+#: assets/admin-payments.js:225
+msgid "Second-or-later completed payment per membership"
+msgstr ""
+
+#: assets/admin-payments.js:230
+msgid "Failed payments"
+msgstr ""
+
+#: assets/admin-payments.js:236
+msgid "Visible on page"
+msgstr ""
+
+#: assets/admin-payments.js:238
+msgid "of %d in current filter"
+msgstr ""
+
+#: assets/admin-payments.js:247
+msgid "Search by member, ID, or transaction reference"
+msgstr ""
+
+#: assets/admin-payments.js:285
+msgid "No payments match these filters."
+msgstr ""
+
+#: assets/admin-plans.js:144
+msgid "Plan name is required."
+msgstr ""
+
+#: assets/admin-plans.js:145
+msgid "Plan slug is required."
+msgstr ""
+
+#: assets/admin-plans.js:169
+msgid "Could not save the plan."
+msgstr ""
+
+#: assets/admin-plans.js:176
+msgid "Delete this plan? Plans with active memberships cannot be deleted."
+msgstr ""
+
+#: assets/admin-plans.js:185
+msgid "Could not delete the plan."
+msgstr ""
+
+#: assets/admin-plans.js:195
+msgid "Edit Plan"
+msgstr ""
+
+#: assets/admin-plans.js:195
+msgid "New Plan"
+msgstr ""
+
+#: assets/admin-plans.js:196
+msgid "Create a plan"
+msgstr ""
+
+#: assets/admin-plans.js:209
+msgid "Delete plan"
+msgstr ""
+
+#: assets/admin-plans.js:209
+msgid "Deleting…"
+msgstr ""
+
+#: assets/admin-plans.js:217
+msgid "Identity"
+msgstr ""
+
+#: assets/admin-plans.js:222
+msgid "Slug"
+msgstr ""
+
+#: assets/admin-plans.js:222
+msgid "Used in URLs and integrations."
+msgstr ""
+
+#: assets/admin-plans.js:230
+msgid "Sort order"
+msgstr ""
+
+#: assets/admin-plans.js:238
+msgid "Pricing & capacity"
+msgstr ""
+
+#: assets/admin-plans.js:240
+msgid "Monthly price"
+msgstr ""
+
+#: assets/admin-plans.js:243
+msgid "Annual price"
+msgstr ""
+
+#: assets/admin-plans.js:246
+msgid "Included people"
+msgstr ""
+
+#: assets/admin-plans.js:249
+msgid "Feature on plan grid"
+msgstr ""
+
+#: assets/admin-plans.js:252
+msgid "Highlighted"
+msgstr ""
+
+#: assets/admin-plans.js:252
+msgid "Standard"
+msgstr ""
+
+#: assets/admin-plans.js:257
+msgid "Benefits"
+msgstr ""
+
+#: assets/admin-plans.js:258
+msgid "Bullet list — one benefit per line"
+msgstr ""
+
+#: assets/admin-plans.js:259
+msgid "e.g. Range access\\nDiscount on instruction"
+msgstr ""
+
+#: assets/admin-plans.js:267
+msgid "Create plan"
+msgstr ""
+
+#: assets/admin-plans.js:293
+msgid "Could not load plans."
+msgstr ""
+
+#: assets/admin-plans.js:344
+msgid "Featured"
+msgstr ""
+
+#: assets/admin-plans.js:347
+msgid "Untitled"
+msgstr ""
+
+#: assets/admin-plans.js:365
+msgid "Capacity: %s"
+msgstr ""
+
+#: assets/admin-plans.js:367
+msgid "Sort %d"
+msgstr ""
+
+#: assets/admin-plans.js:370
+msgid "Edit plan"
+msgstr ""
+
+#: assets/admin-plans.js:382
+msgid "Other"
+msgstr ""
+
+#: assets/admin-plans.js:393
+msgid "Configure your membership tiers, pricing, capacity, and bullet-point benefits."
+msgstr ""
+
+#: assets/admin-plans.js:395
+msgid "Add New Plan"
+msgstr ""
+
+#: assets/admin-plans.js:404
+msgid "Create your first membership plan"
+msgstr ""
+
+#: assets/admin-plans.js:405
+msgid "A plan defines what a membership costs, how many people it covers, and what members get. Nothing is offered for sale until you activate one."
+msgstr ""
+
+#: assets/admin-plans.js:407
+msgid "Add your first plan"
+msgstr ""
+
+#: assets/admin-plans.js:409
+msgid "Prefer a starting point? The plugin bundles example plan sets for gyms, studios, clubs, associations, and ranges in templates/plans/. They import as inactive so you can review the pricing before publishing."
+msgstr ""
+
+#: assets/admin-saved-views.js:103
+msgid "Saved Views…"
+msgstr ""
+
+#: assets/admin-saved-views.js:107
+msgid "Save current"
+msgstr ""
+
+#: assets/admin-saved-views.js:109
+msgid "Delete the selected saved view"
+msgstr ""
+
+#: assets/admin-saved-views.js:52
+msgid "Give the view a name."
+msgstr ""
+
+#: assets/admin-saved-views.js:65
+msgid "Could not save view."
+msgstr ""
+
+#: assets/admin-saved-views.js:73
+msgid "Delete saved view \"%s\"?"
+msgstr ""
+
+#: assets/admin-saved-views.js:82
+msgid "Could not delete view."
+msgstr ""
+
+#: assets/admin-saved-views.js:93
+msgid "Name this view"
+msgstr ""
+
+#: assets/admin-settings.js:103
+msgid "Could not load settings."
+msgstr ""
+
+#: assets/admin-settings.js:131
+msgid "Settings saved."
+msgstr ""
+
+#: assets/admin-settings.js:135
+msgid "Could not save settings."
+msgstr ""
+
+#: assets/admin-settings.js:141
+msgid "Remap will create branded Memberistic pages and overwrite the current mapping. Proceed?"
+msgstr ""
+
+#: assets/admin-settings.js:152
+msgid "Missing pages were created and mapped."
+msgstr ""
+
+#: assets/admin-settings.js:152
+msgid "Pages recreated and mapped."
+msgstr ""
+
+#: assets/admin-settings.js:156
+msgid "Could not create pages."
+msgstr ""
+
+#: assets/admin-settings.js:170
+msgid "Memberistic Settings"
+msgstr ""
+
+#: assets/admin-settings.js:171
+msgid "Brand, pages, payments, emails, and integration toggles. Changes save instantly to the same option as before."
+msgstr ""
+
+#: assets/admin-settings.js:21
+#: assets/admin-settings.js:211
+msgid "General"
+msgstr ""
+
+#: assets/admin-settings.js:213
+msgid "Brand label"
+msgstr ""
+
+#: assets/admin-settings.js:213
+msgid "Used in menus, emails, and headings."
+msgstr ""
+
+#: assets/admin-settings.js:216
+msgid "Business name"
+msgstr ""
+
+#: assets/admin-settings.js:219
+msgid "Business phone"
+msgstr ""
+
+#: assets/admin-settings.js:22
+msgid "Pages"
+msgstr ""
+
+#: assets/admin-settings.js:222
+msgid "Primary brand color"
+msgstr ""
+
+#: assets/admin-settings.js:229
+msgid "Business address"
+msgstr ""
+
+#: assets/admin-settings.js:237
+msgid "Frontend pages"
+msgstr ""
+
+#: assets/admin-settings.js:238
+msgid "Map each Memberistic shortcode page or let us create them for you."
+msgstr ""
+
+#: assets/admin-settings.js:249
+msgid "Create missing pages"
+msgstr ""
+
+#: assets/admin-settings.js:250
+msgid "Reset to branded defaults"
+msgstr ""
+
+#: assets/admin-settings.js:258
+msgid "Enable Stripe Checkout"
+msgstr ""
+
+#: assets/admin-settings.js:26
+#: assets/admin-settings.js:356
+msgid "Advanced"
+msgstr ""
+
+#: assets/admin-settings.js:262
+msgid "Stripe mode"
+msgstr ""
+
+#: assets/admin-settings.js:264
+msgid "Test"
+msgstr ""
+
+#: assets/admin-settings.js:265
+msgid "Live"
+msgstr ""
+
+#: assets/admin-settings.js:268
+msgid "Required for live webhook verification."
+msgstr ""
+
+#: assets/admin-settings.js:268
+msgid "Webhook secret"
+msgstr ""
+
+#: assets/admin-settings.js:272
+msgid "Test keys"
+msgstr ""
+
+#: assets/admin-settings.js:274
+#: assets/admin-settings.js:283
+msgid "Publishable"
+msgstr ""
+
+#: assets/admin-settings.js:277
+#: assets/admin-settings.js:286
+msgid "Secret"
+msgstr ""
+
+#: assets/admin-settings.js:281
+msgid "Live keys"
+msgstr ""
+
+#: assets/admin-settings.js:295
+msgid "Outgoing email"
+msgstr ""
+
+#: assets/admin-settings.js:297
+msgid "From name"
+msgstr ""
+
+#: assets/admin-settings.js:30
+msgid "Membership Plans Page"
+msgstr ""
+
+#: assets/admin-settings.js:300
+msgid "From address"
+msgstr ""
+
+#: assets/admin-settings.js:31
+msgid "Checkout Page"
+msgstr ""
+
+#: assets/admin-settings.js:317
+msgid "Sync completed orders to membership payments."
+msgstr ""
+
+#: assets/admin-settings.js:317
+msgid "WooCommerce bridge"
+msgstr ""
+
+#: assets/admin-settings.js:32
+msgid "Member Account Page"
+msgstr ""
+
+#: assets/admin-settings.js:324
+msgid "Turn each integration on or off. Modules whose plugin is not installed are listed but locked."
+msgstr ""
+
+#: assets/admin-settings.js:329
+msgid "Coming soon."
+msgstr ""
+
+#: assets/admin-settings.js:33
+msgid "Renewal Page"
+msgstr ""
+
+#: assets/admin-settings.js:335
+msgid "Coming soon"
+msgstr ""
+
+#: assets/admin-settings.js:34
+msgid "Login Page"
+msgstr ""
+
+#: assets/admin-settings.js:344
+msgid "Verifyistic options"
+msgstr ""
+
+#: assets/admin-settings.js:35
+msgid "Thank You Page"
+msgstr ""
+
+#: assets/admin-settings.js:357
+msgid "Debug logging"
+msgstr ""
+
+#: assets/admin-settings.js:36
+msgid "Failed Payment Page"
+msgstr ""
+
+#: assets/admin-settings.js:360
+msgid "Delete all data on uninstall"
+msgstr ""
+
+#: assets/admin-settings.js:360
+msgid "When enabled, removing the plugin will drop every Memberistic table and option. Off by default."
+msgstr ""
+
+#: assets/admin-settings.js:37
+msgid "Staff Dashboard Page"
+msgstr ""
+
+#: assets/admin-settings.js:38
+msgid "Booking Page (Book a Lane)"
+msgstr ""
+
+#: assets/admin-settings.js:74
+msgid "— Not mapped —"
+msgstr ""
+
+#: includes/admin/class-activity-page.php:19
+#: includes/admin/class-admin-menu.php:61
+#: includes/admin/class-checkins-page.php:19
+#: includes/admin/class-dashboard-page.php:31
+#: includes/admin/class-import-page.php:249
+#: includes/admin/class-members-page.php:47
+#: includes/admin/class-payments-page.php:19
+#: includes/admin/class-plans-page.php:75
+#: includes/admin/class-settings-page.php:199
+#: includes/waivers/class-waiver-archive-admin.php:38
+#: includes/waivers/class-waivers.php:1669
+msgid "You do not have permission to access this page."
+msgstr ""
+
+#: includes/admin/class-activity-page.php:25
+#: assets/admin-activity.js:116
+msgid "Loading activity…"
+msgstr ""
+
+#: includes/admin/class-activity-page.php:27
+msgid "The Memberistic activity console requires JavaScript."
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:119
+msgid "Coming Soon"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:119
+#: assets/admin-settings.js:65
+msgid "Disabled"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:119
+#: assets/admin-settings.js:65
+msgid "Enabled"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:119
+#: assets/admin-settings.js:337
+msgid "Plugin not detected"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:131
+msgid "Toggle integration"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:142
+#: assets/admin-settings.js:345
+msgid "Auto-stamp member records with verified age/DOB"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:146
+#: assets/admin-settings.js:348
+msgid "Require age verification before membership signup"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:156
+msgid "Save Integrations"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:174
+msgid "coreSTORE Settings"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:175
+msgid "Paste the store URL and API key from coreSTORE (Store Config → API Keys). Map each plan to the coreSTORE price tier that carries its member discount — tiers are created inside coreSTORE under Customers → Tiers."
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:178
+msgid "Store URL"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:182
+msgid "API Key"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:184
+msgid "•••••••• (saved — leave blank to keep)"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:185
+msgid "Stored server-side only. Leave blank to keep the saved key."
+msgstr ""
+
+#. translators: %s: plan name
+#: includes/admin/class-admin-menu.php:190
+msgid "%s → tier ID"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:195
+msgid "Lapsed members → tier ID"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:198
+msgid "Leave empty to clear lapsed members back to standard pricing."
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:202
+msgid "Customer custom fields (optional)"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:204
+msgid "Field name for plan"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:205
+msgid "Field name for status"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:206
+msgid "Field name for expiry"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:207
+msgid "Create matching custom fields on coreSTORE customer records first, then enter their exact names here so plan / status / expiry show on the cashier's screen."
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:212
+msgid "Test Connection"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:213
+msgid "Push all current members to coreSTORE now?"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:213
+msgid "Sync Now"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:214
+msgid "Save first — both buttons use the saved settings."
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:232
+msgid "WooCommerce Member Discounts"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:233
+msgid "Active members automatically get their plan's discount on eligible products at cart and checkout, and see their member price on product pages. Membership products are never discounted."
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:236
+msgid "Enable automatic member discounts in WooCommerce"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:240
+#: includes/admin/class-import-page.php:845
+#: includes/corporate/class-corporate-module.php:3039
+#: includes/utilities/class-verification.php:222
+#: templates/account.php:173
+#: templates/account.php:199
+#: templates/checkout.php:36
+#: templates/staff-dashboard.php:53
+#: assets/admin-emails.js:210
+#: assets/admin-emails.js:324
+#: assets/admin-members.js:519
+#: assets/admin-members.js:1491
+#: assets/admin-plans.js:196
+msgid "Plan"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:241
+msgid "Discount %"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:242
+msgid "Applies to"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:243
+msgid "Categories"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:244
+msgid "Skip sale items"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:256
+msgid "Whole store"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:257
+msgid "Only these categories"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:258
+msgid "All except these"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:273
+msgid "Firearms retail note: keep MAP-protected brands and categories in an exclusion list — the same rules should be mirrored in the coreSTORE tier configuration so in-store and online never disagree."
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:287
+msgid "coreSTORE Sync Log"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:29
+msgid "Memberistic"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:308
+msgid "You are not allowed to manage integrations."
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:376
+#: includes/admin/class-admin-menu.php:394
+#: includes/waivers/class-waiver-archive-admin.php:164
+msgid "Not allowed."
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:384
+msgid "Connection test OK — API key accepted."
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:406
+msgid "Database version"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:407
+msgid "Plugin version"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:408
+msgid "REST namespace"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:409
+msgid "Stripe webhook"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:41
+#: templates/account.php:175
+msgid "Dashboard"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:413
+msgid "Memberistic Tools"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:416
+msgid "System Health"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:42
+#: includes/corporate/class-corporate-module.php:839
+#: includes/waivers/class-waivers.php:1872
+#: templates/account.php:200
+#: assets/admin-members.js:1362
+msgid "Members"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:426
+msgid "Quick Actions"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:427
+msgid "Review Page Mapping"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:428
+msgid "Open Email Directory"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:429
+msgid "Check Integrations"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:43
+#: assets/admin-plans.js:392
+msgid "Plans"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:439
+msgid "Memberistic Shortcodes"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:44
+#: includes/class-privacy.php:420
+#: includes/corporate/class-corporate-module.php:840
+#: assets/admin-members.js:700
+#: assets/admin-payments.js:189
+#: assets/admin-settings.js:23
+#: assets/admin-settings.js:257
+msgid "Payments"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:45
+msgid "Check-Ins"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:46
+#: includes/corporate/class-corporate-module.php:841
+#: includes/waivers/class-waivers.php:1678
+msgid "Waivers"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:47
+#: includes/waivers/class-waiver-archive-admin.php:52
+msgid "Waivers on File"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:48
+#: assets/admin-activity.js:81
+#: assets/admin-members.js:701
+msgid "Activity"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:50
+#: assets/admin-members.js:704
+#: assets/admin-settings.js:24
+msgid "Emails"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:51
+#: assets/admin-settings.js:25
+#: assets/admin-settings.js:316
+#: assets/admin-settings.js:323
+msgid "Integrations"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:52
+msgid "Shortcodes"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:54
+msgid "Import"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:55
+#: includes/corporate/class-corporate-module.php:842
+msgid "Settings"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:56
+msgid "Tools"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:75
+msgid "Loading email directory…"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:77
+msgid "The Memberistic email directory requires JavaScript."
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:91
+msgid "Memberistic Integrations"
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:93
+msgid "Integrations updated."
+msgstr ""
+
+#: includes/admin/class-admin-menu.php:95
+msgid "Turn each integration on or off. Connectable integrations show a switch; \"Coming Soon\" ones are listed for reference."
+msgstr ""
+
+#: includes/admin/class-checkins-page.php:25
+#: assets/admin-checkins.js:147
+msgid "Loading check-ins…"
+msgstr ""
+
+#: includes/admin/class-checkins-page.php:27
+msgid "The Memberistic check-ins console requires JavaScript."
+msgstr ""
+
+#: includes/admin/class-dashboard-page.php:37
+msgid "Loading the Memberistic dashboard…"
+msgstr ""
+
+#: includes/admin/class-dashboard-page.php:39
+msgid "The Memberistic dashboard requires JavaScript. Please enable it to view live metrics."
+msgstr ""
+
+#: includes/admin/class-import-page.php:1023
+msgid "Linked member"
+msgstr ""
+
+#: includes/admin/class-import-page.php:1028
+msgid "Imported linked member (legacy level: %s)."
+msgstr ""
+
+#: includes/admin/class-import-page.php:1035
+msgid "Linked member %s could not be attached."
+msgstr ""
+
+#: includes/admin/class-import-page.php:1044
+msgid "Imported from a PMPro \"Additional Member\" level — review and merge into the correct household membership."
+msgstr ""
+
+#: includes/admin/class-import-page.php:1048
+msgid "Linked member %s could not be imported."
+msgstr ""
+
+#: includes/admin/class-import-page.php:1055
+msgid "Primary memberships created"
+msgstr ""
+
+#: includes/admin/class-import-page.php:1056
+msgid "— of which expired"
+msgstr ""
+
+#: includes/admin/class-import-page.php:1057
+msgid "— of which No Plan / Unknown"
+msgstr ""
+
+#: includes/admin/class-import-page.php:1058
+msgid "Linked members imported"
+msgstr ""
+
+#: includes/admin/class-import-page.php:1059
+msgid "Rows skipped (duplicate)"
+msgstr ""
+
+#: includes/admin/class-import-page.php:1060
+#: includes/admin/class-import-page.php:1252
+msgid "Errors"
+msgstr ""
+
+#: includes/admin/class-import-page.php:1082
+msgid "Imported from PMPro (legacy ID %1$s, level %2$s)."
+msgstr ""
+
+#: includes/admin/class-import-page.php:1084
+msgid "Imported member"
+msgstr ""
+
+#: includes/admin/class-import-page.php:1152
+msgid "Row %1$d: could not create No-Plan sentinel."
+msgstr ""
+
+#: includes/admin/class-import-page.php:1169
+msgid "Auto-created from orphan order import — please review and merge if a real member exists."
+msgstr ""
+
+#: includes/admin/class-import-page.php:1173
+msgid "Row %1$d (%2$s): could not create stub Instore member."
+msgstr ""
+
+#: includes/admin/class-import-page.php:1196
+msgid "Row %1$d: could not create Instore Walk-in membership."
+msgstr ""
+
+#: includes/admin/class-import-page.php:1241
+msgid "Row %1$d (%2$s): payment could not be saved."
+msgstr ""
+
+#: includes/admin/class-import-page.php:1247
+msgid "Payments imported"
+msgstr ""
+
+#: includes/admin/class-import-page.php:1248
+msgid "— matched to existing members"
+msgstr ""
+
+#: includes/admin/class-import-page.php:1249
+msgid "— attached to new Instore members"
+msgstr ""
+
+#: includes/admin/class-import-page.php:1250
+msgid "— attached to Walk-in"
+msgstr ""
+
+#: includes/admin/class-import-page.php:1251
+msgid "Skipped (already imported)"
+msgstr ""
+
+#: includes/admin/class-import-page.php:1287
+msgid "Catch-all Instore Walk-in membership — payments here came from order imports without an email address."
+msgstr ""
+
+#: includes/admin/class-import-page.php:1297
+msgid "Instore Walk-in"
+msgstr ""
+
+#: includes/admin/class-import-page.php:176
+msgid "No Plan"
+msgstr ""
+
+#: includes/admin/class-import-page.php:178
+msgid "Sentinel plan used by the importer for historic/orphan members and Instore-only orders. Hidden from the public plan grid."
+msgstr ""
+
+#: includes/admin/class-import-page.php:282
+msgid "Import Members &amp; Payments"
+msgstr ""
+
+#: includes/admin/class-import-page.php:290
+msgid "Import from Paid Memberships Pro (PMPro)"
+msgstr ""
+
+#: includes/admin/class-import-page.php:291
+msgid "Upload a CSV export of your PMPro members (or a payment/orders export) to bring your existing membership base into Memberistic. The importer auto-detects columns, maps legacy membership levels to Memberistic plans, and shows a dry-run preview before anything is written."
+msgstr ""
+
+#: includes/admin/class-import-page.php:297
+msgid "What are you importing?"
+msgstr ""
+
+#: includes/admin/class-import-page.php:300
+msgid "Members list (memberships + people)"
+msgstr ""
+
+#: includes/admin/class-import-page.php:301
+msgid "Payment / order history"
+msgstr ""
+
+#: includes/admin/class-import-page.php:306
+msgid "CSV file"
+msgstr ""
+
+#: includes/admin/class-import-page.php:309
+msgid "Accepts a raw PMPro members/orders export, or a pre-mapped CSV with a memberistic_plan column."
+msgstr ""
+
+#: includes/admin/class-import-page.php:314
+msgid "Skip rows whose email already has a membership"
+msgstr ""
+
+#: includes/admin/class-import-page.php:316
+msgid "Upload &amp; Preview"
+msgstr ""
+
+#: includes/admin/class-import-page.php:320
+msgid "Membership level mapping"
+msgstr ""
+
+#: includes/admin/class-import-page.php:321
+msgid "Legacy PMPro levels are mapped to Memberistic plans as follows. Levels are matched case-insensitively; \"Additional Member\" levels are imported as linked people."
+msgstr ""
+
+#: includes/admin/class-import-page.php:323
+msgid "Legacy PMPro level"
+msgstr ""
+
+#: includes/admin/class-import-page.php:323
+msgid "Memberistic plan"
+msgstr ""
+
+#: includes/admin/class-import-page.php:349
+msgid "Set renewal dates from activation"
+msgstr ""
+
+#: includes/admin/class-import-page.php:350
+msgid "Active members with no renewal date get one calculated from their activation/start date and billing cycle — landing on the same day each month or year. Runs in batches; click until it reports zero remaining."
+msgstr ""
+
+#. translators: %d: number of active memberships missing a renewal date
+#: includes/admin/class-import-page.php:353
+msgid "Active memberships missing a renewal date: %d"
+msgstr ""
+
+#: includes/admin/class-import-page.php:359
+msgid "Set next 200"
+msgstr ""
+
+#. translators: %d: number of renewal dates set
+#: includes/admin/class-import-page.php:414
+msgid "Renewal dates set for %d membership(s) from their activation date."
+msgstr ""
+
+#: includes/admin/class-import-page.php:436
+msgid "Backfill Stripe customer IDs"
+msgstr ""
+
+#: includes/admin/class-import-page.php:437
+msgid "Imported members have a Stripe subscription but no stored customer id, which the self-serve billing portal needs. This looks each subscription up in Stripe and saves its customer id. Runs in batches; click again until it reports zero remaining."
+msgstr ""
+
+#. translators: %d: number of memberships still needing a customer id
+#: includes/admin/class-import-page.php:440
+msgid "Memberships still needing a customer id: %d"
+msgstr ""
+
+#: includes/admin/class-import-page.php:446
+msgid "Backfill next 50"
+msgstr ""
+
+#. translators: 1: updated count, 2: failed count
+#: includes/admin/class-import-page.php:473
+msgid "Backfill batch complete: %1$d updated, %2$d could not be matched (cancelled/deleted subscriptions)."
+msgstr ""
+
+#: includes/admin/class-import-page.php:489
+msgid "No file was uploaded. Please choose a CSV file."
+msgstr ""
+
+#: includes/admin/class-import-page.php:495
+msgid "The CSV file was empty or could not be read."
+msgstr ""
+
+#: includes/admin/class-import-page.php:508
+msgid "Import Preview"
+msgstr ""
+
+#: includes/admin/class-import-page.php:510
+msgid "Members — dry run"
+msgstr ""
+
+#: includes/admin/class-import-page.php:510
+msgid "Payment history — dry run"
+msgstr ""
+
+#: includes/admin/class-import-page.php:511
+msgid "Nothing has been imported yet. Review the summary below, then confirm to commit."
+msgstr ""
+
+#: includes/admin/class-import-page.php:530
+msgid "Sample rows"
+msgstr ""
+
+#: includes/admin/class-import-page.php:548
+msgid "Confirm &amp; Import"
+msgstr ""
+
+#: includes/admin/class-import-page.php:549
+#: assets/admin-members.js:107
+#: assets/admin-members.js:735
+#: assets/admin-plans.js:263
+#: assets/admin-saved-views.js:98
+msgid "Cancel"
+msgstr ""
+
+#: includes/admin/class-import-page.php:565
+msgid "The import session expired. Please upload the file again."
+msgstr ""
+
+#: includes/admin/class-import-page.php:575
+msgid "Import Complete"
+msgstr ""
+
+#: includes/admin/class-import-page.php:577
+msgid "The import finished. Results are below."
+msgstr ""
+
+#: includes/admin/class-import-page.php:593
+msgid "View Members"
+msgstr ""
+
+#: includes/admin/class-import-page.php:594
+msgid "Import Another File"
+msgstr ""
+
+#: includes/admin/class-import-page.php:770
+msgid "(no name)"
+msgstr ""
+
+#: includes/admin/class-import-page.php:771
+#: includes/admin/class-import-page.php:883
+#: includes/admin/class-import-page.php:1241
+msgid "(no email)"
+msgstr ""
+
+#: includes/admin/class-import-page.php:772
+msgid "(no level)"
+msgstr ""
+
+#: includes/admin/class-import-page.php:775
+msgid "linked"
+msgstr ""
+
+#: includes/admin/class-import-page.php:775
+msgid "primary"
+msgstr ""
+
+#: includes/admin/class-import-page.php:776
+msgid "active/historic"
+msgstr ""
+
+#: includes/admin/class-import-page.php:776
+#: includes/waivers/class-waivers.php:1697
+msgid "expired"
+msgstr ""
+
+#. translators: %d: row count
+#: includes/admin/class-import-page.php:784
+msgid "%d row has no email address. It will still be imported using the full name as the only contact field."
+msgid_plural "%d rows have no email address. They will still be imported using the full name as the only contact field."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: row count
+#: includes/admin/class-import-page.php:791
+msgid "%d row(s) could not be matched to a known plan. They will be imported under a \"No Plan\" sentinel plan so you can review and re-assign later."
+msgstr ""
+
+#. translators: %d: row count
+#: includes/admin/class-import-page.php:798
+msgid "%d row has an expiry date in the past — it will be imported with status = expired so you keep historic members on file."
+msgid_plural "%d rows have an expiry date in the past — they will be imported with status = expired so you keep historic members on file."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/class-import-page.php:803
+msgid "Linked / \"Additional Member\" rows attach to a primary membership of the same plan that still has open capacity. If none is available they import as their own membership flagged for review — spot-check these afterwards."
+msgstr ""
+
+#. translators: %s: membership plan name.
+#: includes/admin/class-import-page.php:820
+msgid "— %s"
+msgstr ""
+
+#: includes/admin/class-import-page.php:823
+msgid "— No Plan / Unknown"
+msgstr ""
+
+#: includes/admin/class-import-page.php:827
+#: includes/admin/class-import-page.php:905
+msgid "Total rows in file"
+msgstr ""
+
+#: includes/admin/class-import-page.php:828
+msgid "Primary memberships"
+msgstr ""
+
+#: includes/admin/class-import-page.php:832
+msgid "Linked members"
+msgstr ""
+
+#: includes/admin/class-import-page.php:833
+msgid "Expired (kept as expired)"
+msgstr ""
+
+#: includes/admin/class-import-page.php:834
+msgid "Rows with no email"
+msgstr ""
+
+#: includes/admin/class-import-page.php:838
+msgid "Duplicate emails (will skip)"
+msgstr ""
+
+#: includes/admin/class-import-page.php:845
+msgid "Cycle"
+msgstr ""
+
+#: includes/admin/class-import-page.php:845
+#: includes/admin/class-import-page.php:913
+#: includes/class-privacy.php:139
+#: includes/corporate/class-corporate-module.php:937
+#: includes/corporate/class-corporate-module.php:1024
+#: includes/corporate/class-corporate-module.php:1078
+#: includes/corporate/class-corporate-module.php:1112
+#: includes/corporate/class-corporate-module.php:3203
+#: includes/corporate/class-corporate-module.php:3355
+#: includes/corporate/class-corporate-module.php:3376
+#: includes/corporate/class-corporate-module.php:3591
+#: includes/waivers/class-waiver-archive-admin.php:71
+#: includes/waivers/class-waivers.php:1885
+#: templates/staff-dashboard.php:82
+#: assets/admin-emails.js:206
+#: assets/admin-emails.js:321
+#: assets/admin-members.js:151
+#: assets/admin-members.js:356
+#: assets/admin-members.js:546
+#: assets/admin-members.js:849
+msgid "Email"
+msgstr ""
+
+#: includes/admin/class-import-page.php:845
+msgid "Legacy level"
+msgstr ""
+
+#: includes/admin/class-import-page.php:845
+msgid "Lifecycle"
+msgstr ""
+
+#: includes/admin/class-import-page.php:845
+#: includes/corporate/class-corporate-module.php:3375
+#: templates/account.php:343
+#: assets/admin-emails.js:205
+#: assets/admin-emails.js:320
+#: assets/admin-members.js:847
+#: assets/admin-plans.js:219
+msgid "Name"
+msgstr ""
+
+#: includes/admin/class-import-page.php:845
+#: includes/class-privacy.php:172
+#: includes/corporate/class-corporate-module.php:3610
+#: includes/waivers/class-waivers.php:1462
+#: templates/account.php:377
+#: templates/staff-dashboard.php:172
+#: assets/admin-checkins.js:155
+#: assets/admin-members.js:290
+#: assets/admin-members.js:1033
+msgid "Type"
+msgstr ""
+
+#: includes/admin/class-import-page.php:874
+msgid "matched"
+msgstr ""
+
+#: includes/admin/class-import-page.php:877
+msgid "creates Instore member"
+msgstr ""
+
+#: includes/admin/class-import-page.php:880
+msgid "attaches to Instore Walk-in"
+msgstr ""
+
+#. translators: %d: row count
+#: includes/admin/class-import-page.php:891
+msgid "%d payment(s) reference an email that has no matching member yet. A stub Instore member will be created so the payment is preserved — review and merge later."
+msgstr ""
+
+#. translators: %d: row count
+#: includes/admin/class-import-page.php:898
+msgid "%d payment(s) have no email at all. They will attach to a single shared \"Instore Walk-in\" membership under the No Plan sentinel."
+msgstr ""
+
+#: includes/admin/class-import-page.php:906
+msgid "Matched to a membership"
+msgstr ""
+
+#: includes/admin/class-import-page.php:907
+msgid "Orphan w/ email (Instore created)"
+msgstr ""
+
+#: includes/admin/class-import-page.php:908
+msgid "Orphan w/o email (Walk-in)"
+msgstr ""
+
+#: includes/admin/class-import-page.php:909
+msgid "Total amount in file"
+msgstr ""
+
+#: includes/admin/class-import-page.php:913
+#: includes/corporate/class-corporate-module.php:913
+#: templates/account.php:304
+#: assets/admin-members.js:198
+#: assets/admin-members.js:925
+#: assets/admin-payments.js:291
+msgid "Amount"
+msgstr ""
+
+#: includes/admin/class-import-page.php:913
+#: templates/account.php:303
+#: templates/account.php:380
+#: templates/account.php:443
+msgid "Date"
+msgstr ""
+
+#: includes/admin/class-import-page.php:913
+msgid "Disposition"
+msgstr ""
+
+#: includes/admin/class-import-page.php:913
+#: assets/admin-members.js:927
+#: assets/admin-payments.js:293
+msgid "Gateway"
+msgstr ""
+
+#: includes/admin/class-import-page.php:913
+#: includes/class-privacy.php:144
+#: includes/class-privacy.php:173
+#: includes/class-privacy.php:233
+#: includes/corporate/class-corporate-module.php:640
+#: includes/corporate/class-corporate-module.php:916
+#: templates/account.php:307
+#: templates/account.php:346
+#: templates/account.php:379
+#: templates/account.php:444
+#: templates/staff-dashboard.php:69
+#: templates/staff-dashboard.php:151
+#: assets/admin-checkins.js:157
+#: assets/admin-members.js:209
+#: assets/admin-members.js:430
+#: assets/admin-members.js:532
+#: assets/admin-members.js:852
+#: assets/admin-members.js:928
+#: assets/admin-members.js:1035
+#: assets/admin-members.js:1492
+#: assets/admin-payments.js:294
+#: assets/admin-plans.js:225
+msgid "Status"
+msgstr ""
+
+#: includes/admin/class-import-page.php:971
+msgid "Row %1$d (%2$s): no plan available and the No-Plan sentinel could not be created."
+msgstr ""
+
+#: includes/admin/class-import-page.php:988
+msgid "Row %1$d (%2$s): could not create membership."
+msgstr ""
+
+#. translators: %s: membership status
+#: includes/admin/class-members-page.php:113
+msgid "Membership marked %s"
+msgstr ""
+
+#: includes/admin/class-members-page.php:61
+#: assets/admin-members.js:1475
+msgid "Loading members…"
+msgstr ""
+
+#: includes/admin/class-members-page.php:63
+msgid "The Memberistic members console requires JavaScript."
+msgstr ""
+
+#: includes/admin/class-payments-page.php:25
+#: assets/admin-payments.js:283
+msgid "Loading payments…"
+msgstr ""
+
+#: includes/admin/class-payments-page.php:27
+msgid "The Memberistic payments console requires JavaScript."
+msgstr ""
+
+#: includes/admin/class-plans-page.php:81
+#: assets/admin-plans.js:401
+msgid "Loading plans…"
+msgstr ""
+
+#: includes/admin/class-plans-page.php:83
+msgid "The Memberistic plans console requires JavaScript."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:205
+#: assets/admin-settings.js:163
+msgid "Loading settings…"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:207
+msgid "The Memberistic settings console requires JavaScript."
+msgstr ""
+
+#. translators: %s = setting key
+#: includes/admin/class-settings-page.php:314
+msgid "The setting \"%s\" is locked by a wp-config.php constant and was not updated."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:95
+#: includes/utilities/helpers.php:504
+msgid "Settings saved successfully."
+msgstr ""
+
+#. translators: %d: number of members without a login
+#: includes/class-account-provisioner.php:74
+msgid "%d member does not have a login yet."
+msgid_plural "%d members do not have a login yet."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-account-provisioner.php:77
+msgid "They cannot sign in or reach their digital card until an account is created. Set up logins and email each member a set-password link."
+msgstr ""
+
+#: includes/class-account-provisioner.php:79
+msgid "Set up member logins now"
+msgstr ""
+
+#: includes/class-content-restrictions.php:174
+msgid "Membership Required"
+msgstr ""
+
+#: includes/class-content-restrictions.php:175
+#: includes/class-content-restrictions.php:212
+msgid "This content is available for active members only."
+msgstr ""
+
+#: includes/class-content-restrictions.php:175
+#: includes/class-content-restrictions.php:211
+msgid "This content is available for: %s."
+msgstr ""
+
+#: includes/class-content-restrictions.php:176
+#: includes/class-content-restrictions.php:218
+#: templates/account.php:34
+msgid "View Membership Plans"
+msgstr ""
+
+#: includes/class-content-restrictions.php:216
+msgid "Members-only content"
+msgstr ""
+
+#: includes/class-content-restrictions.php:266
+#: includes/corporate/class-corporate-module.php:1023
+#: includes/corporate/class-corporate-module.php:1077
+#: includes/corporate/class-corporate-module.php:3037
+#: includes/corporate/class-corporate-module.php:3355
+#: includes/corporate/class-corporate-module.php:3591
+#: includes/utilities/class-verification.php:206
+#: includes/waivers/class-waivers.php:1433
+#: includes/waivers/class-waivers.php:1884
+#: templates/account.php:39
+#: templates/staff-dashboard.php:172
+msgid "Member"
+msgstr ""
+
+#. translators: %s: the membership plan's name.
+#: includes/class-content-restrictions.php:274
+msgid "Member - %s"
+msgstr ""
+
+#: includes/class-content-restrictions.php:78
+msgid "Members-only content. Available for: %s."
+msgstr ""
+
+#: includes/class-content-restrictions.php:79
+msgid "Members-only content. Available for active members only."
+msgstr ""
+
+#: includes/class-content-restrictions.php:89
+msgid "Memberistic Access"
+msgstr ""
+
+#: includes/class-content-restrictions.php:97
+msgid "Restrict this content to selected membership plans."
+msgstr ""
+
+#: includes/class-content-restrictions.php:99
+msgid "No active plans found."
+msgstr ""
+
+#: includes/class-installer.php:167
+#: templates/staff-dashboard.php:134
+msgid "Check In"
+msgstr ""
+
+#: includes/class-membership-service.php:214
+#: includes/class-membership-service.php:275
+msgid "A valid user is required to assign a plan."
+msgstr ""
+
+#: includes/class-membership-service.php:224
+msgid "A plan can only be assigned with verified payment evidence (a confirmed order or gateway transaction)."
+msgstr ""
+
+#: includes/class-membership-service.php:230
+#: includes/class-membership-service.php:280
+msgid "Unknown membership plan."
+msgstr ""
+
+#. translators: 1: plan name, 2: order/transaction reference
+#: includes/class-membership-service.php:241
+msgid "Plan %1$s assigned after verified payment (%2$s)."
+msgstr ""
+
+#: includes/class-membership-service.php:269
+msgid "You do not have permission to assign memberships."
+msgstr ""
+
+#: includes/class-membership-service.php:272
+msgid "A reason is required when assigning a membership manually."
+msgstr ""
+
+#: includes/class-membership-service.php:314
+msgid "A reason is required when removing a membership."
+msgstr ""
+
+#: includes/class-membership-service.php:317
+msgid "You do not have permission to remove memberships."
+msgstr ""
+
+#: includes/class-membership-service.php:322
+msgid "This user has no membership to remove."
+msgstr ""
+
+#: includes/class-membership-service.php:325
+msgid "That plan is not the one this user holds."
+msgstr ""
+
+#: includes/class-membership-service.php:334
+msgid "Membership removed"
+msgstr ""
+
+#: includes/class-membership-service.php:464
+msgid "Could not update the membership."
+msgstr ""
+
+#: includes/class-membership-service.php:478
+msgid "Could not create the membership."
+msgstr ""
+
+#: includes/class-membership-service.php:496
+msgid "Membership plan assigned"
+msgstr ""
+
+#: includes/class-plugin.php:286
+msgid "Are you sure you want to delete this item?"
+msgstr ""
+
+#: includes/class-privacy.php:134
+msgid "Membership profile"
+msgstr ""
+
+#: includes/class-privacy.php:138
+#: includes/corporate/class-corporate-module.php:1111
+#: includes/corporate/class-corporate-module.php:3202
+#: assets/admin-members.js:148
+#: assets/admin-members.js:353
+#: assets/admin-members.js:543
+msgid "Full name"
+msgstr ""
+
+#: includes/class-privacy.php:140
+#: includes/class-privacy.php:203
+#: includes/waivers/class-waivers.php:1607
+#: templates/checkout.php:101
+#: templates/staff-dashboard.php:86
+#: assets/admin-emails.js:207
+#: assets/admin-emails.js:322
+#: assets/admin-members.js:154
+#: assets/admin-members.js:359
+#: assets/admin-members.js:549
+#: assets/admin-members.js:850
+msgid "Phone"
+msgstr ""
+
+#: includes/class-privacy.php:141
+#: includes/class-privacy.php:202
+#: includes/waivers/class-waivers.php:980
+#: includes/waivers/class-waivers.php:1604
+msgid "Date of birth"
+msgstr ""
+
+#: includes/class-privacy.php:142
+#: assets/admin-members.js:157
+#: assets/admin-members.js:362
+msgid "Relationship"
+msgstr ""
+
+#: includes/class-privacy.php:143
+#: includes/waivers/class-waivers.php:1886
+#: templates/account.php:344
+#: assets/admin-emails.js:208
+#: assets/admin-emails.js:323
+#: assets/admin-members.js:848
+msgid "Role"
+msgstr ""
+
+#: includes/class-privacy.php:145
+#: includes/corporate/class-corporate-module.php:1025
+#: assets/admin-members.js:371
+#: assets/admin-members.js:552
+#: assets/admin-members.js:1459
+msgid "Waiver status"
+msgstr ""
+
+#: includes/class-privacy.php:146
+msgid "Added"
+msgstr ""
+
+#: includes/class-privacy.php:166
+msgid "Check-in history"
+msgstr ""
+
+#: includes/class-privacy.php:170
+#: includes/corporate/class-corporate-module.php:3035
+#: assets/admin-checkins.js:156
+#: assets/admin-members.js:1034
+msgid "Checked in"
+msgstr ""
+
+#: includes/class-privacy.php:171
+msgid "Checked out"
+msgstr ""
+
+#: includes/class-privacy.php:194
+msgid "Signed waivers"
+msgstr ""
+
+#: includes/class-privacy.php:198
+msgid "Signer name"
+msgstr ""
+
+#: includes/class-privacy.php:199
+msgid "Signer email"
+msgstr ""
+
+#: includes/class-privacy.php:200
+msgid "Signed at"
+msgstr ""
+
+#: includes/class-privacy.php:201
+#: includes/waivers/class-waivers.php:1735
+#: includes/waivers/class-waivers.php:1889
+msgid "Expires"
+msgstr ""
+
+#: includes/class-privacy.php:204
+#: includes/waivers/class-waivers.php:1610
+msgid "Emergency contact"
+msgstr ""
+
+#: includes/class-privacy.php:205
+msgid "Emergency phone"
+msgstr ""
+
+#: includes/class-privacy.php:206
+msgid "IP address"
+msgstr ""
+
+#: includes/class-privacy.php:207
+msgid "Signed from"
+msgstr ""
+
+#: includes/class-privacy.php:227
+msgid "Emails sent"
+msgstr ""
+
+#: includes/class-privacy.php:231
+msgid "Subject"
+msgstr ""
+
+#: includes/class-privacy.php:232
+msgid "Sent"
+msgstr ""
+
+#. translators: %d: number of signed waivers retained.
+#: includes/class-privacy.php:365
+msgid "%d signed waiver was retained. A signed waiver is a legal record of the terms this person accepted and the date they accepted them; it is kept under the site operator's legal-claims basis. Contact the site owner to request its removal."
+msgid_plural "%d signed waivers were retained. A signed waiver is a legal record of the terms this person accepted and the date they accepted them; they are kept under the site operator's legal-claims basis. Contact the site owner to request their removal."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of payment records retained.
+#: includes/class-privacy.php:390
+msgid "%d payment record was retained to meet financial record-keeping requirements. It holds an amount, a status, and a payment-gateway reference — no card details are stored."
+msgid_plural "%d payment records were retained to meet financial record-keeping requirements. They hold amounts, statuses, and payment-gateway references — no card details are stored."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-privacy.php:415
+msgid "Membership records"
+msgstr ""
+
+#: includes/class-privacy.php:416
+msgid "When you join as a member, we store the name, email address, phone number, and date of birth you give us, along with any family or linked members you add to your membership. We also keep a record of your membership plan, its status, and its start and renewal dates."
+msgstr ""
+
+#: includes/class-privacy.php:417
+msgid "Each time you check in, we record the date and time. This lets us show you your own visit history and lets staff confirm your membership is current."
+msgstr ""
+
+#: includes/class-privacy.php:418
+msgid "Waivers and signed documents"
+msgstr ""
+
+#: includes/class-privacy.php:419
+msgid "If you sign a waiver, we store the text you agreed to, your name and contact details, your signature, the date and time, and the IP address you signed from. We keep signed waivers as a record of the terms you accepted, and may retain them after your membership ends."
+msgstr ""
+
+#: includes/class-privacy.php:421
+msgid "Payments are processed by our payment provider. We never see or store your full card number. We keep a record of the amount, the date, the status, and a reference number from the payment provider, so we can answer billing questions and meet our accounting obligations."
+msgstr ""
+
+#: includes/class-privacy.php:422
+msgid "Emails we send you"
+msgstr ""
+
+#: includes/class-privacy.php:423
+msgid "We keep a log of membership emails sent to you — the subject, the date, and whether delivery succeeded — so we can tell whether a notice such as a renewal reminder actually reached you."
+msgstr ""
+
+#: includes/class-privacy.php:424
+msgid "Your rights"
+msgstr ""
+
+#: includes/class-privacy.php:425
+msgid "You can ask us for a copy of the membership data we hold about you, or ask us to erase it. Some records, such as signed waivers and payment records, may be retained where we have a legal basis or obligation to keep them; we will tell you if that applies to your request."
+msgstr ""
+
+#: includes/class-privacy.php:427
+msgid "Memberistic Membership Solutions"
+msgstr ""
+
+#: includes/class-privacy.php:462
+msgid "Erased at request"
+msgstr ""
+
+#: includes/class-privacy.php:75
+#: includes/class-privacy.php:90
+msgid "Memberistic membership records"
+msgstr ""
+
+#: includes/class-roles.php:22
+msgid "Memberistic Manager"
+msgstr ""
+
+#: includes/class-roles.php:23
+msgid "Memberistic Staff"
+msgstr ""
+
+#: includes/class-roles.php:24
+msgid "Memberistic Cashier"
+msgstr ""
+
+#: includes/class-roles.php:25
+msgid "Memberistic Instructor"
+msgstr ""
+
+#: includes/class-roles.php:26
+msgid "Memberistic KIOSK Operator"
+msgstr ""
+
+#: includes/class-roles.php:27
+msgid "Memberistic POS Staff"
+msgstr ""
+
+#: includes/class-scheduler.php:283
+msgid "Stripe reconciliation inconclusive; membership left active"
+msgstr ""
+
+#: includes/class-scheduler.php:301
+msgid "Recurring membership marked past due (Stripe subscription is past_due/unpaid)"
+msgstr ""
+
+#: includes/class-scheduler.php:302
+msgid "Recurring membership marked past due after renewal grace period"
+msgstr ""
+
+#: includes/class-scheduler.php:328
+msgid "Membership expired automatically"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1000
+msgid "Primary payer:"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1002
+msgid "Internal notes"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1020
+msgid "waivers signed"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1030
+msgid "No members yet."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1044
+msgid "Resend waiver"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1045
+msgid "Open signing link"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1046
+msgid "Mark complete (exception)"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1046
+msgid "Mark this waiver complete as a manual staff exception?"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1055
+msgid "Members receive a waiver link in their welcome email. They can sign from any device with no login required. Signed waivers are valid for one year."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1068
+msgid "%1$d member(s) added. %2$d skipped."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1071
+msgid "seats used."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1072
+msgid "Seats full — increase seat count in Settings to add more."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1079
+#: includes/corporate/class-corporate-module.php:3041
+#: includes/corporate/class-corporate-module.php:3355
+#: includes/waivers/class-waivers.php:1435
+#: includes/waivers/class-waivers.php:1887
+#: templates/account.php:345
+#: templates/staff-dashboard.php:90
+#: assets/admin-emails.js:326
+#: assets/admin-members.js:851
+#: assets/admin-members.js:1496
+msgid "Waiver"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1080
+msgid "QR"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1085
+msgid "No members yet. Add them below."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1095
+msgid "Ready"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1097
+msgid "Resend email"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1098
+#: templates/account.php:167
+#: assets/admin-members.js:893
+msgid "Remove"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1098
+msgid "Remove this member from the group?"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1110
+msgid "Add one member"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1113
+#: includes/corporate/class-corporate-module.php:3204
+msgid "Phone (optional)"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1114
+msgid "Add + Send Welcome Email"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1121
+msgid "Bulk add"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1122
+msgid "One per line: Full Name, email@example.com, phone (phone optional)."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1124
+msgid "Import + Send Welcome Emails"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1132
+#: includes/corporate/class-corporate-module.php:1167
+#: includes/corporate/class-corporate-module.php:1180
+#: includes/corporate/class-corporate-module.php:1204
+#: includes/corporate/class-corporate-module.php:1220
+#: includes/corporate/class-corporate-module.php:1230
+#: includes/corporate/class-corporate-module.php:1246
+#: includes/corporate/class-corporate-module.php:1268
+#: includes/corporate/class-corporate-module.php:1284
+#: includes/corporate/class-corporate-module.php:1300
+#: includes/corporate/class-corporate-module.php:1314
+#: includes/corporate/class-corporate-module.php:1328
+#: includes/corporate/class-corporate-module.php:1344
+#: includes/corporate/class-corporate-module.php:1361
+msgid "Permission denied."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1238
+msgid "Member removed from group."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1307
+msgid "Payment link emailed."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1320
+msgid "Marked paid by staff"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1321
+msgid "Link marked paid."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1335
+msgid "Link voided."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1354
+msgid "Waiver email sent."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1367
+msgid "Staff manual exception"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1368
+msgid "Waiver marked complete (staff exception)."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1494
+msgid "Skipped \"%s\": a valid name and email are required."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1498
+msgid "This group is busy processing another invite — please try again in a moment."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1520
+msgid "Seat limit reached (%d). Increase seats to add more."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1538
+msgid "Could not create user for %s: %s"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1547
+msgid "%s is already in this group."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1562
+msgid "Member of corporate group #%d (%s)."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1566
+msgid "Could not create membership for %s."
+msgstr ""
+
+#. translators: 1: member name, 2: email
+#: includes/corporate/class-corporate-module.php:1602
+msgid "Member added: %1$s (%2$s)."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1613
+msgid "Added %s."
+msgstr ""
+
+#. translators: %s: member name
+#: includes/corporate/class-corporate-module.php:1755
+msgid "Existing member added to group: %s."
+msgstr ""
+
+#. translators: %s: brand label
+#: includes/corporate/class-corporate-module.php:1915
+msgid "Welcome to %s — your range account is ready"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:1921
+msgid "Your %s group is set up"
+msgstr ""
+
+#. translators: %s: brand
+#: includes/corporate/class-corporate-module.php:1928
+msgid "Action needed: sign your %s range waiver"
+msgstr ""
+
+#. translators: %s: brand
+#: includes/corporate/class-corporate-module.php:1935
+msgid "Your %s range pass + check-in QR"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2068
+#: includes/corporate/class-corporate-module.php:2100
+msgid "Enter an amount greater than zero."
+msgstr ""
+
+#. translators: 1: amount, 2: method
+#: includes/corporate/class-corporate-module.php:2080
+msgid "Payment recorded: $%1$s via %2$s."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2084
+msgid "Payment recorded."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2136
+msgid "Membership / group payment link. Recorded in Memberistic; excluded from product-sales reports."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2142
+msgid "Payment link created for $%s."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2152
+msgid "Payment link created."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2187
+msgid "Payment link paid: $%s."
+msgstr ""
+
+#. translators: %s: brand
+#: includes/corporate/class-corporate-module.php:2252
+msgid "Payment request from %s"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2255
+msgid "Hello,\n\n%1$s has sent you a secure payment request.\n\n"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2257
+msgid "For: %s\n"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2259
+msgid "Amount due: $%s\n\n"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2260
+msgid "Pay securely here:\n%s\n\n"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2262
+msgid "This link expires on %s.\n\n"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2265
+msgid "Questions? Call %s.\n\n"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2310
+msgid "Stripe is not enabled."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2328
+msgid "Group payment"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2341
+msgid "Stripe did not return a checkout URL."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2383
+msgid "Corporate group payment"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2441
+msgid "Payment link not found"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2441
+msgid "This payment link is invalid. Please contact us for a new one."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2452
+msgid "Payment complete"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2452
+msgid "Thank you — your payment has been received. A receipt is on its way."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2455
+msgid "Payment cancelled — you can try again below."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2459
+msgid "Already paid"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2459
+msgid "This payment has already been completed. Thank you!"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2462
+msgid "Link cancelled"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2462
+msgid "This payment link has been cancelled. Please contact us."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2465
+msgid "Link expired"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2465
+msgid "This payment link has expired. Please contact us for a new one."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2471
+msgid "Session expired — please try again."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2480
+msgid "We could not start the secure checkout. Please try again or call us."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2491
+msgid "Online payment is not available right now — please call us to complete this payment."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2545
+msgid "Membership payment"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2547
+msgid "Pay before"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2549
+msgid "Amount due"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2553
+msgid "Pay Now"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2555
+msgid "Secure payment via Stripe"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2557
+msgid "To pay, please call us at %s."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2557
+msgid "To pay, please contact us."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2687
+msgid "I acknowledge that the use of firearms and the shooting range at %s involves inherent risks. I confirm I am legally permitted to handle firearms, will follow all posted range rules and staff instructions at all times, and assume responsibility for my own safety and conduct on the premises. I release %s, its owners, staff, and affiliates from liability for injury or loss arising from my voluntary participation, to the extent permitted by law."
+msgstr ""
+
+#. translators: %s: signer name
+#: includes/corporate/class-corporate-module.php:2729
+msgid "Waiver signed by %s."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2776
+msgid "This waiver link is invalid. Please contact us."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2776
+#: includes/waivers/class-waivers.php:1166
+#: includes/waivers/class-waivers.php:1170
+msgid "Waiver not found"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2783
+#: includes/waivers/class-waivers.php:870
+#: includes/waivers/class-waivers.php:1175
+msgid "Please reload the page and try again."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2783
+#: includes/waivers/class-waivers.php:870
+#: includes/waivers/class-waivers.php:1175
+msgid "Session expired"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2788
+#: includes/waivers/class-waivers.php:1180
+msgid "Please type your full name and check the agreement box."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2793
+#: includes/waivers/class-waivers.php:921
+#: includes/waivers/class-waivers.php:930
+#: includes/waivers/class-waivers.php:1225
+msgid "Waiver complete"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2794
+msgid "Thank you — your waiver is on file. You can show your member QR at the range desk on your next visit."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2795
+#: includes/waivers/class-waivers.php:1227
+msgid "Go to my account"
+msgstr ""
+
+#. translators: %s: date
+#: includes/corporate/class-corporate-module.php:2802
+#: includes/waivers/class-waivers.php:1240
+msgid "Waiver already on file"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2802
+msgid "Your waiver is already signed and on file. Thank you!"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2817
+#: includes/waivers/class-waivers.php:1255
+msgid "Type your full legal name"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2819
+#: includes/waivers/class-waivers.php:959
+#: includes/waivers/class-waivers.php:1258
+msgid "I have read and agree to the waiver above, and I am signing electronically."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2820
+#: includes/waivers/class-waivers.php:960
+#: includes/waivers/class-waivers.php:1261
+msgid "Sign Waiver"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2822
+#: includes/waivers/class-waivers.php:962
+#: includes/waivers/class-waivers.php:1263
+msgid "Range Waiver"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2872
+msgid "Membership payment — recorded in Memberistic. Excluded from product-sales reports."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2971
+msgid "QR check-in"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:2972
+msgid "Checked in at the range desk via QR by %s."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3033
+msgid "Staff Check-In"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3038
+#: assets/admin-members.js:517
+msgid "Membership"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3041
+msgid "NOT on file"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3041
+#: includes/corporate/class-corporate-module.php:3364
+#: includes/waivers/class-waivers.php:1624
+#: includes/waivers/class-waivers.php:1732
+#: includes/waivers/class-waivers.php:1876
+#: includes/waivers/class-waivers.php:1888
+#: templates/staff-dashboard.php:93
+msgid "Signed"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3042
+msgid "Last check-in"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3043
+msgid "Collect a signed waiver before range access."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3046
+msgid "Notes (optional)"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3047
+msgid "Check In Now"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3047
+msgid "Not eligible — see status"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3083
+msgid "A valid name and email are required."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3146
+msgid "You're all set — check your email for your range pass + waiver."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3196
+msgid "You're all set! Check your email for your range pass QR code and waiver link. Show the QR at the range desk on your next visit."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:320
+msgid "Initial payment recorded at group creation."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3205
+msgid "Get My Range Pass"
+msgstr ""
+
+#. translators: %s: group name
+#: includes/corporate/class-corporate-module.php:326
+msgid "Corporate group \"%s\" created."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3345
+msgid "Group membership — you manage the people and seats."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3349
+#: includes/corporate/class-corporate-module.php:3574
+msgid "Available"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3351
+#: includes/corporate/class-corporate-module.php:3557
+msgid "Balance"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3358
+msgid "No members yet — invite your first below."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3364
+#: templates/staff-dashboard.php:72
+#: assets/admin-members.js:1344
+msgid "Pending"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3377
+msgid "Invite"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3380
+msgid "All seats are used."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3386
+msgid "Request more seats"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3402
+msgid "You are part of this group membership. Your digital card, waiver, and check-in QR are on this page."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:343
+#: includes/corporate/class-corporate-module.php:624
+msgid "Corporate group updated."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3433
+msgid "Member invited — they have an email to set up their account, waiver, and QR."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3447
+msgid "[%s] Group seat request"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3449
+msgid "%1$s (owner of group \"%2$s\", #%3$d) has requested more seats.\nCurrent: %4$d seats / max %5$d.\nReview in Memberistic → Corporate Groups."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3458
+msgid "Group owner requested more seats."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3459
+msgid "Request sent — our team will be in touch about adding seats."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3486
+#: includes/corporate/class-corporate-module.php:3487
+#: includes/corporate/class-corporate-module.php:3546
+msgid "Corporate Reports"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3496
+msgid "You do not have permission to view corporate reports."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3549
+msgid "Active groups"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3550
+msgid "Total members"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3551
+msgid "Group revenue"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3552
+msgid "Waivers pending"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3555
+msgid "Unpaid balances"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3557
+msgid "Price"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3560
+msgid "All groups are paid in full. 🎉"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3572
+msgid "Groups with open seats"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3574
+#: templates/account.php:445
+#: assets/admin-dashboard.js:237
+#: assets/admin-plans.js:374
+msgid "Total"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3574
+msgid "Used"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3577
+msgid "No groups have open seats."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3589
+msgid "Waiver-pending members"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3594
+msgid "Every group member has a signed waiver. 🎉"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3608
+msgid "Recent check-ins"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3610
+msgid "By staff"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3610
+msgid "When"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3613
+#: templates/staff-dashboard.php:182
+msgid "No check-ins recorded yet."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:3626
+msgid "All membership revenue figures here come from Memberistic (the single source of truth) — not WooCommerce product sales."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:486
+#: includes/corporate/class-corporate-module.php:487
+#: includes/corporate/class-corporate-module.php:618
+msgid "Corporate Groups"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:601
+msgid "You do not have permission to manage corporate groups."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:619
+#: includes/corporate/class-corporate-module.php:819
+msgid "Create Group"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:621
+msgid "Corporate group created."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:627
+msgid "Corporate group deleted. The members keep their individual accounts and memberships."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:630
+msgid "One organization pays once; each member keeps their own account, waiver, and QR check-in. Group plans stay hidden from public pricing unless set to \"Call for Details\" or \"Public\"."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:635
+#: includes/corporate/class-corporate-module.php:3040
+#: includes/corporate/class-corporate-module.php:3557
+#: includes/corporate/class-corporate-module.php:3574
+#: includes/corporate/class-corporate-module.php:3591
+msgid "Group"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:636
+msgid "Primary Payer"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:637
+msgid "Seats"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:638
+#: includes/corporate/class-corporate-module.php:3350
+#: includes/corporate/class-corporate-module.php:3557
+#: assets/admin-members.js:929
+#: assets/admin-payments.js:295
+msgid "Paid"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:639
+#: templates/checkout.php:38
+#: templates/checkout.php:106
+msgid "Payment"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:641
+#: assets/admin-emails.js:217
+msgid "Created"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:646
+msgid "No corporate groups yet. Click “Create Group” to set one up."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:658
+msgid "Manage"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:659
+#: assets/admin-saved-views.js:109
+msgid "Delete"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:659
+msgid "Delete this group? The group + its payment records are removed. Members KEEP their individual accounts, memberships, waivers, and QR codes."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:663
+msgid "up to %d"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:696
+msgid "Create Corporate Group"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:696
+msgid "Edit Corporate Group"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:697
+msgid "Back to all groups"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:707
+msgid "%d selected member"
+msgid_plural "%d selected members"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/corporate/class-corporate-module.php:707
+msgid "will be added to this group once you create it. Their existing accounts, waivers, and QR codes are kept — they are simply linked into the group. Make sure “Seats Purchased” is at least this number."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:713
+msgid "Group / Display Name"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:717
+msgid "Company Name"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:721
+msgid "Primary Payer (WP user)"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:727
+msgid "— Select payer —"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:734
+msgid "Plan Key"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:738
+msgid "Seats Purchased"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:742
+msgid "Max Future Seats"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:746
+msgid "Custom Price ($)"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:750
+msgid "Group Status"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:758
+msgid "Payment Status"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:766
+msgid "Payment Method"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:768
+msgid "— none —"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:775
+msgid "Public Visibility"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:779
+msgid "Private (hidden from site)"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:780
+msgid "Call for Details (CTA only)"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:781
+msgid "Public (listed)"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:793
+msgid "Allow the group owner to manage this group from their account (view members, seats, payment, and invite people)."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:794
+msgid "When off, the owner only sees their own membership — no group management front-end."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:800
+msgid "Record initial payment (optional)"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:800
+msgid "e.g. the in-store POS/cash sale."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:803
+msgid "Amount Paid ($)"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:807
+msgid "POS Receipt / Reference"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:808
+msgid "e.g. POS-2026-00481"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:814
+msgid "Internal Admin Notes"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:819
+msgid "Save Changes"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:832
+#: includes/corporate/class-corporate-module.php:1486
+msgid "Group not found."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:838
+msgid "Overview"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:846
+msgid "All groups"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:877
+msgid "Danger zone"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:878
+msgid "Deleting removes this group and its payment records. Members KEEP their individual accounts, memberships, waivers, and QR codes — they simply stop being part of this group."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:879
+msgid "Delete this group"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:879
+msgid "Delete this group? This cannot be undone. Members keep their own accounts and memberships."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:898
+#: includes/corporate/class-corporate-module.php:990
+msgid "Amount paid"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:899
+msgid "Group price"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:900
+msgid "Balance due"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:903
+msgid "Payment links"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:905
+msgid "Links open an invoice page branded with your business name; \"Pay Now\" takes the customer to secure Stripe checkout. Paid links auto-record on this group."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:907
+msgid "Stripe is not enabled, so links use the WooCommerce pay page as a fallback after the branded invoice. Enable Stripe in Memberistic → Settings for the cleanest flow."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:909
+msgid "No payment gateway is enabled, so links show a branded invoice with a \"call to pay\" message. Enable Stripe in Memberistic → Settings to accept online card payments, or record payments manually below."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:914
+#: includes/corporate/class-corporate-module.php:955
+#: includes/corporate/class-corporate-module.php:2545
+#: assets/admin-plans.js:234
+msgid "Description"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:915
+msgid "Recipient"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:917
+msgid "Link"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:918
+#: includes/corporate/class-corporate-module.php:1026
+#: includes/corporate/class-corporate-module.php:1081
+#: assets/admin-checkins.js:158
+#: assets/admin-emails.js:328
+#: assets/admin-members.js:853
+#: assets/admin-members.js:1497
+#: assets/admin-payments.js:296
+msgid "Actions"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:922
+msgid "No payment links yet."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:938
+msgid "Mark paid"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:938
+msgid "Mark this link as paid? This records a payment on the group."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:939
+msgid "Void"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:939
+msgid "Void this link?"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:952
+msgid "Generate payment link"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:953
+msgid "Enter ANY amount — fully custom per link. Send it to the customer to pay online."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:954
+#: includes/corporate/class-corporate-module.php:967
+msgid "Amount ($)"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:955
+msgid "%s group membership"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:956
+msgid "Send to email (optional)"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:957
+msgid "Expires in (days, 0 = never)"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:958
+msgid "Create Link"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:965
+msgid "Record a payment"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:966
+msgid "For cash / POS / card taken in store, or a deposit."
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:968
+#: includes/waivers/class-waivers.php:1626
+#: includes/waivers/class-waivers.php:1734
+#: templates/account.php:289
+#: templates/account.php:305
+#: assets/admin-members.js:926
+#: assets/admin-payments.js:292
+msgid "Method"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:975
+msgid "Reference (POS receipt #, etc.)"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:976
+#: assets/admin-members.js:296
+#: assets/admin-members.js:445
+#: assets/admin-members.js:558
+#: assets/admin-members.js:702
+msgid "Notes"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:977
+#: assets/admin-members.js:789
+msgid "Record Payment"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:988
+#: includes/corporate/class-corporate-module.php:3348
+msgid "Seats used"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:989
+msgid "Max future seats"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:991
+msgid "Custom price"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:992
+msgid "Payment status"
+msgstr ""
+
+#: includes/corporate/class-corporate-module.php:993
+msgid "Group status"
+msgstr ""
+
+#: includes/emails/class-email-service.php:103
+msgid "Membership Cancelled"
+msgstr ""
+
+#: includes/emails/class-email-service.php:104
+msgid "Confirms cancellation and final billing window."
+msgstr ""
+
+#: includes/emails/class-email-service.php:108
+msgid "Linked Member Added"
+msgstr ""
+
+#: includes/emails/class-email-service.php:109
+msgid "Confirms a new linked / family member was attached to the membership."
+msgstr ""
+
+#: includes/emails/class-email-service.php:113
+msgid "Waiver Missing"
+msgstr ""
+
+#: includes/emails/class-email-service.php:114
+msgid "Reminds the member to complete an outstanding waiver before benefits unlock."
+msgstr ""
+
+#: includes/emails/class-email-service.php:118
+msgid "Waiver Renewal Reminder"
+msgstr ""
+
+#: includes/emails/class-email-service.php:119
+msgid "Sent before a signed waiver expires so the member can re-sign in advance."
+msgstr ""
+
+#: includes/emails/class-email-service.php:123
+msgid "Staff Manual Message"
+msgstr ""
+
+#: includes/emails/class-email-service.php:124
+msgid "Generic staff-initiated message sent from the member profile."
+msgstr ""
+
+#: includes/emails/class-email-service.php:171
+msgid "Suppressed: email kill-switch is enabled."
+msgstr ""
+
+#: includes/emails/class-email-service.php:223
+msgid "wp_mail() returned false."
+msgstr ""
+
+#. translators: %s: email template key
+#: includes/emails/class-email-service.php:235
+msgid "Email sent: %s"
+msgstr ""
+
+#: includes/emails/class-email-service.php:302
+#: includes/emails/class-email-service.php:303
+msgid "Not set"
+msgstr ""
+
+#: includes/emails/class-email-service.php:312
+#: templates/account.php:55
+msgid "Card on file"
+msgstr ""
+
+#: includes/emails/class-email-service.php:344
+msgid "%s membership update"
+msgstr ""
+
+#: includes/emails/class-email-service.php:349
+msgid "Hi {member_name},\n\nMembership: {membership_id}\nPlan: {plan_name}\nStatus: {status}\nRenewal: {renewal_date}\n\nView your account here:\n{account_url}\n\n{brand_label}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:367
+msgid "Your {brand_label} membership was started"
+msgstr ""
+
+#: includes/emails/class-email-service.php:368
+msgid "Hi {member_name},\n\nGood news — your {plan_name} membership ({membership_id}) has been created. Once payment is confirmed, your membership becomes active automatically and we'll send a welcome email with everything you need.\n\nView your account: {account_url}\n\nQuestions? Just reply to this email and our team will help.\n\n{brand_label}\n{business_phone}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:371
+msgid "Welcome to {brand_label} — your membership is active"
+msgstr ""
+
+#: includes/emails/class-email-service.php:372
+msgid "Hi {member_name},\n\nWelcome to {brand_label}! Your {plan_name} membership is now active.\n\nMembership ID: {membership_id}\nBilling cycle: {billing_cycle}\nNext renewal: {renewal_date}\n\nSign in to your account:\n{login_url}\n\nForgot your password? Reset it here:\n{lostpassword_url}\n\nManage your membership and download your digital card:\n{account_url}\n\nSign your range waiver (required before your first visit):\n{waiver_url}\n\nBook a lane:\n{booking_url}\n\nSee you at the range.\n\n{brand_label}\n{business_phone}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:375
+msgid "Your {brand_label} membership was renewed"
+msgstr ""
+
+#: includes/emails/class-email-service.php:376
+msgid "Hi {member_name},\n\nThanks for renewing your {plan_name} membership ({membership_id}).\nNext renewal: {renewal_date}\n\n{brand_label}\n{account_url}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:379
+msgid "Your {brand_label} payment receipt"
+msgstr ""
+
+#: includes/emails/class-email-service.php:380
+msgid "Hi {member_name},\n\nThis confirms a payment was processed for your {plan_name} membership ({membership_id}).\n\nAmount paid: {paid_amount}\nDate: {payment_date}\nPayment method: {payment_method}\nReference: {transaction_id}\n\nNext renewal: {renewal_date}\n\nKeep this email for your records. View your full billing history any time: {account_url}\n\nThanks for being a member.\n\n{brand_label}\n{business_phone}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:383
+msgid "Your {brand_label} membership renewal is coming up"
+msgstr ""
+
+#: includes/emails/class-email-service.php:384
+msgid "Hi {member_name},\n\nYour {plan_name} membership renews on {renewal_date}.\n\nManage or renew your membership: {renewal_link}\n\n{brand_label}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:387
+msgid "30 days until your {brand_label} membership renews"
+msgstr ""
+
+#: includes/emails/class-email-service.php:388
+msgid "Hi {member_name},\n\nYour {plan_name} membership ({membership_id}) renews on {renewal_date} — 30 days from now.\n\nIf you need to update payment details or change plans, you can do that here:\n{account_url}\n\n{brand_label}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:391
+msgid "7 days until your {brand_label} membership renews"
+msgstr ""
+
+#: includes/emails/class-email-service.php:392
+msgid "Hi {member_name},\n\nQuick reminder: your {plan_name} membership renews on {renewal_date}.\n\nManage your membership: {account_url}\nRenew now: {renewal_link}\n\n{brand_label}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:395
+msgid "Your {brand_label} membership renews tomorrow"
+msgstr ""
+
+#: includes/emails/class-email-service.php:396
+msgid "Hi {member_name},\n\nYour {plan_name} membership renews tomorrow, {renewal_date}.\n\nRenew or update payment: {renewal_link}\n\n{brand_label}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:399
+msgid "Your {brand_label} membership has expired"
+msgstr ""
+
+#: includes/emails/class-email-service.php:400
+msgid "Hi {member_name},\n\nYour {plan_name} membership ({membership_id}) has expired. To restore member benefits, renew here:\n{renewal_link}\n\n{brand_label}\n{business_phone}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:403
+msgid "Action needed for your {brand_label} membership"
+msgstr ""
+
+#: includes/emails/class-email-service.php:404
+msgid "Hi {member_name},\n\nWe could not complete your latest payment for the {plan_name} membership ({membership_id}). Please update payment details to keep the membership active.\n\nUpdate payment: {payment_link}\n\n{brand_label}\n{support_email}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:407
+msgid "Your {brand_label} membership was cancelled"
+msgstr ""
+
+#: includes/emails/class-email-service.php:408
+msgid "Hi {member_name},\n\nYour {plan_name} membership ({membership_id}) has been cancelled. If this was unexpected, please reach out to staff.\n\n{business_phone}\n{brand_label}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:411
+msgid "A linked member was added to your {brand_label} membership"
+msgstr ""
+
+#: includes/emails/class-email-service.php:412
+msgid "Hi {member_name},\n\n{linked_member_name} was added as a linked member on your {plan_name} membership ({membership_id}).\n\nView linked members: {account_url}\n\n{brand_label}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:415
+msgid "Sign your {brand_label} range waiver"
+msgstr ""
+
+#: includes/emails/class-email-service.php:416
+msgid "Hi {member_name},\n\nA signed waiver is needed before your range benefits can be fully used. You can sign it now from any device in under a minute — no login required:\n\n{waiver_url}\n\nMembership: {membership_id}\n\nSee you at the range.\n\n{brand_label}\n{business_phone}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:419
+msgid "Your {brand_label} range waiver expires soon"
+msgstr ""
+
+#: includes/emails/class-email-service.php:420
+msgid "Hi {member_name},\n\nYour signed range waiver expires on {waiver_expires}. Re-sign it now from any device in under a minute — no login required — and skip the front-desk paperwork on your next visit:\n\n{waiver_url}\n\nMembership: {membership_id}\n\nSee you at the range.\n\n{brand_label}\n{business_phone}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:423
+msgid "A message from {brand_label}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:424
+msgid "Hi {member_name},\n\n{staff_name} from {brand_label} wanted to reach out about your membership ({membership_id}).\n\n{business_phone}\n{brand_label}"
+msgstr ""
+
+#: includes/emails/class-email-service.php:526
+msgid "Update payment method"
+msgstr ""
+
+#: includes/emails/class-email-service.php:527
+#: includes/emails/class-email-service.php:528
+#: includes/emails/class-email-service.php:529
+#: includes/emails/class-email-service.php:530
+msgid "Renew membership"
+msgstr ""
+
+#: includes/emails/class-email-service.php:53
+msgid "Membership Created"
+msgstr ""
+
+#: includes/emails/class-email-service.php:531
+msgid "Manage membership"
+msgstr ""
+
+#: includes/emails/class-email-service.php:532
+msgid "View billing history"
+msgstr ""
+
+#: includes/emails/class-email-service.php:533
+#: includes/emails/class-email-service.php:534
+#: includes/emails/class-email-service.php:535
+msgid "View your account"
+msgstr ""
+
+#: includes/emails/class-email-service.php:536
+msgid "View linked members"
+msgstr ""
+
+#: includes/emails/class-email-service.php:537
+msgid "Sign your waiver"
+msgstr ""
+
+#: includes/emails/class-email-service.php:538
+msgid "Re-sign your waiver"
+msgstr ""
+
+#: includes/emails/class-email-service.php:54
+msgid "Confirms a new membership was set up. Sent automatically on checkout; safe to resend."
+msgstr ""
+
+#: includes/emails/class-email-service.php:58
+msgid "Membership Activated"
+msgstr ""
+
+#: includes/emails/class-email-service.php:59
+msgid "Welcomes a member when their membership becomes active."
+msgstr ""
+
+#: includes/emails/class-email-service.php:612
+msgid "All rights reserved."
+msgstr ""
+
+#. translators: %s: brand label
+#: includes/emails/class-email-service.php:616
+msgid "You are receiving this message about your %s membership. Questions? Reply to this email or contact us directly."
+msgstr ""
+
+#: includes/emails/class-email-service.php:63
+msgid "Membership Renewed"
+msgstr ""
+
+#: includes/emails/class-email-service.php:64
+msgid "Receipt sent after a successful renewal payment or staff renewal action."
+msgstr ""
+
+#: includes/emails/class-email-service.php:68
+msgid "Payment Receipt"
+msgstr ""
+
+#: includes/emails/class-email-service.php:69
+msgid "Transactional receipt sent every time a card is charged (amount, date, reference)."
+msgstr ""
+
+#: includes/emails/class-email-service.php:73
+msgid "Renewal Reminder (Generic)"
+msgstr ""
+
+#: includes/emails/class-email-service.php:74
+msgid "Generic renewal reminder used when no specific window template is configured."
+msgstr ""
+
+#: includes/emails/class-email-service.php:78
+msgid "Expiring in 30 Days"
+msgstr ""
+
+#: includes/emails/class-email-service.php:79
+msgid "Heads-up notice 30 days before renewal_date."
+msgstr ""
+
+#: includes/emails/class-email-service.php:83
+msgid "Expiring in 7 Days"
+msgstr ""
+
+#: includes/emails/class-email-service.php:84
+msgid "Sent 7 days before renewal_date."
+msgstr ""
+
+#: includes/emails/class-email-service.php:88
+msgid "Expiring Tomorrow"
+msgstr ""
+
+#: includes/emails/class-email-service.php:89
+msgid "Last-day-of-membership reminder."
+msgstr ""
+
+#: includes/emails/class-email-service.php:93
+msgid "Membership Expired"
+msgstr ""
+
+#: includes/emails/class-email-service.php:94
+msgid "Sent after the membership expires."
+msgstr ""
+
+#: includes/emails/class-email-service.php:98
+msgid "Payment Failed"
+msgstr ""
+
+#: includes/emails/class-email-service.php:99
+msgid "Notifies the member that the most recent charge failed."
+msgstr ""
+
+#: includes/frontend/class-auth.php:337
+#: includes/frontend/class-auth.php:359
+#: includes/frontend/class-auth.php:402
+#: includes/frontend/class-auth.php:440
+msgid "MEMBERS HUB"
+msgstr ""
+
+#: includes/frontend/class-auth.php:338
+msgid "SIGN OUT"
+msgstr ""
+
+#: includes/frontend/class-auth.php:339
+msgid "Ready to sign out of your range account?"
+msgstr ""
+
+#: includes/frontend/class-auth.php:340
+msgid "Yes, Sign Me Out"
+msgstr ""
+
+#: includes/frontend/class-auth.php:341
+msgid "Back to my account"
+msgstr ""
+
+#: includes/frontend/class-auth.php:360
+msgid "MEMBER LOGIN"
+msgstr ""
+
+#: includes/frontend/class-auth.php:361
+msgid "Welcome back. Access your range account."
+msgstr ""
+
+#: includes/frontend/class-auth.php:369
+#: includes/frontend/class-auth.php:413
+#: templates/checkout.php:95
+msgid "Email Address"
+msgstr ""
+
+#: includes/frontend/class-auth.php:372
+msgid "Password"
+msgstr ""
+
+#: includes/frontend/class-auth.php:376
+msgid "Remember me"
+msgstr ""
+
+#: includes/frontend/class-auth.php:377
+msgid "Forgot password?"
+msgstr ""
+
+#: includes/frontend/class-auth.php:380
+msgid "Sign In"
+msgstr ""
+
+#: includes/frontend/class-auth.php:382
+msgid "OR"
+msgstr ""
+
+#: includes/frontend/class-auth.php:383
+msgid "Join As A Member"
+msgstr ""
+
+#: includes/frontend/class-auth.php:403
+msgid "RESET PASSWORD"
+msgstr ""
+
+#: includes/frontend/class-auth.php:404
+msgid "Enter the email on your membership and we will send a reset link."
+msgstr ""
+
+#: includes/frontend/class-auth.php:416
+msgid "Send Reset Link"
+msgstr ""
+
+#: includes/frontend/class-auth.php:417
+#: includes/frontend/class-auth.php:420
+msgid "Back to sign in"
+msgstr ""
+
+#: includes/frontend/class-auth.php:441
+msgid "SET PASSWORD"
+msgstr ""
+
+#: includes/frontend/class-auth.php:444
+msgid "This password link is invalid or has expired."
+msgstr ""
+
+#: includes/frontend/class-auth.php:445
+msgid "Request a new link below — the old one only works once and expires after 24 hours."
+msgstr ""
+
+#: includes/frontend/class-auth.php:446
+msgid "Request a New Link"
+msgstr ""
+
+#. translators: %s: member display name
+#: includes/frontend/class-auth.php:448
+msgid "Choose a new password for %s."
+msgstr ""
+
+#: includes/frontend/class-auth.php:458
+msgid "New Password"
+msgstr ""
+
+#: includes/frontend/class-auth.php:461
+msgid "Confirm Password"
+msgstr ""
+
+#: includes/frontend/class-auth.php:464
+msgid "Save Password & Continue"
+msgstr ""
+
+#: includes/frontend/class-auth.php:499
+msgid "If an account exists for that email, a reset link is on its way. Check your inbox (and spam folder)."
+msgstr ""
+
+#: includes/frontend/class-auth.php:500
+msgid "Your password has been set. You can sign in now."
+msgstr ""
+
+#: includes/frontend/class-auth.php:501
+msgid "That email and password did not match. Please try again or reset your password."
+msgstr ""
+
+#: includes/frontend/class-auth.php:502
+msgid "Please enter both your email and password."
+msgstr ""
+
+#: includes/frontend/class-auth.php:503
+msgid "Your session expired. Please try again."
+msgstr ""
+
+#: includes/frontend/class-auth.php:504
+msgid "That reset link has expired. Request a new one below."
+msgstr ""
+
+#: includes/frontend/class-auth.php:505
+msgid "The two passwords did not match. Please try again."
+msgstr ""
+
+#: includes/frontend/class-auth.php:506
+msgid "Please enter and confirm your new password."
+msgstr ""
+
+#: includes/frontend/class-auth.php:507
+msgid "Use at least 8 characters for your password."
+msgstr ""
+
+#. translators: 1: site name, 2: reset URL
+#: includes/frontend/class-auth.php:569
+msgid "Someone requested a password reset for your %1$s account.\n\nIf this was you, set a new password here:\n%2$s\n\nIf not, you can ignore this email."
+msgstr ""
+
+#: includes/frontend/class-auth.php:573
+msgid "Password reset"
+msgstr ""
+
+#. translators: %s: formatted plan price (e.g. $29.99)
+#: includes/frontend/class-auth.php:593
+msgid "From %s/mo - Cancel Anytime"
+msgstr ""
+
+#: includes/frontend/class-shortcodes.php:192
+msgid "No Membership"
+msgstr ""
+
+#. translators: %d: days until renewal
+#: includes/frontend/class-shortcodes.php:218
+msgid "Your membership renews in %d day."
+msgid_plural "Your membership renews in %d days."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/frontend/class-shortcodes.php:222
+msgid "View Account"
+msgstr ""
+
+#: includes/frontend/class-shortcodes.php:245
+msgid "Membership Checkout Received"
+msgstr ""
+
+#: includes/frontend/class-shortcodes.php:246
+msgid "We are checking your Stripe payment status."
+msgstr ""
+
+#: includes/frontend/class-shortcodes.php:253
+msgid "Payment Was Not Completed"
+msgstr ""
+
+#: includes/frontend/class-shortcodes.php:254
+msgid "The payment was cancelled or could not be completed. You can return to checkout or contact staff for help completing your membership."
+msgstr ""
+
+#: includes/frontend/class-shortcodes.php:269
+msgid "Return to Checkout"
+msgstr ""
+
+#: includes/frontend/class-shortcodes.php:270
+msgid "Member Account"
+msgstr ""
+
+#: includes/frontend/class-staff-dashboard.php:157
+msgid "Walk-in membership created at front desk"
+msgstr ""
+
+#: includes/frontend/class-staff-dashboard.php:193
+msgid "Walk-in customer checked in"
+msgstr ""
+
+#: includes/frontend/class-staff-dashboard.php:238
+msgid "Walk-in membership created."
+msgstr ""
+
+#: includes/frontend/class-staff-dashboard.php:239
+msgid "Check-in recorded."
+msgstr ""
+
+#: includes/frontend/class-staff-dashboard.php:240
+#: includes/utilities/helpers.php:503
+msgid "The request could not be verified."
+msgstr ""
+
+#: includes/frontend/class-staff-dashboard.php:241
+msgid "Required information is missing."
+msgstr ""
+
+#: includes/frontend/class-staff-dashboard.php:242
+msgid "Your account cannot perform that action."
+msgstr ""
+
+#: includes/frontend/class-staff-dashboard.php:243
+msgid "The record could not be saved."
+msgstr ""
+
+#: includes/frontend/class-staff-dashboard.php:56
+msgid "Staff Dashboard"
+msgstr ""
+
+#: includes/frontend/class-staff-dashboard.php:56
+msgid "Your account does not have access to the front desk dashboard."
+msgstr ""
+
+#: includes/integrations/class-booking-adapter.php:280
+msgid "Booking engine"
+msgstr ""
+
+#. translators: %s: plan name
+#: includes/integrations/class-booking-engine.php:123
+msgid "Included with your %s membership"
+msgstr ""
+
+#. translators: %s: discount percentage
+#: includes/integrations/class-booking-engine.php:148
+msgid "Members Hub Discount Applied: %s%%"
+msgstr ""
+
+#: includes/integrations/class-booking-engine.php:167
+msgid "Booking connected to membership"
+msgstr ""
+
+#: includes/integrations/class-booking-engine.php:209
+msgid "Booking payment completed"
+msgstr ""
+
+#: includes/integrations/class-booking-engine.php:309
+msgid "member"
+msgstr ""
+
+#: includes/integrations/class-corestore-client.php:60
+msgid "coreSTORE store URL / API key not configured."
+msgstr ""
+
+#: includes/integrations/class-ffl-checkout-bridge.php:102
+msgid "Your FFL Firearm Transfers"
+msgstr ""
+
+#: includes/integrations/class-ffl-checkout-bridge.php:103
+msgid "From the online store — separate from your range membership."
+msgstr ""
+
+#. translators: 1: item description, 2: transfer status
+#: includes/integrations/class-ffl-checkout-bridge.php:146
+msgid "Also has an open FFL transfer: %1$s (%2$s)."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:103
+msgid "Waiver Manager"
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:104
+msgid "Built-in digital waivers: tokenized member signing, guest and kiosk surfaces, immutable signature archive, expiry tracking, and check-in mirroring."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:112
+msgid "POS Bridge"
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:113
+msgid "Connect memberships with an on-premise point of sale: live member lookup at the counter, plan and status on the customer profile, upcoming bookings on the POS dashboard, and check-in sync."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:118
+msgid "Install and activate a supported POS plugin, then map it with the memberistic_pos_adapter filter."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:121
+msgid "coreSTORE (Coreware) POS"
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:122
+msgid "Push membership state into a hosted coreSTORE account: a price tier per plan for automatic in-store member discounts, plus plan, status, and expiry on the cashier's customer screen. Sends member data to Coreware — see the Third-Party Services notice before enabling. Independent from the POS Bridge."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:130
+msgid "SMS Notifications (Messageistic)"
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:131
+msgid "Send membership welcome, activation, renewal, and expiry texts through Messageistic. Booking confirmations ride along when the booking engine is active."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:136
+msgid "Install & activate the Messageistic plugin to use this."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:139
+msgid "Advanced FFL Checkout (firearms retail only)"
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:140
+msgid "Optional, industry-specific. For US firearms retailers running the Advanced FFL Checkout plugin: shows a member's own FFL transfer history on their account dashboard, and a heads-up on the staff verification card when one is in flight. Read-only, and inert for every other kind of business."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:145
+msgid "Install & activate the Advanced FFL Checkout plugin to use this."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:150
+msgid "Export member segments, renewal windows, and failed payment audiences into marketing automation."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:150
+msgid "Klaviyo Sync"
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:58
+msgid "Booking Engine"
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:59
+msgid "Member eligibility, member booking rates, booking activity, and front-desk visibility for a connected booking plugin."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:64
+msgid "Install and activate a supported booking plugin, then map it with the memberistic_booking_adapter filter."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:67
+msgid "Verifyistic Age Verification"
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:68
+msgid "Stamp member records with verified age/DOB from the Verifyistic popup, show verified status, and optionally require verification at signup."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:73
+msgid "Install & activate the Verifyistic plugin to use this."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:76
+msgid "Stripe Checkout"
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:77
+msgid "Hosted membership subscription checkout and webhooks."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:85
+msgid "WooCommerce"
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:86
+msgid "Completed-order sync for membership purchases."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:91
+msgid "Install & activate WooCommerce to use this."
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:94
+msgid "Email Automation"
+msgstr ""
+
+#: includes/integrations/class-integrations-registry.php:95
+msgid "Lifecycle notifications for checkout, activation, failed payment, cancellation, renewals, and waivers."
+msgstr ""
+
+#: includes/integrations/class-pos-bridge.php:118
+msgid "Point of sale"
+msgstr ""
+
+#: includes/integrations/class-pos-bridge.php:256
+#: templates/staff-dashboard.php:151
+msgid "Booking"
+msgstr ""
+
+#. translators: 1: POS tier code, 2: POS tier label
+#: includes/integrations/class-pos-bridge.php:347
+msgid "Needs plan mapping — imported from POS tier \"%1$s\" (%2$s). Set the correct plan manually."
+msgstr ""
+
+#: includes/integrations/class-pos-bridge.php:391
+msgid "Membership sold at POS counter"
+msgstr ""
+
+#: includes/integrations/class-verifyistic-bridge.php:184
+msgid "✓ Age verified"
+msgstr ""
+
+#: includes/integrations/class-woocommerce-bridge.php:107
+msgid "Membership cancelled via WooCommerce refund or cancellation"
+msgstr ""
+
+#: includes/integrations/class-woocommerce-bridge.php:179
+msgid "WooCommerce order completed"
+msgstr ""
+
+#. translators: 1: plan name, 2: percentage
+#: includes/integrations/class-woocommerce-discounts.php:189
+msgid "Member discount — %1$s (%2$s%%)"
+msgstr ""
+
+#: includes/integrations/class-woocommerce-discounts.php:213
+msgid "Member discount"
+msgstr ""
+
+#. translators: 1: formatted member price, 2: plan name
+#: includes/integrations/class-woocommerce-discounts.php:276
+msgid "Your %2$s price: %1$s"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:103
+msgid "Checkout requests must be submitted from the membership checkout form."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1030
+msgid "Pending membership could not be found."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:105
+#: includes/payments/class-stripe-service.php:114
+#: includes/payments/class-stripe-service.php:693
+#: includes/payments/class-stripe-service.php:697
+#: includes/payments/class-stripe-service.php:701
+#: includes/payments/class-stripe-service.php:705
+msgid "Invalid checkout request"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1085
+msgid "A Stripe subscription already appears to exist for this pending membership. Staff must review before creating another checkout."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1095
+#: includes/payments/class-stripe-service.php:1136
+#: includes/payments/class-stripe-service.php:1142
+msgid "Payment Processing"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1095
+msgid "We are waiting for Stripe confirmation. Please refresh this page in a moment or contact staff if it does not update."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1100
+#: includes/payments/class-stripe-service.php:1109
+#: includes/payments/class-stripe-service.php:1115
+#: includes/payments/class-stripe-service.php:1120
+#: includes/payments/class-stripe-service.php:1131
+#: includes/payments/class-stripe-service.php:1149
+#: includes/payments/class-stripe-service.php:1152
+msgid "Manual Review Required"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1100
+msgid "Stripe confirmation could not be retrieved. Staff can reconcile this payment from Stripe."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1109
+msgid "The Stripe session does not match this membership record."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1115
+msgid "No matching membership record was found for this Stripe session."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:112
+msgid "Checkout request could not be started. No payment was taken."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1120
+msgid "The membership plan could not be verified."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1131
+msgid "The Stripe session did not pass membership verification."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1136
+msgid "Stripe has not returned a final subscription state yet. Please refresh this page in a moment."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1142
+msgid "Payment Not Completed"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1143
+msgid "Stripe has not confirmed payment yet."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1143
+msgid "The Stripe checkout session expired before payment completed."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1149
+msgid "Payment was found, but local activation could not complete automatically."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1152
+msgid "Payment was found, but staff must review this membership before activation can be completed."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1155
+msgid "Membership Active"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1155
+msgid "Your payment is confirmed and your membership is active."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1163
+msgid "The selected plan does not have a valid price."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1242
+msgid "Stripe request failed."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1251
+msgid "Stripe Checkout Session is missing an id."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1254
+msgid "Stripe Checkout Session mode is not subscription."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1259
+msgid "Stripe Checkout Session does not belong to this membership."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1262
+msgid "Stripe Checkout Session plan does not match the membership."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1265
+msgid "Stripe Checkout Session billing cycle does not match the membership."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1270
+msgid "Stripe Checkout Session mode does not match this site."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1276
+msgid "Stripe Checkout Session amount does not match the selected plan."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1284
+msgid "Stripe Checkout Session currency does not match this site."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1290
+msgid "Stripe Checkout Session email does not match the membership."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1320
+msgid "Stripe Checkout Session has no subscription reference."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1492
+msgid "Could not acquire the idempotency lock; try again."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1661
+#: includes/payments/class-stripe-service.php:1823
+msgid "Card on file (Stripe)"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1669
+msgid "Membership renewed via Stripe"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1696
+msgid "Membership activation is already processing."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1800
+msgid "Membership activated by Stripe checkout"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1863
+msgid "Stripe subscription cancelled"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:1893
+msgid "Stripe invoice payment failed"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:2052
+#: includes/payments/class-stripe-service.php:2075
+msgid "Database locking is unavailable."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:2117
+#: includes/payments/class-stripe-service.php:2143
+msgid "Checkout rate limiting is unavailable."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:218
+#: includes/payments/class-stripe-service.php:253
+msgid "No subscription id provided."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:226
+msgid "No Checkout Session id provided."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:383
+msgid "Stripe subscription set to cancel at period end"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:384
+msgid "Stripe subscription cancelled — billing stopped"
+msgstr ""
+
+#. translators: %s = Stripe error message
+#: includes/payments/class-stripe-service.php:414
+msgid "Stripe cancellation FAILED and retries are exhausted — cancel the subscription manually in the Stripe Dashboard: %s"
+msgstr ""
+
+#. translators: %s = Stripe error message
+#: includes/payments/class-stripe-service.php:419
+msgid "Stripe cancellation FAILED — subscription may still be billing. A retry is queued: %s"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:490
+msgid "Membership cancelled after Stripe retry succeeded"
+msgstr ""
+
+#. translators: 1: membership id, 2: attempts, 3: error message
+#: includes/payments/class-stripe-service.php:531
+msgid "Membership #%1$d (attempt %2$d): %3$s"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:540
+msgid "Memberistic: Stripe subscription cancellation failed — these members may still be billed."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:542
+msgid "Automatic retries are running. If this persists, cancel the subscription manually in the Stripe Dashboard; the notice clears when Stripe confirms."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:598
+msgid "Memberistic Stripe webhook has not verified a signed event in the last 24 hours."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:601
+msgid "The most recent Memberistic Stripe webhook attempt failed."
+msgstr ""
+
+#. translators: %d: manual review count
+#: includes/payments/class-stripe-service.php:606
+msgid "%d Stripe membership item needs manual review."
+msgid_plural "%d Stripe membership items need manual review."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/payments/class-stripe-service.php:632
+msgid "Memberistic webhook health:"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:635
+msgid "Review Stripe items"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:637
+msgid "Dismiss until this changes"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:665
+#: includes/payments/class-stripe-service.php:689
+msgid "Checkout request could not be verified. No payment was taken."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:665
+#: includes/payments/class-stripe-service.php:689
+msgid "Checkout verification failed"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:669
+#: includes/payments/class-stripe-service.php:741
+#: includes/payments/class-stripe-service.php:751
+#: includes/payments/class-stripe-service.php:773
+#: includes/payments/class-stripe-service.php:802
+#: includes/payments/class-stripe-service.php:807
+#: includes/payments/class-stripe-service.php:840
+msgid "Checkout temporarily unavailable"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:669
+#: includes/payments/class-stripe-service.php:807
+#: includes/payments/class-stripe-service.php:859
+msgid "We couldn't connect to secure payment checkout. No payment was taken. Please try again."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:693
+msgid "The selected membership plan was not found or is no longer available. No payment was taken."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:697
+msgid "Please enter your full name. No payment was taken."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:701
+msgid "Please enter a valid email address. No payment was taken."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:705
+msgid "You must accept the terms to continue. No payment was taken."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:715
+msgid "Please complete the age verification on the website before signing up for a membership."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:716
+msgid "Age verification required"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:721
+msgid "Go back and verify"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:758
+msgid "Slow down"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:758
+#: includes/payments/class-stripe-service.php:855
+msgid "Too many checkout attempts. Please wait a few minutes and try again."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:794
+msgid "Online checkout started"
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:851
+#: includes/payments/class-stripe-service.php:1916
+msgid "Checkout is handling another request. Please wait a few seconds and try again."
+msgstr ""
+
+#. translators: %s: the business name shown to customers.
+#: includes/payments/class-stripe-service.php:882
+msgid "We couldn't start checkout. No payment was taken. Please contact %s if the issue continues."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:887
+msgid "We couldn't start checkout. No payment was taken. Please contact support if the issue continues."
+msgstr ""
+
+#: includes/payments/class-stripe-service.php:912
+msgid "Checkout unavailable"
+msgstr ""
+
+#. translators: %s = comma-separated field names
+#: includes/rest/class-memberships-controller.php:1067
+msgid "These fields cannot be updated via this endpoint: %s."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1109
+msgid "Please log in to update your profile photo."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1112
+#: includes/waivers/class-waiver-archive-admin.php:132
+msgid "No file uploaded."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1118
+msgid "Please upload a JPG, PNG, GIF, or WebP image."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1164
+#: includes/utilities/helpers.php:510
+msgid "This membership plan has reached its included people limit."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1170
+#: assets/admin-members.js:133
+#: assets/admin-members.js:325
+msgid "Full name is required."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1187
+msgid "Linked member could not be created."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1195
+msgid "Linked member added"
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1235
+msgid "Payment could not be recorded."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1242
+msgid "Manual payment recorded"
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1298
+msgid "Membership renewed"
+msgstr ""
+
+#. translators: %s = Stripe error message
+#: includes/rest/class-memberships-controller.php:1323
+msgid "The membership was NOT cancelled: Stripe could not stop the subscription (%s). A retry is queued and will finish the cancellation automatically once Stripe confirms. To cancel locally anyway (billing may continue until a retry succeeds), repeat with force=true."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1332
+msgid "Membership cancelled"
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1345
+#: includes/rest/class-plans-controller.php:103
+#: includes/rest/class-plans-controller.php:129
+#: includes/rest/class-plans-controller.php:140
+msgid "Plan not found."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1350
+msgid "Membership plan changed"
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1380
+msgid "Check-in could not be recorded."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1388
+msgid "Member checked in"
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1418
+msgid "Note could not be recorded."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1425
+msgid "Staff note added"
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1446
+msgid "Unknown email template."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1454
+msgid "The email could not be sent. The primary member may not have a valid email address."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1474
+#: includes/rest/class-memberships-controller.php:1524
+msgid "Linked member not found."
+msgstr ""
+
+#. translators: 1: person name, 2: new waiver status.
+#: includes/rest/class-memberships-controller.php:1507
+msgid "Waiver status for %1$s set to %2$s"
+msgstr ""
+
+#. translators: 1: person name, 2: new waiver status.
+#: includes/rest/class-memberships-controller.php:1508
+msgid "linked member"
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1528
+msgid "The primary member cannot be removed."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1538
+msgid "Linked member removed"
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1556
+msgid "WooCommerce bridge is not enabled."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1570
+msgid "Webhook secret is not configured"
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1578
+msgid "Invalid WooCommerce webhook signature."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1584
+msgid "Invalid WooCommerce webhook payload."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1600
+msgid "Stripe webhook is not configured on this site."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1615
+#: includes/rest/class-memberships-controller.php:1619
+msgid "Invalid Stripe webhook signature."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:1626
+msgid "Invalid Stripe webhook payload."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:636
+msgid "You must be logged in."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:657
+msgid "You do not have an active membership."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:669
+msgid "You are not allowed to manage Memberistic memberships."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:679
+msgid "You are not allowed to manage Memberistic payments."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:687
+msgid "You are not allowed to check in Memberistic members."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:695
+msgid "You are not allowed to add Memberistic notes."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:771
+msgid "Invalid waiver status."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:775
+msgid "No memberships were selected."
+msgstr ""
+
+#. translators: %s: waiver status.
+#: includes/rest/class-memberships-controller.php:810
+msgid "Bulk update — waiver set to %s"
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:933
+#: includes/rest/class-memberships-controller.php:1016
+#: includes/rest/class-memberships-controller.php:1099
+#: includes/rest/class-memberships-controller.php:1160
+#: includes/rest/class-memberships-controller.php:1218
+#: includes/rest/class-memberships-controller.php:1278
+#: includes/rest/class-memberships-controller.php:1308
+#: includes/rest/class-memberships-controller.php:1362
+#: includes/rest/class-memberships-controller.php:1406
+#: includes/rest/class-memberships-controller.php:1442
+msgid "Membership not found."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:953
+msgid "A valid plan and primary member name are required."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:970
+msgid "Membership could not be created."
+msgstr ""
+
+#: includes/rest/class-memberships-controller.php:990
+msgid "Membership created"
+msgstr ""
+
+#: includes/rest/class-plans-controller.php:115
+msgid "Plan could not be created."
+msgstr ""
+
+#: includes/rest/class-plans-controller.php:144
+msgid "Plan could not be deleted because memberships are attached."
+msgstr ""
+
+#: includes/rest/class-plans-controller.php:80
+msgid "You are not allowed to manage Memberistic plans."
+msgstr ""
+
+#: includes/rest/class-records-controller.php:159
+msgid "You are not allowed to view Memberistic payments."
+msgstr ""
+
+#: includes/rest/class-records-controller.php:176
+msgid "You are not allowed to view Memberistic check-ins."
+msgstr ""
+
+#: includes/rest/class-rest-controller.php:34
+msgid "You are not allowed to access this Memberistic endpoint."
+msgstr ""
+
+#: includes/rest/class-rest-controller.php:60
+msgid "You are not allowed to access member contact/profile data."
+msgstr ""
+
+#: includes/rest/class-saved-views-controller.php:133
+msgid "Unknown saved-view context."
+msgstr ""
+
+#: includes/rest/class-saved-views-controller.php:137
+msgid "Saved views need a name."
+msgstr ""
+
+#. translators: %d: maximum number of saved views allowed per user
+#: includes/rest/class-saved-views-controller.php:147
+msgid "You already have %d saved views. Delete one before adding another."
+msgstr ""
+
+#: includes/rest/class-saved-views-controller.php:185
+msgid "Saved view not found."
+msgstr ""
+
+#: includes/rest/class-saved-views-controller.php:94
+msgid "You are not allowed to manage saved views."
+msgstr ""
+
+#: includes/rest/class-settings-controller.php:75
+msgid "You are not allowed to manage Memberistic settings."
+msgstr ""
+
+#: includes/utilities/class-verification.php:104
+msgid "Invalid verification token."
+msgstr ""
+
+#: includes/utilities/class-verification.php:116
+msgid "No member matches this code. Ask the customer to refresh their dashboard."
+msgstr ""
+
+#: includes/utilities/class-verification.php:121
+#: includes/waivers/class-waivers.php:1425
+msgid "Member not found."
+msgstr ""
+
+#: includes/utilities/class-verification.php:208
+#: templates/account.php:100
+msgid "Active Member"
+msgstr ""
+
+#: includes/utilities/class-verification.php:216
+msgid "✓ Waiver on file"
+msgstr ""
+
+#: includes/utilities/class-verification.php:217
+msgid "⚠ Waiver expired"
+msgstr ""
+
+#: includes/utilities/class-verification.php:217
+msgid "⚠ Waiver not signed"
+msgstr ""
+
+#: includes/utilities/class-verification.php:223
+#: templates/account.php:556
+msgid "Renews"
+msgstr ""
+
+#: includes/utilities/class-verification.php:224
+msgid "Waiver valid through"
+msgstr ""
+
+#: includes/utilities/class-verification.php:226
+msgid "Live verification"
+msgstr ""
+
+#: includes/utilities/class-verification.php:246
+msgid "Verification failed"
+msgstr ""
+
+#: includes/utilities/helpers.php:474
+msgid "Memberistic 2.0.0:"
+msgstr ""
+
+#: includes/utilities/helpers.php:475
+msgid "Plans no longer include bookings at no charge by default. Until you choose which plans qualify, members will be charged the standard booking price. This does not affect memberships, payments, or waivers."
+msgstr ""
+
+#: includes/utilities/helpers.php:477
+msgid "Review plans"
+msgstr ""
+
+#: includes/utilities/helpers.php:479
+msgid "Dismiss"
+msgstr ""
+
+#: includes/utilities/helpers.php:498
+msgid "Plan saved successfully."
+msgstr ""
+
+#: includes/utilities/helpers.php:499
+msgid "Plan deleted successfully."
+msgstr ""
+
+#: includes/utilities/helpers.php:500
+msgid "Plan deactivated successfully."
+msgstr ""
+
+#: includes/utilities/helpers.php:501
+msgid "This plan has active memberships and cannot be deleted."
+msgstr ""
+
+#: includes/utilities/helpers.php:502
+msgid "The requested plan was not found."
+msgstr ""
+
+#: includes/utilities/helpers.php:505
+msgid "Membership saved successfully."
+msgstr ""
+
+#: includes/utilities/helpers.php:506
+msgid "The requested membership was not found."
+msgstr ""
+
+#: includes/utilities/helpers.php:507
+msgid "Membership could not be saved."
+msgstr ""
+
+#: includes/utilities/helpers.php:508
+msgid "The membership was NOT cancelled: Stripe could not stop the subscription, so billing would have continued. A retry is queued and the cancellation will complete automatically once Stripe confirms — see the notice on this screen for details."
+msgstr ""
+
+#: includes/utilities/helpers.php:509
+msgid "Linked member added successfully."
+msgstr ""
+
+#: includes/utilities/helpers.php:511
+msgid "Payment record added successfully."
+msgstr ""
+
+#: includes/utilities/helpers.php:512
+msgid "Check-in recorded successfully."
+msgstr ""
+
+#: includes/utilities/helpers.php:513
+msgid "Staff note added successfully."
+msgstr ""
+
+#: includes/utilities/helpers.php:514
+msgid "Required Memberistic pages were created or mapped successfully."
+msgstr ""
+
+#: includes/utilities/helpers.php:515
+msgid "Branded Memberistic pages were created and mapped successfully."
+msgstr ""
+
+#. translators: 1: accounts created, 2: set-password emails sent, 3: accounts linked
+#: includes/utilities/helpers.php:525
+msgid "Member logins repaired: %1$d new account(s) created, %2$d set-password email(s) sent, %3$d existing account(s) linked."
+msgstr ""
+
+#: includes/utilities/helpers.php:531
+msgid "All members already have a login — nothing to repair."
+msgstr ""
+
+#: includes/utilities/helpers.php:534
+msgid "Memberistic notice."
+msgstr ""
+
+#: includes/waivers/class-documents.php:160
+msgid "No file received."
+msgstr ""
+
+#: includes/waivers/class-documents.php:163
+msgid "The file could not be uploaded."
+msgstr ""
+
+#: includes/waivers/class-documents.php:166
+msgid "Invalid upload."
+msgstr ""
+
+#. translators: %d MB
+#: includes/waivers/class-documents.php:169
+msgid "File is too large (max %d MB)."
+msgstr ""
+
+#: includes/waivers/class-documents.php:178
+msgid "That file type is not allowed. Upload a PDF or image (JPG, PNG, WEBP, HEIC)."
+msgstr ""
+
+#: includes/waivers/class-documents.php:194
+msgid "Could not save the file. Please try again."
+msgstr ""
+
+#: includes/waivers/class-documents.php:216
+msgid "Generated file is empty or too large."
+msgstr ""
+
+#: includes/waivers/class-documents.php:221
+msgid "Generated file type is not allowed."
+msgstr ""
+
+#: includes/waivers/class-documents.php:230
+msgid "Could not save the generated file."
+msgstr ""
+
+#: includes/waivers/class-documents.php:309
+msgid "Document not found."
+msgstr ""
+
+#: includes/waivers/class-documents.php:312
+msgid "This download link could not be verified."
+msgstr ""
+
+#: includes/waivers/class-documents.php:319
+msgid "You do not have permission to view this document."
+msgstr ""
+
+#: includes/waivers/class-documents.php:328
+msgid "The document file is missing."
+msgstr ""
+
+#: includes/waivers/class-documents.php:60
+msgid "My Documents"
+msgstr ""
+
+#: includes/waivers/class-documents.php:61
+msgid "Upload a signed waiver, ID, or other required document (PDF or image, up to 10 MB). Only you and range staff can view these."
+msgstr ""
+
+#: includes/waivers/class-documents.php:63
+#: includes/waivers/class-waivers.php:1389
+msgid "Document uploaded."
+msgstr ""
+
+#: includes/waivers/class-documents.php:65
+msgid "Upload failed. Please choose a PDF or image under 10 MB."
+msgstr ""
+
+#: includes/waivers/class-documents.php:70
+msgid "Label (optional)"
+msgstr ""
+
+#: includes/waivers/class-documents.php:72
+msgid "Upload"
+msgstr ""
+
+#: includes/waivers/class-documents.php:79
+#: includes/waivers/class-waivers.php:1746
+#: templates/account.php:460
+msgid "View"
+msgstr ""
+
+#: includes/waivers/class-documents.php:84
+msgid "No documents uploaded yet."
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:101
+msgid "Upload the OtterWaiver export. PDFs are mirrored into protected storage so they survive Ottertext cancellation, repeat signers collapse to one current waiver, and members are auto-matched by email. For very large files, the WP-CLI command is more reliable:"
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:109
+msgid "Mirror PDFs locally (recommended)"
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:110
+msgid "Match & stamp existing members"
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:111
+msgid "Fresh import (clear the archive first)"
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:113
+msgid "Import Waivers"
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:126
+msgid "You are not allowed to import waivers."
+msgstr ""
+
+#. translators: import stats
+#: includes/waivers/class-waiver-archive-admin.php:153
+msgid "Imported %1$d rows for %2$d people. Members matched: %3$d. %4$d PDFs are mirroring in the background — reload this page in a few minutes to watch the count rise."
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:173
+msgid "Waiver not found."
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:196
+msgid "No document available."
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:202
+msgid "Document unavailable."
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:62
+msgid "waiver records"
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:63
+#: includes/waivers/class-waivers.php:1806
+msgid "current"
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:64
+msgid "with mirrored PDF"
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:65
+msgid "matched to members"
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:68
+msgid "Look up a waiver"
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:72
+msgid "or First Last"
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:73
+#: templates/staff-dashboard.php:115
+msgid "Search"
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:80
+msgid "waiver on file"
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:89
+msgid "View signed PDF"
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:93
+msgid "No waiver on file for that email/name. They will need to sign."
+msgstr ""
+
+#: includes/waivers/class-waiver-archive-admin.php:99
+msgid "Import from Ottertext CSV"
+msgstr ""
+
+#: includes/waivers/class-waiver-import.php:293
+msgid "Could not open the CSV file."
+msgstr ""
+
+#: includes/waivers/class-waiver-import.php:298
+msgid "The CSV file is empty."
+msgstr ""
+
+#: includes/waivers/class-waiver-import.php:39
+#: includes/waivers/class-waiver-import.php:105
+msgid "CSV file not found or unreadable."
+msgstr ""
+
+#: includes/waivers/class-waiver-import.php:411
+msgid "Could not save the PDF."
+msgstr ""
+
+#: includes/waivers/class-waiver-import.php:422
+msgid "Could not create the waivers storage directory."
+msgstr ""
+
+#: includes/waivers/class-waiver-versions.php:180
+msgid "Initial version (migrated)"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1003
+msgid "Signature — please sign in the box below"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1007
+msgid "Clear signature"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1009
+msgid "JavaScript is required to sign electronically. Please ask range staff for a paper waiver."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1027
+#: includes/waivers/class-waivers.php:1081
+msgid "Please sign in the signature box."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1051
+msgid "Please enter your date of birth."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1055
+msgid "You must be 18 or older to sign this waiver. A parent or guardian signs for minors — add the minor below their own signature."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1058
+msgid "Please enter a valid phone number."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1069
+msgid "Please enter a date of birth for each minor listed."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1086
+msgid "Your signature could not be read. Please clear the box and sign again."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1128
+msgid "Drawn signature"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1138
+msgid "Signed waiver (PDF)"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1166
+msgid "This waiver link is invalid or has expired. Please contact the range."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1170
+msgid "This waiver link is invalid. Please contact the range."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1226
+msgid "Thank you — your waiver is on file. Show your member QR at the range desk on your next visit."
+msgstr ""
+
+#. translators: %s: date
+#: includes/waivers/class-waivers.php:1238
+msgid "Your waiver is signed and on file (valid through %s). Thank you!"
+msgstr ""
+
+#. translators: %s: date
+#: includes/waivers/class-waivers.php:1239
+msgid "Your waiver is signed and on file. Thank you!"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1259
+msgid "Optional: attach a photo of your ID or a signed paper waiver (PDF/JPG/PNG)"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1315
+msgid "Waiver settings saved."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1323
+msgid "The waiver text cannot be empty."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1327
+msgid "No changes — the text matches the current version."
+msgstr ""
+
+#. translators: %d: version id
+#: includes/waivers/class-waivers.php:1333
+msgid "Version %d published. All previously signed waivers now require re-consent."
+msgstr ""
+
+#. translators: %d: version id
+#: includes/waivers/class-waivers.php:1334
+msgid "Version %d published. Existing signatures remain valid until their normal expiry."
+msgstr ""
+
+#. translators: %d: version id
+#: includes/waivers/class-waivers.php:1336
+msgid "The new version could not be published."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1351
+msgid "Kiosk link generated — see the Kiosk stations card below. Open it on the kiosk device."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1357
+msgid "Kiosk staff PIN removed."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1358
+msgid "Kiosk staff PIN saved."
+msgstr ""
+
+#. translators: %d: count
+#: includes/waivers/class-waivers.php:1362
+msgid "Marked %d member(s) as signed."
+msgstr ""
+
+#. translators: %d: count
+#: includes/waivers/class-waivers.php:1366
+msgid "Sent the waiver link to %d member(s)."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1371
+msgid "Waiver marked signed."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1391
+msgid "No file selected."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1431
+msgid "Back to all members"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1438
+msgid "valid through"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1446
+msgid "Mark waiver signed"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1451
+msgid "Documents"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1456
+msgid "Label (e.g. Signed paper waiver)"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1458
+msgid "Upload document"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1462
+msgid "Document"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1462
+msgid "Uploaded"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1469
+#: templates/account.php:485
+msgid "Download"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1475
+msgid "No documents on file for this member yet."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1528
+msgid "This export link could not be verified."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1590
+msgid "Signature not found."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1597
+msgid "Signed Waiver"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1599
+#: includes/waivers/class-waivers.php:1656
+msgid "Print / Save PDF"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1600
+msgid "Liability Waiver (signed copy)"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1602
+#: includes/waivers/class-waivers.php:1733
+msgid "Signer"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1621
+msgid "Minors covered"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1625
+msgid "Valid through"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1628
+msgid "Document hash (SHA-256)"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1647
+msgid "Check-In Poster"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1658
+msgid "Check In Here"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1659
+msgid "Scan with your phone camera to sign your waiver & check in"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1662
+msgid "Point your phone camera at the code above."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1662
+msgid "Show your confirmation (or member QR) at the desk."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1662
+msgid "Tap the link, read and sign the waiver."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1693
+msgid "Waiver status (active members)"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1695
+msgid "signed"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1696
+msgid "missing"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1698
+msgid "total"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1700
+msgid "Mark every active member with a missing or expired waiver as signed? Use this only for members who signed on paper in store."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1703
+msgid "Mark all missing/expired as signed (in-store backlog)"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1708
+msgid "Email waiver link to all missing"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1713
+msgid "Signed waiver archive"
+msgstr ""
+
+#. translators: %d: number of recorded signatures
+#: includes/waivers/class-waivers.php:1717
+msgid "%d signature record(s) on file. Each export includes the signer, date, expiry, IP, the exact waiver text they agreed to, and a SHA-256 hash of that text."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1721
+msgid "Download all signed waivers (CSV)"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1722
+msgid "Open check-in kiosk"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1723
+msgid "Print check-in QR poster"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1725
+msgid "Guest/non-member signing page (no login): share the link above or embed the [memberistic_guest_waiver] shortcode on a public page or desk kiosk."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1736
+msgid "Attachment"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1737
+msgid "Copy"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1747
+msgid "Print"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1752
+msgid "Showing the 50 most recent. Use the CSV download for the full archive."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1757
+msgid "Waiver document (versioned)"
+msgstr ""
+
+#. translators: 1: version id, 2: title, 3: date
+#: includes/waivers/class-waivers.php:1764
+msgid "Currently in effect: version %1$d%2$s, published %3$s."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1776
+msgid "Waiver text shown when signing (saving publishes a NEW version — past signatures keep their original text snapshot)"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1780
+msgid "Version label (optional, e.g. \"2026 insurance update\")"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1786
+msgid "Require re-consent"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1787
+msgid "everyone signed before this version must sign again (their status flips to \"needs review\" and waivers on file stop satisfying booking/check-in). Leave unchecked for wording tweaks: existing signatures then stay valid until their normal expiry."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1790
+msgid "Publish new version"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1794
+msgid "Version history"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1797
+msgid "Version"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1798
+msgid "Label"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1799
+msgid "Effective from"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1800
+msgid "Re-consent"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1801
+msgid "Published by"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1809
+msgid "No"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1809
+msgid "Yes"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1819
+msgid "Waiver schedule settings"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1824
+msgid "Validity (days before a signed waiver expires)"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1828
+msgid "Renewal reminder (days before expiry to email the member; 0 disables)"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1831
+msgid "Save waiver settings"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1836
+msgid "Kiosk stations"
+msgstr ""
+
+#. translators: %d: hours
+#: includes/waivers/class-waivers.php:1841
+msgid "Generate a signed kiosk link for a front-desk device. A kiosk link unlocks the full-screen signing mode, skips the public per-IP throttle, and stamps the station name on every signature. Links are valid for %d hours — mint a fresh one each shift, like the check-in stations."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1852
+msgid "open this on the kiosk device (valid until"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1853
+#: assets/admin-dashboard.js:414
+#: assets/admin-members.js:1526
+msgid "Open"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1859
+msgid "Station name (e.g. front-desk-ipad)"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1860
+msgid "Generate kiosk link"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1865
+msgid "Staff exit PIN (digits, optional — shows a PIN-gated exit button on the kiosk; empty disables)"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1867
+msgid "Save PIN"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1876
+msgid "All"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1876
+#: assets/admin-members.js:1346
+msgid "Expired"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1876
+#: templates/staff-dashboard.php:92
+msgid "Missing"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1890
+msgid "Action"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1894
+msgid "No members match this filter."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1911
+msgid "Mark signed"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1915
+msgid "Sign link"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1917
+msgid "Docs"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:1923
+msgid "Showing up to 200 rows. Use the filters above to narrow the list."
+msgstr ""
+
+#. translators: %s: signer
+#: includes/waivers/class-waivers.php:296
+msgid "Waiver signed by %s"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:456
+msgid "Waiver marked signed by staff"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:762
+msgid "Welcome to the range. Tap an option to check in."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:763
+#: includes/waivers/class-waivers.php:834
+msgid "Guest / First Visit — Sign Waiver"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:764
+#: includes/waivers/class-waivers.php:835
+msgid "Member — Sign In to Show Your Pass"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:765
+msgid "Already have your member QR on your phone? Just show it at the desk."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:766
+#: includes/waivers/class-waivers.php:795
+#: templates/account.php:393
+msgid "Range Check-In"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:811
+msgid "Welcome to the range"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:812
+msgid "Guest / First Visit — Sign the Waiver"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:813
+msgid "Member — Show Your Pass"
+msgstr ""
+
+#. translators: %s: station name
+#: includes/waivers/class-waivers.php:814
+msgid "Station: %s"
+msgstr ""
+
+#. translators: %s: station name
+#: includes/waivers/class-waivers.php:816
+msgid "Staff PIN"
+msgstr ""
+
+#. translators: %s: station name
+#: includes/waivers/class-waivers.php:816
+msgid "Staff exit"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:850
+msgid "Sign the range waiver"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:876
+msgid "Please enter your full name, a valid email, and check the agreement box."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:893
+msgid "Please try again later"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:893
+msgid "Too many waiver submissions from this connection. Please ask range staff for help."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:922
+#: includes/waivers/class-waivers.php:931
+msgid "Thank you — your waiver is on file. Enjoy your visit."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:923
+msgid "Next guest — tap here"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:925
+msgid "Resetting for the next guest in"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:932
+msgid "Next guest — back to check-in"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:954
+msgid "Full legal name"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:956
+msgid "Email address"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:978
+msgid "Phone number"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:985
+msgid "Emergency contact name"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:987
+msgid "Emergency contact phone"
+msgstr ""
+
+#. translators: 1,2: business/brand name
+#: includes/waivers/class-waivers.php:99
+msgid "I acknowledge that the use of firearms and the shooting range at %1$s involves inherent risks. I confirm I am legally permitted to handle firearms, will follow all posted range rules and staff instructions at all times, and assume responsibility for my own safety and conduct on the premises. I release %2$s, its owners, staff, and affiliates from liability for injury or loss arising from my voluntary participation, to the extent permitted by law."
+msgstr ""
+
+#: includes/waivers/class-waivers.php:992
+msgid "Minors you are signing for as parent/guardian (optional)"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:995
+msgid "Minor's full name"
+msgstr ""
+
+#: includes/waivers/class-waivers.php:999
+msgid "Add another minor"
+msgstr ""
+
+#: memberistic-membership-solutions.php:151
+msgid "Duplicate Memberistic plugin folder detected:"
+msgstr ""
+
+#. translators: 1: path of the copy that loaded first and is active, 2: path of the inert duplicate
+#: memberistic-membership-solutions.php:155
+msgid "Two copies of Memberistic Membership Solutions are active — \"%1$s\" is running; \"%2$s\" is a leftover duplicate and should be deactivated and deleted from wp-content/plugins/."
+msgstr ""
+
+#: memberistic-membership-solutions.php:73
+msgid "Memberistic Membership Solutions is inactive."
+msgstr ""
+
+#. translators: 1: required PHP version, 2: required WordPress version, 3: current PHP version, 4: current WordPress version
+#: memberistic-membership-solutions.php:77
+msgid "It requires PHP %1$s or newer and WordPress %2$s or newer. This site is running PHP %3$s and WordPress %4$s. Ask your host to update, then reload this page."
+msgstr ""
+
+#: templates/account.php:112
+msgid "Online payment management is briefly unavailable. Please try again shortly or contact the range desk to update your payment."
+msgstr ""
+
+#: templates/account.php:134
+msgid "Your range waiver is not signed. Please sign it before your next visit — it takes under a minute."
+msgstr ""
+
+#: templates/account.php:135
+msgid "Sign waiver"
+msgstr ""
+
+#: templates/account.php:142
+msgid "Your membership payment is past due — please update your payment method."
+msgstr ""
+
+#: templates/account.php:143
+msgid "Update payment"
+msgstr ""
+
+#: templates/account.php:145
+msgid "Your membership has expired."
+msgstr ""
+
+#: templates/account.php:146
+msgid "Renew now"
+msgstr ""
+
+#: templates/account.php:163
+msgid "Member since %s"
+msgstr ""
+
+#: templates/account.php:165
+msgid "Add photo"
+msgstr ""
+
+#: templates/account.php:165
+msgid "Change photo"
+msgstr ""
+
+#: templates/account.php:176
+#: templates/account.php:207
+#: templates/account.php:620
+msgid "Book A Lane"
+msgstr ""
+
+#: templates/account.php:177
+msgid "Membership Details"
+msgstr ""
+
+#: templates/account.php:178
+msgid "Billing &amp; Payments"
+msgstr ""
+
+#: templates/account.php:179
+msgid "Additional Members"
+msgstr ""
+
+#: templates/account.php:180
+msgid "Booking History"
+msgstr ""
+
+#: templates/account.php:182
+msgid "Shop Orders"
+msgstr ""
+
+#: templates/account.php:184
+msgid "Digital Member Card"
+msgstr ""
+
+#: templates/account.php:195
+msgid "Welcome back, %s."
+msgstr ""
+
+#: templates/account.php:196
+msgid "Your range access is active and your member card is ready. Lane availability is good for today."
+msgstr ""
+
+#: templates/account.php:201
+msgid "Next Renewal"
+msgstr ""
+
+#: templates/account.php:202
+#: templates/account.php:554
+msgid "Member Since"
+msgstr ""
+
+#: templates/account.php:207
+msgid "Reserve online 24/7"
+msgstr ""
+
+#: templates/account.php:211
+msgid "Mon–Thu 10–6 · Fri & Sat 10–7 · Sun 12–6"
+msgstr ""
+
+#: templates/account.php:211
+msgid "Range Hours"
+msgstr ""
+
+#: templates/account.php:215
+msgid "Add, edit or remove people"
+msgstr ""
+
+#: templates/account.php:215
+msgid "Manage Members"
+msgstr ""
+
+#: templates/account.php:219
+msgid "Update Payment"
+msgstr ""
+
+#: templates/account.php:239
+msgid "Reserve Your Lane"
+msgstr ""
+
+#: templates/account.php:241
+msgid "Pick any open slot — your contact details on file are pre-filled, so it only takes a few taps."
+msgstr ""
+
+#: templates/account.php:245
+msgid "Open Booking Form"
+msgstr ""
+
+#: templates/account.php:255
+msgid "Plan Details"
+msgstr ""
+
+#: templates/account.php:265
+msgid "Unlimited range time and full member benefits."
+msgstr ""
+
+#: templates/account.php:268
+msgid "Change Plan"
+msgstr ""
+
+#: templates/account.php:269
+msgid "Switch to Annual"
+msgstr ""
+
+#: templates/account.php:269
+msgid "Switch to Monthly"
+msgstr ""
+
+#: templates/account.php:273
+msgid "Cancel Membership"
+msgstr ""
+
+#: templates/account.php:274
+msgid "Cancel anytime. Access remains active until the end of your current billing period."
+msgstr ""
+
+#: templates/account.php:275
+msgid "Request Cancellation"
+msgstr ""
+
+#: templates/account.php:282
+msgid "Next Charge"
+msgstr ""
+
+#: templates/account.php:286
+msgid "on %s"
+msgstr ""
+
+#: templates/account.php:292
+msgid "Update Payment Method"
+msgstr ""
+
+#: templates/account.php:296
+msgid "Billing History"
+msgstr ""
+
+#: templates/account.php:298
+msgid "No payments are recorded yet."
+msgstr ""
+
+#: templates/account.php:306
+msgid "Reference"
+msgstr ""
+
+#: templates/account.php:313
+msgid "Card"
+msgstr ""
+
+#: templates/account.php:32
+msgid "No active membership found"
+msgstr ""
+
+#: templates/account.php:33
+msgid "No membership is linked to this account yet. If you joined online, sign in with the same email you used at checkout."
+msgstr ""
+
+#: templates/account.php:334
+msgid "People On This Membership"
+msgstr ""
+
+#: templates/account.php:338
+msgid "No people are linked to this membership yet."
+msgstr ""
+
+#: templates/account.php:35
+#: templates/account.php:186
+msgid "Sign Out"
+msgstr ""
+
+#: templates/account.php:362
+msgid "Add or Update a Member"
+msgstr ""
+
+#: templates/account.php:370
+msgid "Booking &amp; Check-In History"
+msgstr ""
+
+#: templates/account.php:372
+msgid "No booking or check-in records yet."
+msgstr ""
+
+#: templates/account.php:378
+msgid "Resource"
+msgstr ""
+
+#: templates/account.php:385
+msgid "Lane Booking"
+msgstr ""
+
+#: templates/account.php:427
+msgid "Orders"
+msgstr ""
+
+#: templates/account.php:428
+msgid "Total Spent"
+msgstr ""
+
+#: templates/account.php:429
+msgid "Saved As A Member"
+msgstr ""
+
+#: templates/account.php:430
+#: templates/account.php:472
+msgid "Downloads"
+msgstr ""
+
+#: templates/account.php:434
+msgid "Recent Orders"
+msgstr ""
+
+#: templates/account.php:436
+msgid "No orders yet. Member pricing is applied automatically at checkout when you shop signed in."
+msgstr ""
+
+#: templates/account.php:437
+msgid "Browse The Shop"
+msgstr ""
+
+#: templates/account.php:442
+msgid "Order"
+msgstr ""
+
+#: templates/account.php:446
+msgid "Member Saving"
+msgstr ""
+
+#: templates/account.php:466
+msgid "View all orders →"
+msgstr ""
+
+#: templates/account.php:476
+msgid "Product"
+msgstr ""
+
+#: templates/account.php:477
+msgid "File"
+msgstr ""
+
+#: templates/account.php:495
+msgid "Addresses & Account"
+msgstr ""
+
+#: templates/account.php:498
+msgid "Billing Address"
+msgstr ""
+
+#: templates/account.php:499
+#: templates/account.php:504
+msgid "Not set yet."
+msgstr ""
+
+#: templates/account.php:500
+#: templates/account.php:505
+#: assets/admin-members.js:885
+msgid "Edit"
+msgstr ""
+
+#: templates/account.php:503
+msgid "Shipping Address"
+msgstr ""
+
+#: templates/account.php:509
+msgid "Payment methods"
+msgstr ""
+
+#: templates/account.php:511
+msgid "Account details & password"
+msgstr ""
+
+#: templates/account.php:520
+msgid "Your Digital Member Card"
+msgstr ""
+
+#: templates/account.php:552
+#: assets/admin-checkins.js:153
+#: assets/admin-members.js:1489
+#: assets/admin-payments.js:289
+msgid "Member ID"
+msgstr ""
+
+#: templates/account.php:559
+msgid "Member verification QR code"
+msgstr ""
+
+#: templates/account.php:595
+msgid "Show at the range desk · or scan the QR"
+msgstr ""
+
+#: templates/account.php:597
+msgid "Download / Print Card"
+msgstr ""
+
+#: templates/account.php:621
+#: templates/staff-dashboard.php:35
+#: assets/admin-members.js:885
+msgid "Close"
+msgstr ""
+
+#. translators: %s: anchor to the standalone booking page
+#: templates/account.php:637
+msgid "The booking module is not active. %s."
+msgstr ""
+
+#. translators: %s: anchor to the standalone booking page
+#: templates/account.php:638
+msgid "Open the standalone booking page"
+msgstr ""
+
+#: templates/checkout.php:100
+msgid "Member Details"
+msgstr ""
+
+#: templates/checkout.php:107
+msgid "Payment is processed securely on Stripe in the next step."
+msgstr ""
+
+#: templates/checkout.php:113
+msgid "I agree to the range safety waiver and membership terms. I confirm I am legally eligible for firearms range access where required by law."
+msgstr ""
+
+#: templates/checkout.php:118
+msgid "Complete Membership Enrollment ->"
+msgstr ""
+
+#: templates/checkout.php:174
+msgid "Connecting to secure checkout"
+msgstr ""
+
+#: templates/checkout.php:37
+msgid "Account"
+msgstr ""
+
+#: templates/checkout.php:39
+msgid "Confirm"
+msgstr ""
+
+#: templates/checkout.php:41
+msgid "COMPLETE YOUR ENROLLMENT"
+msgstr ""
+
+#: templates/checkout.php:42
+msgid "Almost there. Set up your account and membership details, then continue to secure Stripe checkout."
+msgstr ""
+
+#: templates/checkout.php:46
+msgid "Online checkout is not enabled yet. Please contact staff to start your membership."
+msgstr ""
+
+#: templates/checkout.php:50
+msgid "No membership plans are currently available. Please check back soon or contact staff."
+msgstr ""
+
+#: templates/checkout.php:61
+#: templates/checkout.php:152
+msgid "Annual Billing"
+msgstr ""
+
+#: templates/checkout.php:61
+#: templates/checkout.php:152
+msgid "Monthly Billing"
+msgstr ""
+
+#: templates/checkout.php:63
+msgid "mo"
+msgstr ""
+
+#: templates/checkout.php:63
+msgid "yr"
+msgstr ""
+
+#: templates/checkout.php:72
+msgid "Account Creation"
+msgstr ""
+
+#: templates/checkout.php:73
+msgid "Membership Plan"
+msgstr ""
+
+#: templates/checkout.php:86
+#: assets/admin-emails.js:212
+msgid "Billing Cycle"
+msgstr ""
+
+#: templates/checkout.php:88
+#: templates/plans-grid.php:21
+#: templates/staff-dashboard.php:64
+#: assets/admin-members.js:437
+#: assets/admin-members.js:528
+#: assets/admin-plans.js:355
+msgid "Monthly"
+msgstr ""
+
+#: templates/checkout.php:89
+#: templates/plans-grid.php:22
+#: templates/staff-dashboard.php:65
+#: assets/admin-members.js:438
+#: assets/admin-members.js:529
+#: assets/admin-plans.js:359
+msgid "Annual"
+msgstr ""
+
+#: templates/checkout.php:92
+#: templates/staff-dashboard.php:78
+msgid "Full Name"
+msgstr ""
+
+#: templates/plans-grid.php:20
+#: assets/admin-members.js:435
+#: assets/admin-members.js:526
+msgid "Billing cycle"
+msgstr ""
+
+#: templates/plans-grid.php:28
+msgid "No membership plans are available at this time. Please check back soon."
+msgstr ""
+
+#: templates/plans-grid.php:45
+msgid "Most Popular"
+msgstr ""
+
+#: templates/plans-grid.php:53
+msgid "/ month"
+msgstr ""
+
+#. translators: %s: formatted savings amount
+#: templates/plans-grid.php:60
+msgid "Save $%s / year"
+msgstr ""
+
+#. translators: %d: included people count
+#: templates/plans-grid.php:70
+msgid "Includes %d total person(s)"
+msgstr ""
+
+#: templates/plans-grid.php:82
+msgid "Choose %s"
+msgstr ""
+
+#: templates/staff-dashboard.php:101
+msgid "Create Membership"
+msgstr ""
+
+#: templates/staff-dashboard.php:106
+msgid "Find Members"
+msgstr ""
+
+#: templates/staff-dashboard.php:108
+msgid "Name, email, phone, or member ID"
+msgstr ""
+
+#: templates/staff-dashboard.php:110
+msgid "Any status"
+msgstr ""
+
+#: templates/staff-dashboard.php:124
+msgid "No plan"
+msgstr ""
+
+#: templates/staff-dashboard.php:140
+msgid "No members found."
+msgstr ""
+
+#: templates/staff-dashboard.php:148
+msgid "Recent Bookings"
+msgstr ""
+
+#: templates/staff-dashboard.php:151
+msgid "Customer"
+msgstr ""
+
+#: templates/staff-dashboard.php:161
+msgid "No booking records found yet."
+msgstr ""
+
+#: templates/staff-dashboard.php:169
+msgid "Recent Check-Ins"
+msgstr ""
+
+#: templates/staff-dashboard.php:172
+msgid "Time"
+msgstr ""
+
+#: templates/staff-dashboard.php:18
+msgid "Front Desk"
+msgstr ""
+
+#: templates/staff-dashboard.php:19
+msgid "Memberistic Staff Dashboard"
+msgstr ""
+
+#: templates/staff-dashboard.php:32
+msgid "Action Complete"
+msgstr ""
+
+#: templates/staff-dashboard.php:32
+msgid "Action Needed"
+msgstr ""
+
+#: templates/staff-dashboard.php:40
+#: assets/admin-dashboard.js:329
+msgid "Active Members"
+msgstr ""
+
+#: templates/staff-dashboard.php:41
+msgid "Pending Members"
+msgstr ""
+
+#: templates/staff-dashboard.php:42
+msgid "Check-Ins Today"
+msgstr ""
+
+#: templates/staff-dashboard.php:43
+msgid "Waivers Needed"
+msgstr ""
+
+#: templates/staff-dashboard.php:48
+msgid "Create Walk-In Membership"
+msgstr ""
+
+#: templates/staff-dashboard.php:55
+msgid "Select plan"
+msgstr ""
+
+#: templates/staff-dashboard.php:62
+#: assets/admin-members.js:1493
+msgid "Billing"
+msgstr ""
+
+#: templates/staff-dashboard.php:71
+#: assets/admin-members.js:1343
+#: assets/admin-plans.js:378
+msgid "Active"
+msgstr ""
+
+#: templates/staff-dashboard.php:73
+msgid "Trial"
+msgstr ""
+
+#: templates/staff-dashboard.php:74
+msgid "Comped"
+msgstr ""
+
+#: templates/staff-dashboard.php:94
+msgid "Needs Review"
+msgstr ""
+
+#: templates/staff-dashboard.php:98
+msgid "Staff Notes"
+msgstr ""
