@@ -58,7 +58,7 @@ declared compatibility.
 - [ ] PHP 8.2, 8.3, 8.4 all pass
 - [x] A real WordPress integration harness exists — `bin/install-wp-tests.sh`,
       `tests/integration/`, `phpunit-integration.xml`, and a CI matrix in
-      `.github/workflows/integration.yml` covering WP 6.8 / 6.9 / 7.0.2 ×
+      `.github/workflows/integration.yml` covering WP 6.8 / 6.9 / 7.0.3 ×
       PHP 8.2 / 8.3 / 8.4, plus a non-blocking trunk canary
 - [x] Deprecation notices fail the suite, so incompatibilities surface without
       maintaining a per-release deprecation list
