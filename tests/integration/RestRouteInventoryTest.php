@@ -45,13 +45,6 @@ class RestRouteInventoryTest extends Memberistic_Integration_TestCase {
 			// it is public by design, and it exposes route schemas rather than
 			// member data. Holding plugin rules against a core-owned route
 			// would be asserting the wrong thing.
-			// `/memberistic/v1` itself is the namespace index, which WordPress
-			// core registers for every namespace via WP_REST_Server. It is
-			// core's route, not the plugin's: it lists the endpoints in the
-			// namespace, carries no permission callback, and is public on
-			// every WordPress site for every plugin that registers a
-			// namespace. Asserting the plugin's permission invariants against
-			// it tests core's behaviour, not Memberistic's.
 			if ( '/memberistic/v1' === $route ) {
 				continue;
 			}

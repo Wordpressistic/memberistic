@@ -104,29 +104,21 @@ jobs:
           coverage: none
           tools: composer
 
-      # PHPUnit 9, not the 10.5 composer.json pins for the unit suite. The
-      # WordPress test library calls PHPUnit\Util\Test::parseTestMethodAnnotations()
-      # from WP_UnitTestCase::set_up(), and PHPUnit 10 removed it — on 10 every
-      # test in this suite errors before its first assertion, on every WordPress
-      # version including trunk. See phpunit-integration.xml for the detail.
-      # The override lives on the runner; the committed composer.json is
-      # untouched, so the unit suite keeps PHPUnit 10.
-      - name: Install the PHPUnit 9 test stack
-        run: |
-          composer require --dev --no-progress --no-interaction --update-with-all-dependencies \
-            "phpunit/phpunit:^9.6" "yoast/phpunit-polyfills:^1.1"
-          vendor/bin/phpunit --version
-
       # PHPUnit 9.6, not the 10.5 the unit suite pins. The WordPress core test
       # library still calls PHPUnit\Util\Test::parseTestMethodAnnotations(),
       # which PHPUnit 10 removed, so every test errors under 10.x — on 6.8,
       # 6.9, 7.0.3 and trunk alike. Installed over the top here so the
       # integration job's vendor/ is internally consistent; composer.lock and
       # the unit suite are untouched.
+      # The polyfills constraint is pinned alongside PHPUnit rather than left
+      # to resolve: composer.json allows ^1.1 || ^2.0, and the combination the
+      # matrix was actually verified green on is 9.6 with polyfills 1.x. 2.x
+      # declares support for PHPUnit 9, so it would very likely work too — but
+      # "very likely" is not what a compatibility matrix is for.
       - name: Downgrade to PHPUnit 9.6 for the WordPress test library
         run: |
           composer require --dev --no-interaction --no-progress \
-            --with-all-dependencies 'phpunit/phpunit:^9.6'
+            --with-all-dependencies 'phpunit/phpunit:^9.6' 'yoast/phpunit-polyfills:^1.1'
           vendor/bin/phpunit --version
 
       - name: Install WordPress ${{ matrix.wordpress }} and the test library
@@ -194,16 +186,15 @@ jobs:
           coverage: none
           tools: composer
 
-      # Same PHPUnit 9 pin as the matrix job above.
-      - name: Install the PHPUnit 9 test stack
-        run: |
-          composer require --dev --no-progress --no-interaction --update-with-all-dependencies \
-            "phpunit/phpunit:^9.6" "yoast/phpunit-polyfills:^1.1"
-
+      # The polyfills constraint is pinned alongside PHPUnit rather than left
+      # to resolve: composer.json allows ^1.1 || ^2.0, and the combination the
+      # matrix was actually verified green on is 9.6 with polyfills 1.x. 2.x
+      # declares support for PHPUnit 9, so it would very likely work too — but
+      # "very likely" is not what a compatibility matrix is for.
       - name: Downgrade to PHPUnit 9.6 for the WordPress test library
         run: |
           composer require --dev --no-interaction --no-progress \
-            --with-all-dependencies 'phpunit/phpunit:^9.6'
+            --with-all-dependencies 'phpunit/phpunit:^9.6' 'yoast/phpunit-polyfills:^1.1'
 
       - name: Install WordPress trunk
         run: |
