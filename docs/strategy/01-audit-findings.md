@@ -260,6 +260,19 @@ logic. Four unit test classes do not cover that.
 
 Required pyramid in [`03-quality-and-release.md`](03-quality-and-release.md).
 
+### The prerequisite behind five of the P0 findings
+
+F-03, F-04, F-05 and F-07 are each written as a missing test suite. None of them
+can be written today. `tests/bootstrap.php` does not load WordPress — it stubs
+the handful of WP functions the two behavioural tests need and shadows the
+`Database\*` repositories with static fixtures. There is no request, no user, no
+capability map, no `$wpdb` beyond a stub, so there is nothing to authorise
+against, upload to, or post a webhook at.
+
+That makes the absence of a WordPress integration harness a finding in its own
+right rather than an implementation detail of the other four — tracked as F-15
+and scheduled as backlog P0-0.
+
 ---
 
 ## 9. Findings index
@@ -280,3 +293,8 @@ Required pyramid in [`03-quality-and-release.md`](03-quality-and-release.md).
 | F-12 | P1 | No system-health/diagnostic export | Backlog P1-7 |
 | F-13 | P2 | Licensing seam unimplemented | Backlog P1-3 |
 | F-14 | P2 | No cloud control plane | Backlog P2-1 |
+| F-15 | P0 | No WordPress integration test harness — F-03, F-04, F-05 and F-07 are unstartable without it | Backlog P0-0 |
+
+> F-15 was identified after the original numbering and is appended rather than
+> inserted in severity order. Renumbering would break every cross-reference in
+> the backlog and the master plan.
