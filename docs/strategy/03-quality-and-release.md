@@ -30,9 +30,14 @@ main reason coverage has stayed narrow.
 ### The gap
 
 38 REST routes. Payments. Webhooks. Uploads. Admin workflows. Imports. Waivers.
-Check-in. Corporate group logic. Four test classes do not cover that surface,
-and the claimed 47 tests / 831 assertions has never been independently
-reproduced (see [`01-audit-findings.md`](01-audit-findings.md) §3).
+Check-in. Corporate group logic.
+
+The suite passes — 47 tests, 831 assertions, reproduced on PHP 8.4.19 with
+PHPUnit 10.5.64 (see [`01-audit-findings.md`](01-audit-findings.md) §3). The
+problem is not that the tests fail; it is that four test classes cannot cover
+that surface. 746 of those 831 assertions come from the two guard tests, which
+scan source files rather than exercise behaviour. Behavioural coverage is
+thinner than the headline number suggests.
 
 ---
 

@@ -98,15 +98,27 @@ added here.)*
 | Nonce / sanitization / escaping usage | extensive |
 | PMPro runtime dependency | absent, and guarded by regression test |
 
-### Limitation, stated plainly
+### Limitation at audit time, since resolved
 
-Composer and PHPUnit were unavailable in the audit environment and could not be
-installed from the network. **The claimed test result was not independently
-reproduced.** The release PR states 47 tests / 831 assertions passing; that is
-useful evidence, not verification.
+Composer and PHPUnit were unavailable in the audit environment, so the claimed
+test result could not be reproduced there. The release PR stated 47 tests / 831
+assertions passing.
 
-Release approval should rest on an actual GitHub Actions run attached to the
-release, plus integration and E2E suites — not on a number in a PR description.
+**Reproduced 2026-08-08** during the migration to this repository, on PHP
+8.4.19 with PHPUnit 10.5.64:
+
+```
+$ vendor/bin/phpunit -c phpunit.xml
+OK (47 tests, 831 assertions)
+
+$ vendor/bin/phpunit -c phpunit.xml --filter 'FreshInstallDefaults|PmproRemoval'
+OK (11 tests, 746 assertions)
+```
+
+The number is now verified. What it covers is still narrow — see §8 — so
+release approval should continue to rest on a CI run attached to the release
+plus the integration and E2E suites that do not yet exist, not on this figure
+alone.
 
 ---
 

@@ -81,7 +81,9 @@ These need no external re-check — verify them against the code instead:
 | DB version 1.11.0 | `MEMBERISTIC_DB_VERSION` in the main plugin file |
 | Requires PHP 8.2 / WordPress 6.8 | plugin headers and the runtime requirements gate |
 | Four unit test classes, two of them guard tests | `tests/unit/` |
-| Claimed 47 tests / 831 assertions | Release PR — **a claim, not a verified result** |
+| 47 tests / 831 assertions | **Verified** 2026-08-08 on PHP 8.4.19 / PHPUnit 10.5.64 — was an unreproduced claim at audit time |
 
-That last row matters. It has never been independently reproduced, and it should
-not be repeated as fact until a CI run is attached to a release.
+On that last row: 746 of the 831 assertions come from the two guard tests, which
+scan source files rather than exercise behaviour. The suite genuinely passes;
+quoting "831 assertions" as a measure of behavioural coverage would still be
+misleading.

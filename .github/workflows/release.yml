@@ -93,7 +93,15 @@ jobs:
           TAG="${{ github.event.inputs.tag || github.ref_name }}"
           VERSION="${TAG#v}"
           mkdir -p build/${PLUGIN_SLUG}
-          rsync -a --exclude-from=.distignore --exclude='build' ./ build/${PLUGIN_SLUG}/
+          # Copy everything, then remove what .distignore names. Done this way
+          # rather than with rsync --exclude-from so the step depends only on
+          # coreutils, and so the exclusion list stays readable in the log.
+          tar --exclude=./build --exclude=./.git -cf - . | tar -xf - -C build/${PLUGIN_SLUG}
+          while IFS= read -r pattern; do
+            case "$pattern" in ''|'#'*) continue ;; esac
+            echo "excluding: $pattern"
+            rm -rf build/${PLUGIN_SLUG}/${pattern}
+          done < .distignore
           cd build
           zip -rq ${PLUGIN_SLUG}-${VERSION}.zip ${PLUGIN_SLUG}
           sha256sum ${PLUGIN_SLUG}-${VERSION}.zip > ${PLUGIN_SLUG}-${VERSION}.zip.sha256
