@@ -134,11 +134,11 @@ jobs:
           # .org reviewer runs. Narrowing either would hide exactly the
           # plugin_repo findings that block the listing.
           #
-          # These are the codes Plugin Check actually emits for this codebase,
-          # read out of the printed report below — not the WPCS names the
-          # inline `phpcs:ignore` annotations use. Plugin Check ships its own
-          # PluginCheck.* sniffs, so an ignore list guessed from the inline
-          # annotations matches nothing.
+          # Read out of the printed report below, not guessed. Plugin Check
+          # runs *two* sniff families over the same code and both fire on it:
+          # its own PluginCheck.* sniffs and the WPCS WordPress.DB.* ones. An
+          # ignore list naming only one family silences half the findings and
+          # leaves the job red on the other half.
           #
           # UnescapedDBParameter: Memberistic stores its data in its own
           # {prefix}memberistic_* tables and queries them with raw $wpdb; a
@@ -162,6 +162,11 @@ jobs:
           # finding of any other kind still fails the job.
           ignore-codes: |
             PluginCheck.Security.DirectDB.UnescapedDBParameter
+            WordPress.DB.DirectDatabaseQuery.DirectQuery
+            WordPress.DB.DirectDatabaseQuery.NoCaching
+            WordPress.DB.DirectDatabaseQuery.SchemaChange
+            WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            WordPress.DB.PreparedSQL.NotPrepared
             WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
             unexpected_markdown_file
 

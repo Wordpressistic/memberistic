@@ -2,7 +2,7 @@
 Contributors: wordpressistic
 Tags: membership, members, waivers, check-in, subscriptions
 Requires at least: 6.8
-Tested up to: 7.0.3
+Tested up to: 7.0
 Requires PHP: 8.2
 Stable tag: 2.0.0
 License: GPL-2.0-or-later
