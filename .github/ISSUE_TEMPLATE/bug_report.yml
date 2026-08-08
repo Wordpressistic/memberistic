@@ -1,0 +1,135 @@
+name: Bug report
+description: Something in Memberistic behaves incorrectly
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Do not report security vulnerabilities here.** Use private reporting —
+        see [SECURITY.md](../blob/main/SECURITY.md).
+
+        Redact API keys, webhook secrets, tokens and member personal data from
+        anything you paste.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happens
+      description: The incorrect behaviour, in one or two sentences.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Numbered, starting from a state someone else can reach.
+      placeholder: |
+        1. Create a plan priced at …
+        2. Join as a new member using …
+        3. Open Members → …
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Plans / pricing
+        - Members / memberships
+        - Linked people / family accounts
+        - Waivers (signing, versioning, kiosk, PDF)
+        - Check-in / front desk / QR
+        - Payments — Stripe
+        - Payments — manual / counter
+        - WooCommerce sync
+        - Corporate / group memberships
+        - Content restriction
+        - Emails
+        - Import / export / migration
+        - Member account portal
+        - Admin screens
+        - REST API
+        - Privacy / GDPR tools
+        - Install / activation / upgrade
+        - Other / not sure
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Memberistic version
+      placeholder: "2.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: wp
+    attributes:
+      label: WordPress version
+      placeholder: "7.0.2"
+    validations:
+      required: true
+
+  - type: input
+    id: php
+    attributes:
+      label: PHP version
+      placeholder: "8.3"
+    validations:
+      required: true
+
+  - type: input
+    id: env
+    attributes:
+      label: Other relevant versions
+      description: WooCommerce, theme, multisite, host — anything involved.
+      placeholder: "WooCommerce 9.x, Twenty Twenty-Five, single site"
+
+  - type: dropdown
+    id: isolated
+    attributes:
+      label: Does it still happen with other plugins deactivated and a default theme?
+      options:
+        - "Yes — still happens"
+        - "No — goes away"
+        - "Not tested"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: stripe_mode
+    attributes:
+      label: If payments are involved, which Stripe mode?
+      options:
+        - Not payment related
+        - Test mode
+        - Live mode
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Errors
+      description: PHP error log entries and/or browser console output. Redact secrets.
+      render: text
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Before submitting
+      options:
+        - label: This is not a security vulnerability
+          required: true
+        - label: I have removed secrets and member personal data from everything above
+          required: true

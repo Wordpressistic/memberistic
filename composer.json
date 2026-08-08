@@ -1,0 +1,19 @@
+{
+    "name": "wordpressistic/memberistic-membership-solutions",
+    "description": "Dev tooling only: unit tests and CI for the Memberistic Membership Solutions WordPress plugin. The plugin itself has no Composer runtime dependencies.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
+    },
+    "scripts": {
+        "test": "phpunit -c phpunit.xml"
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    }
+}

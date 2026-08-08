@@ -1,0 +1,32 @@
+# Files excluded from the distributable plugin zip.
+# Everything here is development tooling, not product.
+.git
+.gitattributes
+.gitignore
+.distignore
+.github
+.phpunit.cache
+composer.json
+composer.lock
+phpunit.xml
+tests
+vendor
+node_modules
+build
+*.zip
+.editorconfig
+
+# Contributor- and agent-facing material. Useful in the repository, noise in a
+# customer's wp-content/plugins directory.
+CLAUDE.md
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+SUPPORT.md
+
+# Internal planning material. docs/strategy in particular contains pricing
+# models, revenue targets and competitor analysis — none of which belongs in a
+# zip that ships to customers. The product documentation directly under docs/
+# (HOOKS, INSTALL, INTEGRATIONS, UPGRADE-2.0, entitlements, guest-pass-audit)
+# still ships, as it always has.
+docs/strategy
+docs/governance

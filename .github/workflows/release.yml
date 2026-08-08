@@ -1,0 +1,166 @@
+name: Release
+
+# Tag-triggered only. This never runs on push-to-branch or on a pull request,
+# so it cannot turn an ordinary PR red and cannot publish anything by accident.
+# Cutting a release is an explicit act: push a `v*` tag.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to package (dry run — no release is published)'
+        required: true
+
+permissions:
+  contents: read
+
+env:
+  PLUGIN_SLUG: memberistic-membership-solutions
+
+jobs:
+  package:
+    name: Build and publish release artifact
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      # The version string lives in five places and nothing else checks that
+      # they agree. A release built from a mismatched tree ships a plugin that
+      # reports the wrong version to update checks, so this fails the release
+      # rather than producing a subtly wrong artifact.
+      - name: Verify version consistency
+        run: |
+          set -euo pipefail
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          VERSION="${TAG#v}"
+          echo "Tag $TAG implies version $VERSION"
+
+          fail=0
+          check() {
+            if [ "$2" != "$VERSION" ]; then
+              echo "::error::$1 is '$2', expected '$VERSION'"
+              fail=1
+            else
+              echo "ok: $1 = $2"
+            fi
+          }
+
+          header=$(grep -m1 -oP '^\s*\*\s*Version:\s*\K[0-9][^\s]*' ${PLUGIN_SLUG}.php)
+          constant=$(grep -m1 -oP "define\(\s*'MEMBERISTIC_VERSION',\s*'\K[^']+" ${PLUGIN_SLUG}.php)
+          stable=$(grep -m1 -oP '^Stable tag:\s*\K[0-9][^\s]*' readme.txt)
+
+          check "plugin header Version:" "$header"
+          check "MEMBERISTIC_VERSION"    "$constant"
+          check "readme.txt Stable tag:" "$stable"
+
+          if ! grep -q "$VERSION" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no entry mentioning $VERSION"
+            fail=1
+          else
+            echo "ok: CHANGELOG.md mentions $VERSION"
+          fi
+
+          exit $fail
+
+      - name: Lint before packaging
+        run: |
+          set -euo pipefail
+          find . -name '*.php' -not -path './vendor/*' -not -path './node_modules/*' -print0 \
+            | xargs -0 -n1 php -l
+          while IFS= read -r -d '' f; do node --check "$f"; done \
+            < <(find assets -name '*.js' -not -path '*/node_modules/*' -print0)
+
+      # .distignore is the single source of truth for what is product and what
+      # is development tooling. Building the zip from it (rather than a second
+      # hand-maintained list) means adding a dev file to .distignore is enough.
+      - name: Build distributable zip
+        run: |
+          set -euo pipefail
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          VERSION="${TAG#v}"
+          mkdir -p build/${PLUGIN_SLUG}
+          # Copy everything, then remove what .distignore names. Done this way
+          # rather than with rsync --exclude-from so the step depends only on
+          # coreutils, and so the exclusion list stays readable in the log.
+          tar --exclude=./build --exclude=./.git -cf - . | tar -xf - -C build/${PLUGIN_SLUG}
+          while IFS= read -r pattern; do
+            case "$pattern" in ''|'#'*) continue ;; esac
+            echo "excluding: $pattern"
+            rm -rf build/${PLUGIN_SLUG}/${pattern}
+          done < .distignore
+          cd build
+          zip -rq ${PLUGIN_SLUG}-${VERSION}.zip ${PLUGIN_SLUG}
+          sha256sum ${PLUGIN_SLUG}-${VERSION}.zip > ${PLUGIN_SLUG}-${VERSION}.zip.sha256
+          echo "--- archive contents (top level) ---"
+          unzip -l ${PLUGIN_SLUG}-${VERSION}.zip | head -40
+          echo "--- checksum ---"
+          cat ${PLUGIN_SLUG}-${VERSION}.zip.sha256
+
+      # Cheap guard against shipping the dev tooling: if any of these made it
+      # into the archive, .distignore and the build have drifted apart.
+      - name: Assert no dev files in the archive
+        run: |
+          set -euo pipefail
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          VERSION="${TAG#v}"
+          listing=$(unzip -Z1 build/${PLUGIN_SLUG}-${VERSION}.zip)
+          for forbidden in '/tests/' '/vendor/' '/.github/' 'composer.json' 'composer.lock' 'phpunit.xml' '.distignore'; do
+            if grep -q -- "$forbidden" <<<"$listing"; then
+              echo "::error::$forbidden is present in the distributable zip"
+              exit 1
+            fi
+          done
+          echo "archive is clean"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PLUGIN_SLUG }}-package
+          path: |
+            build/*.zip
+            build/*.sha256
+          retention-days: 30
+
+      # Published as a draft so a human reads the notes and confirms the
+      # smoke-install on clean WordPress before anything becomes public.
+      # Skipped entirely on workflow_dispatch, which is a dry run.
+      - name: Draft GitHub Release
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="${{ github.ref_name }}"
+          VERSION="${TAG#v}"
+          SUM=$(cut -d' ' -f1 < build/${PLUGIN_SLUG}-${VERSION}.zip.sha256)
+          gh release create "$TAG" \
+            --draft \
+            --title "Memberistic $VERSION" \
+            --notes "Release $VERSION.
+
+          See CHANGELOG.md for the full list of changes.
+
+          **SHA-256** of \`${PLUGIN_SLUG}-${VERSION}.zip\`:
+
+          \`\`\`
+          $SUM
+          \`\`\`
+
+          Before publishing this draft, confirm the release-gate checklist in
+          \`docs/governance/RELEASE-PROCESS.md\` — in particular the clean-install
+          and upgrade smoke tests." \
+            build/${PLUGIN_SLUG}-${VERSION}.zip \
+            build/${PLUGIN_SLUG}-${VERSION}.zip.sha256

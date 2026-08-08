@@ -1,0 +1,89 @@
+/**
+ * Memberistic design-token bridge.
+ *
+ * Defines the `--memberistic-*` custom-property layer that every other
+ * Memberistic stylesheet consumes. Each property resolves in two steps:
+ *
+ *   1. If the active theme exposes a matching design token, use it.
+ *   2. Otherwise fall back to Memberistic's own neutral palette.
+ *
+ * That ordering is the whole point of this file. A theme that publishes
+ * its own `--color-*` scale gets Memberistic blended into it for free,
+ * in whatever colour modes that scale supports, with no plugin edit and
+ * no drift when the theme is retuned. A theme that publishes nothing
+ * still gets a complete, self-contained palette — the plugin never
+ * renders unstyled or half-styled because a token was missing.
+ *
+ * Every fallback below is verified at >= 4.5:1 against the surface it is
+ * used on (WCAG 2.2 AA for normal text). If you override these, re-check
+ * contrast — several of them carry status meaning, not just decoration.
+ *
+ * Overriding: define any `--memberistic-*` property on `:root` in your
+ * theme (or via the `memberistic_inline_styles` filter) to win outright;
+ * a direct definition beats the fallback chain here. Theme authors who
+ * want Memberistic to track their palette automatically should instead
+ * publish the `--color-*` / `--font-*` token names referenced below.
+ *
+ * Enqueue order: this stylesheet MUST load before frontend.css (see
+ * includes/class-plugin.php) so these properties are already resolved
+ * when frontend.css's var() calls run.
+ */
+
+:root {
+	/* ---- Surfaces ---- */
+	--memberistic-bg: var(--color-void, #0f1419);                          /* page-level / form-field background */
+	--memberistic-surface: var(--color-gunmetal, #171d25);                 /* cards, panels, modals */
+	--memberistic-surface-alt: var(--color-surface-2, #1e252f);            /* subtle/secondary panels (e.g. summary strips) */
+	--memberistic-surface-glass: var(--color-chrome-glass, rgba(23, 29, 37, 0.72)); /* translucent panels over photography */
+
+	/* ---- Brand accents ---- */
+	--memberistic-primary: var(--color-accent, #6aa9ff);                   /* headings, links, accent borders */
+	--memberistic-primary-strong: var(--color-accent-bright, #99c4ff);     /* hover/emphasis text */
+	--memberistic-primary-dim: var(--color-accent-dim, #3f6ea8);
+	--memberistic-primary-ink: var(--color-ink, #0b0f14);                  /* text placed ON primary/success fills */
+	--memberistic-cta: var(--color-cta, #2563eb);                          /* solid-fill buttons/bars (pairs with light text) */
+	--memberistic-cta-dim: var(--color-cta-dim, #1d4ed8);
+	--memberistic-info: var(--color-accent, #6aa9ff);                      /* neutral informational banners */
+	--memberistic-warning: var(--color-warning, #fbbf24);                  /* expiring / attention-needed banners */
+
+	/* ---- Text ---- */
+	--memberistic-text: var(--color-white, #f2f5f8);                       /* primary text on dark surfaces */
+	--memberistic-text-soft: var(--color-fog, #c2cbd6);                    /* secondary body copy */
+	--memberistic-muted: var(--color-silver, #94a3b0);                     /* labels, captions, least-emphasis text */
+
+	/* ---- Borders ---- */
+	--memberistic-border: var(--color-hairline, rgba(255, 255, 255, 0.10));        /* card/table/divider borders */
+	--memberistic-border-strong: var(--color-hairline-bright, rgba(255, 255, 255, 0.20));
+	--memberistic-input-border: var(--color-steel, #3a4552);               /* form field borders */
+
+	/* ---- Ambient glows (decorative page-background gradients) ---- */
+	--memberistic-glow-primary: var(--color-page-glow-a, rgba(106, 169, 255, 0.10));
+	--memberistic-glow-cta: var(--color-page-glow-b, rgba(37, 99, 235, 0.10));
+
+	/* ---- Photo scrims (dark gradient overlays atop hero/background imagery) ---- */
+	--memberistic-scrim: var(--hero-scrim, rgba(15, 20, 25, 0.72));
+	--memberistic-scrim-deep: var(--hero-scrim-deep, rgba(15, 20, 25, 0.94));
+
+	/* ---- Semantic states ---- */
+	--memberistic-success: var(--color-active, #4ade80);
+	--memberistic-green: var(--color-active, #4ade80);
+	--memberistic-navy: var(--color-cta-dim, #1d4ed8);
+	--memberistic-soft: var(--color-surface-2, #1e252f);
+
+	/*
+	 * Danger deliberately does NOT bridge to a theme accent. Expired,
+	 * failed, and error states have to read as "wrong" — mapping them onto
+	 * whatever hue a theme happens to use for emphasis would let a red
+	 * state render in a colour that signals the opposite. These stay a
+	 * plain semantic red unless a theme publishes an explicit danger token.
+	 */
+	--memberistic-danger: var(--color-danger, #b91c1c);                    /* base red — icons, fills, strong borders */
+	--memberistic-danger-bright: var(--color-danger-bright, #fca5a5);      /* light red — text on dark/tinted backgrounds */
+	--memberistic-danger-text: var(--color-danger-text, #991b1b);          /* darker red — text on soft/light-tinted badges */
+
+	/* ---- Type ---- */
+	--memberistic-font-display: var(--font-display, "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+	--memberistic-font-body: var(--font-body, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
+	--memberistic-font-mono: var(--font-mono, ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace);
+	--memberistic-font-condensed: var(--font-condensed, "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+}
