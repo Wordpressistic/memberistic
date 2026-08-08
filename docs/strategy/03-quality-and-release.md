@@ -53,12 +53,31 @@ Fast, no WordPress, extend the existing stub approach.
 
 ### WordPress integration
 
-Needs a real WordPress test environment — this is the missing piece that unlocks
-most of the remaining coverage.
+**The harness now exists.** `bin/install-wp-tests.sh` installs WordPress core
+plus the PHPUnit test library for any published version; `tests/integration/`
+runs against it with a real database and a real plugin activation;
+`.github/workflows/integration.yml` runs the matrix on every PR.
 
-Activation, schema creation and upgrades · capabilities and roles · REST
-permissions · privacy exporter and eraser · cron and scheduler · content
-restrictions · multisite install and uninstall · WooCommerce hooks.
+Two design decisions worth keeping:
+
+- **Deprecations fail the suite.** Rather than maintaining a list of what each
+  WordPress release deprecated — stale the day it is written, impossible to
+  keep correct across three release lines — every `_deprecated_*` and
+  `_doing_it_wrong` notice the plugin triggers becomes a failure, on every
+  version in the matrix. The bootstrap extends this to plugin load, which is
+  where a deprecated hook signature would otherwise go unseen.
+- **The version resolver is loud.** Asking for a WordPress version that does
+  not exist fails with the list of versions that do, instead of a download
+  error buried in a build log.
+
+Covered so far: activation, schema creation, DB version, capabilities and
+roles, the narrower PII capability, scheduled tasks, fresh-install network
+silence, integration defaults, uninstall retention default, REST route
+inventory and permission-callback enforcement.
+
+Still to cover: schema *upgrades* from prior versions · privacy exporter and
+eraser · content restrictions · multisite install and uninstall · WooCommerce
+hooks · the membership, waiver, check-in and import lifecycles.
 
 ### Payment integration
 

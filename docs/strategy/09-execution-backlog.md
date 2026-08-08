@@ -46,7 +46,7 @@ picks up P0-5 instead of before.
 ---
 
 ### P0-1 · Support current WordPress
-**Status:** open · **Workstream:** WS-1 · **Milestone:** M0 · **Finding:** F-02
+**Status:** in progress · **Workstream:** WS-1 · **Milestone:** M0 · **Finding:** F-02
 
 Test and fix against the full matrix in
 [`03-quality-and-release.md`](03-quality-and-release.md) §3, then update the
@@ -56,10 +56,29 @@ declared compatibility.
 - [ ] Full activation, onboarding, plan creation, join/pay, check-in, waiver and
       import flows exercised on WordPress 6.8.x, 6.9.x and 7.0.3
 - [ ] PHP 8.2, 8.3, 8.4 all pass
+- [x] A real WordPress integration harness exists — `bin/install-wp-tests.sh`,
+      `tests/integration/`, `phpunit-integration.xml`, and a CI matrix in
+      `.github/workflows/integration.yml` covering WP 6.8 / 6.9 / 7.0.2 ×
+      PHP 8.2 / 8.3 / 8.4, plus a non-blocking trunk canary
+- [x] Deprecation notices fail the suite, so incompatibilities surface without
+      maintaining a per-release deprecation list
+- [x] Installation flow covered: schema, DB version, capabilities, roles, the
+      narrower PII capability, and scheduled tasks
+- [ ] Remaining lifecycle flows covered: onboarding, plans, membership status
+      transitions, linked-person ownership, payments (test-mode fixtures),
+      waivers, check-in, import, privacy export/erase
 - [ ] Multisite activation, uninstall and privacy export/erase pass
+- [ ] PHP 8.2, 8.3, 8.4 all pass on all three WordPress lines
 - [ ] Any incompatibility fixed, with a regression test
 - [ ] `readme.txt` `Tested up to` raised **only after** the above
 - [ ] Result recorded in the release notes
+
+> **Static pre-check (2026-08-08).** No PHP 8.4 issues found: no implicitly
+> nullable parameters, no `E_STRICT`, no `each()`/`create_function()`, no
+> removed string functions. HPOS and cart/checkout blocks compatibility is
+> already declared in the bootstrap via `FeaturesUtil::declare_compatibility()`.
+> The WordPress 6.8 → 7.0 deprecation surface was **not** enumerated statically
+> — that is what the matrix is for.
 
 ---
 

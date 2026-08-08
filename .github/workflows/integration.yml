@@ -1,0 +1,179 @@
+name: WordPress integration
+
+# The compatibility matrix for P0-1. Runs the integration suite against a real
+# WordPress and a real database, across every supported WordPress and PHP
+# version, so "tested up to" becomes a statement about what was tested rather
+# than about what shipped.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # Resolve the requested versions before spending nine jobs on them. When a
+  # matrix names a WordPress version that does not exist, the useful output is
+  # that fact stated once — not nine download failures.
+  resolve:
+    name: Resolve WordPress versions
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: What wordpress.org currently publishes
+        run: |
+          set -euo pipefail
+          curl -sSL --retry 3 https://api.wordpress.org/core/stable-check/1.0/ -o /tmp/stable.json
+
+          # Written to stdout as well as the step summary. The summary is only
+          # readable in the web UI, and this job exists precisely so the answer
+          # is available from the logs — including to whoever is reading them
+          # through an API rather than a browser.
+          {
+            echo "### WordPress versions available"
+            echo ''
+
+            latest=$(python3 -c "
+          import json
+          d = json.load(open('/tmp/stable.json'))
+          print(next((k for k, v in d.items() if v == 'latest'), 'unknown'))
+          ")
+            echo "Latest published: **$latest**"
+            echo ''
+            echo 'Newest 12 releases:'
+            python3 -c "
+          import json
+          d = json.load(open('/tmp/stable.json'))
+          ks = sorted(d, key=lambda s: [int(x) for x in s.split('.')])
+          print('\n'.join('- ' + k for k in ks[-12:]))
+          "
+            echo ''
+            echo 'Requested by this matrix: 6.8, 6.9, 7.0.2'
+            for want in 6.8 6.9 7.0.2; do
+              if python3 -c "
+          import json, sys
+          d = json.load(open('/tmp/stable.json'))
+          sys.exit(0 if any(k == '$want' or k.startswith('$want.') for k in d) else 1)
+          "; then
+                echo "- \`$want\` — available"
+              else
+                echo "- \`$want\` — **NOT PUBLISHED — the matrix needs correcting**"
+              fi
+            done
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+  integration:
+    name: WP ${{ matrix.wordpress }} · PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: resolve
+    strategy:
+      fail-fast: false
+      matrix:
+        wordpress: ['6.8', '6.9', '7.0.2']
+        php: ['8.2', '8.3', '8.4']
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mysqli, zip, gd
+          coverage: none
+          tools: composer
+
+      - name: Install PHPUnit
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Install WordPress ${{ matrix.wordpress }} and the test library
+        run: |
+          chmod +x bin/install-wp-tests.sh
+          bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 ${{ matrix.wordpress }}
+
+      - name: Run integration suite
+        env:
+          WP_TESTS_DIR: /tmp/wordpress-tests-lib
+          MEMBERISTIC_ROUTE_INVENTORY: ${{ github.workspace }}/route-inventory.json
+        run: vendor/bin/phpunit -c phpunit-integration.xml --testdox
+
+      - name: Upload REST route inventory
+        if: always() && matrix.php == '8.3'
+        uses: actions/upload-artifact@v4
+        with:
+          name: route-inventory-wp${{ matrix.wordpress }}
+          path: route-inventory.json
+          if-no-files-found: ignore
+          retention-days: 14
+
+  # Forward-compatibility canary. Non-blocking by design: a failure here is
+  # information about an unreleased WordPress, not a reason to stop shipping.
+  # Never treat a green canary as support for the version it tested.
+  canary:
+    name: Canary · WordPress trunk · PHP 8.4
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: resolve
+    continue-on-error: true
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mysqli, zip, gd
+          coverage: none
+          tools: composer
+
+      - run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Install WordPress trunk
+        run: |
+          chmod +x bin/install-wp-tests.sh
+          bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 nightly
+
+      - name: Run integration suite against trunk
+        env:
+          WP_TESTS_DIR: /tmp/wordpress-tests-lib
+        run: vendor/bin/phpunit -c phpunit-integration.xml --testdox
+
+      - name: Note the canary result
+        if: always()
+        run: |
+          echo 'The trunk canary is advisory. Do not declare support for an' >> "$GITHUB_STEP_SUMMARY"
+          echo 'unreleased WordPress version on the strength of this job.' >> "$GITHUB_STEP_SUMMARY"
