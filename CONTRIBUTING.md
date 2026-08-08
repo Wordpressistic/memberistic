@@ -28,6 +28,29 @@ find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
 find assets -name '*.js' -print0 | xargs -0 -n1 node --check
 ```
 
+### The integration suite
+
+The unit suite runs with WordPress stubbed, which keeps it fast but means it
+cannot see a schema problem, a capability that failed to land, or an API that
+WordPress deprecated. The integration suite runs against a real WordPress and
+a real database:
+
+```bash
+# needs a MySQL/MariaDB server; the DB is dropped and recreated
+bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1:3306 latest
+WP_TESTS_DIR=/tmp/wordpress-tests-lib vendor/bin/phpunit -c phpunit-integration.xml
+```
+
+Pass a WordPress version as the fifth argument (`6.8`, `7.0.2`, `latest`,
+`nightly`). `6.8` resolves to the newest 6.8.x; an unpublished version fails
+with the list of what actually exists rather than a download error.
+
+CI runs this across the full supported matrix on every PR
+(`.github/workflows/integration.yml`). **Any deprecation notice WordPress
+raises fails the suite** — that is the mechanism that finds version
+incompatibilities, rather than a hand-maintained list of what each release
+deprecated.
+
 `composer test` aborts when running as root — call `vendor/bin/phpunit`
 directly in containers.
 
