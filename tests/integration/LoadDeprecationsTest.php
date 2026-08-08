@@ -39,16 +39,28 @@ class LoadDeprecationsTest extends Memberistic_Integration_TestCase {
 	}
 
 	/**
-	 * Record what was actually exercised, so a green run says which versions it
-	 * was green on rather than leaving that to be inferred from the job name.
+	 * The job must have tested the WordPress it claims to have tested.
+	 *
+	 * install-wp-tests.sh exports WP_RESOLVED_VERSION after resolving what it
+	 * actually installed. If the running WordPress does not match, the matrix
+	 * is reporting green for a version it never exercised — which is precisely
+	 * the failure mode `Tested up to` exists to avoid.
+	 *
+	 * Asserting rather than echoing: the suite runs with
+	 * beStrictAboutOutputDuringTests, and a test that prints is marked risky.
 	 */
-	public function test_environment_is_reported(): void {
-		$wp  = get_bloginfo( 'version' );
-		$php = PHP_VERSION;
+	public function test_running_wordpress_matches_the_requested_version(): void {
+		$requested = getenv( 'WP_RESOLVED_VERSION' );
 
-		echo "\nEnvironment: WordPress {$wp} · PHP {$php} · Memberistic " . MEMBERISTIC_VERSION
-			. ' · DB schema ' . MEMBERISTIC_DB_VERSION . "\n";
+		if ( false === $requested || '' === $requested || 'trunk' === $requested ) {
+			$this->markTestSkipped( 'WP_RESOLVED_VERSION not set (local run) or trunk (canary).' );
+		}
 
-		$this->assertNotEmpty( $wp );
+		$running = get_bloginfo( 'version' );
+
+		$this->assertTrue(
+			$running === $requested || str_starts_with( $running, $requested . '.' ),
+			"This job installed WordPress {$requested} but is running {$running}."
+		);
 	}
 }

@@ -39,6 +39,16 @@ class RestRouteInventoryTest extends Memberistic_Integration_TestCase {
 				continue;
 			}
 
+			// The namespace index — `/memberistic/v1` exactly — is registered
+			// by WordPress core, not by the plugin. It is the API discovery
+			// document every namespace gets (`/wp/v2` behaves identically),
+			// it is public by design, and it exposes route schemas rather than
+			// member data. Holding plugin rules against a core-owned route
+			// would be asserting the wrong thing.
+			if ( '/memberistic/v1' === $route ) {
+				continue;
+			}
+
 			foreach ( $handlers as $handler ) {
 				$found[] = array(
 					'route'      => $route,
