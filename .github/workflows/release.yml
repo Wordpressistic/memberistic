@@ -17,7 +17,12 @@ permissions:
   contents: read
 
 env:
-  PLUGIN_SLUG: memberistic-membership-solutions
+  # The distributed folder name, which is also the wordpress.org slug and
+  # must equal the plugin's Text Domain. The main PHP file keeps its longer
+  # historical name — WordPress derives the slug from the directory, not the
+  # filename, so there is no reason to churn plugin_basename() twice.
+  PLUGIN_SLUG: memberistic
+  PLUGIN_MAIN_FILE: memberistic-membership-solutions.php
 
 jobs:
   package:
@@ -59,8 +64,8 @@ jobs:
             fi
           }
 
-          header=$(grep -m1 -oP '^\s*\*\s*Version:\s*\K[0-9][^\s]*' ${PLUGIN_SLUG}.php)
-          constant=$(grep -m1 -oP "define\(\s*'MEMBERISTIC_VERSION',\s*'\K[^']+" ${PLUGIN_SLUG}.php)
+          header=$(grep -m1 -oP '^\s*\*\s*Version:\s*\K[0-9][^\s]*' ${PLUGIN_MAIN_FILE})
+          constant=$(grep -m1 -oP "define\(\s*'MEMBERISTIC_VERSION',\s*'\K[^']+" ${PLUGIN_MAIN_FILE})
           stable=$(grep -m1 -oP '^Stable tag:\s*\K[0-9][^\s]*' readme.txt)
 
           check "plugin header Version:" "$header"

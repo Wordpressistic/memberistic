@@ -97,7 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      PLUGIN_SLUG: memberistic-membership-solutions
+      PLUGIN_SLUG: memberistic
     steps:
       - uses: actions/checkout@v4
 
@@ -122,13 +122,16 @@ jobs:
       - name: Run Plugin Check
         uses: WordPress/plugin-check-action@v1
         with:
-          build-dir: ./build/memberistic-membership-solutions
+          build-dir: ./build/memberistic
           # The slug is the install directory users actually get, which is what
-          # the release job zips. Not overridden to match the shorter
-          # "memberistic" text domain: if those two disagree, that is a real
-          # finding for P0-4 to resolve, not something to hide from the check
-          # that exists to find it.
-          slug: memberistic-membership-solutions
+          # the release job zips — and wordpress.org requires it to equal the
+          # plugin's Text Domain. It previously did not: the folder was
+          # `memberistic-membership-solutions` while the domain has always been
+          # `memberistic`, which Plugin Check reported as ~20 TextDomainMismatch
+          # errors. Resolved by moving the folder to the domain rather than the
+          # domain to the folder — the domain appears at ~2,000 call sites and
+          # in every translation, the folder name appears here.
+          slug: memberistic
           # No `categories` filter and no pinned `wp-version`: P0-4 asks for
           # the full default check set on current WordPress, which is what the
           # .org reviewer runs. Narrowing either would hide exactly the
