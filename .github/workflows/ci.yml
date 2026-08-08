@@ -34,25 +34,38 @@ jobs:
         run: find . -name '*.php' -not -path './vendor/*' -not -path './node_modules/*' -print0 | xargs -0 -n1 php -l
 
   phpunit:
-    name: PHPUnit (unit suite)
+    name: PHPUnit unit suite (PHP ${{ matrix.php-version }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      # The unit suite is the only thing that runs on every supported PHP
+      # without a database behind it, so it is the cheapest place to catch a
+      # syntax-legal-but-runtime-broken 8.4 change. `php -l` above proves the
+      # file parses; only executing it proves the behaviour survives.
+      matrix:
+        php-version: ['8.2', '8.3', '8.4']
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup PHP
+      - name: Setup PHP ${{ matrix.php-version }}
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: ${{ matrix.php-version }}
           coverage: none
           tools: composer
 
+      # Keyed on the PHP version as well as the lockfile: Composer resolves
+      # against the running platform, so a vendor/ built on 8.2 is not
+      # necessarily the tree 8.4 would have installed. Sharing one key across
+      # the matrix would let the first job to finish decide what the other two
+      # actually test.
       - name: Cache Composer packages
         uses: actions/cache@v4
         with:
           path: vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-
+          key: ${{ runner.os }}-php${{ matrix.php-version }}-composer-${{ hashFiles('composer.json') }}
+          restore-keys: ${{ runner.os }}-php${{ matrix.php-version }}-composer-
 
       # Composer is the primary install path; the phar is a fallback so a
       # Packagist outage can't hide a real test regression behind a red
@@ -69,6 +82,108 @@ jobs:
 
       - name: Run unit tests
         run: $PHPUNIT -c phpunit.xml
+
+  # P0-4. Plugin Check is the gate on the WordPress.org listing, so it runs
+  # against the distributable tree rather than the repository: a reviewer only
+  # ever sees what .distignore leaves behind. Checking the repository instead
+  # would bury the findings that matter under findings about tests/, bin/ and
+  # docs/strategy/, none of which ship.
+  #
+  # Building that tree from .distignore rather than restating the exclusions
+  # as action inputs keeps one source of truth. A second list here would drift
+  # the first time someone adds a dev-only file to the repository root.
+  plugin-check:
+    name: WordPress Plugin Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PLUGIN_SLUG: memberistic-membership-solutions
+    steps:
+      - uses: actions/checkout@v4
+
+      # Same copy-then-remove construction as the release workflow, and
+      # deliberately not rsync: the step then depends only on coreutils and the
+      # exclusion list stays readable in the log. Keeping the two in step
+      # matters more than brevity — the whole point is that Plugin Check sees
+      # the same tree the release job zips.
+      - name: Assemble the distributable tree
+        run: |
+          set -euo pipefail
+          mkdir -p build/${PLUGIN_SLUG}
+          tar --exclude=./build --exclude=./.git -cf - . | tar -xf - -C build/${PLUGIN_SLUG}
+          while IFS= read -r pattern; do
+            case "$pattern" in ''|'#'*) continue ;; esac
+            echo "excluding: $pattern"
+            rm -rf build/${PLUGIN_SLUG}/${pattern}
+          done < .distignore
+          echo "--- shipping tree (top level) ---"
+          find build/${PLUGIN_SLUG} -maxdepth 1 -mindepth 1 | sort
+
+      - name: Run Plugin Check
+        uses: WordPress/plugin-check-action@v1
+        with:
+          build-dir: ./build/memberistic-membership-solutions
+          # The slug is the install directory users actually get, which is what
+          # the release job zips. Not overridden to match the shorter
+          # "memberistic" text domain: if those two disagree, that is a real
+          # finding for P0-4 to resolve, not something to hide from the check
+          # that exists to find it.
+          slug: memberistic-membership-solutions
+          # No `categories` filter and no pinned `wp-version`: P0-4 asks for
+          # the full default check set on current WordPress, which is what the
+          # .org reviewer runs. Narrowing either would hide exactly the
+          # plugin_repo findings that block the listing.
+          #
+          # Read out of the printed report below, not guessed. Plugin Check
+          # runs *two* sniff families over the same code and both fire on it:
+          # its own PluginCheck.* sniffs and the WPCS WordPress.DB.* ones. An
+          # ignore list naming only one family silences half the findings and
+          # leaves the job red on the other half.
+          #
+          # UnescapedDBParameter: Memberistic stores its data in its own
+          # {prefix}memberistic_* tables and queries them with raw $wpdb; a
+          # membership is not a post, so there is no WP_Query path to migrate
+          # to. The sniff fires on the interpolated *table name*, which comes
+          # from a repository's table() method and never from input, while the
+          # actual values in those queries are passed through prepare() as
+          # %d/%s. Already suppressed inline, case by case, in ~50 places.
+          #
+          # ReplacementsWrongNumber: one hit, in
+          # memberistic_user_has_membership(). It builds an IN() list of %s
+          # placeholders dynamically and passes the values as a single array,
+          # which the sniff cannot count statically. Verified by hand: four
+          # placeholders, four values.
+          #
+          # unexpected_markdown_file: THIRD-PARTY-LICENSES.md. Attribution that
+          # belongs in the shipped package, not dev tooling to strip.
+          #
+          # This list is a statement about architecture, not a way to quiet the
+          # report. Nothing sets ignore-warnings or ignore-errors, so any
+          # finding of any other kind still fails the job.
+          ignore-codes: |
+            PluginCheck.Security.DirectDB.UnescapedDBParameter
+            WordPress.DB.DirectDatabaseQuery.DirectQuery
+            WordPress.DB.DirectDatabaseQuery.NoCaching
+            WordPress.DB.DirectDatabaseQuery.SchemaChange
+            WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            WordPress.DB.PreparedSQL.NotPrepared
+            WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+            unexpected_markdown_file
+
+      # The action uploads its report as an artifact, which means reading it
+      # costs a download and a click. Printing it puts the finding codes in the
+      # log, where they are greppable and where whoever is triaging the next
+      # failure can see them without leaving the page.
+      - name: Print the Plugin Check report
+        if: always()
+        run: |
+          report="${RUNNER_TEMP}/plugin-check-results.txt"
+          if [ -s "$report" ]; then
+            echo "--- Plugin Check findings ---"
+            cat "$report"
+          else
+            echo "No Plugin Check report was produced (the run failed before checks ran)."
+          fi
 
   js-lint:
     name: JS syntax check

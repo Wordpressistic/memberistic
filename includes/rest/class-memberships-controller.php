@@ -1602,12 +1602,21 @@ final class Memberships_Controller extends REST_Controller {
 			);
 		}
 
-		$payload = $request->get_body();
-		$header  = $request->get_header( 'stripe-signature' );
-		if ( '' === (string) $header ) {
-			$header = $request->get_header( 'stripe_signature' );
+		$payload = (string) $request->get_body();
+
+		// Normalised to a string at every step: WP_REST_Request::get_header()
+		// returns NULL for a header that was not sent, and the '' === $header
+		// guard below is strict, so an unsigned request used to slip past it
+		// and reach explode() inside verify_webhook_signature() as NULL. The
+		// request was still refused — the parse simply found no t/v1 pair —
+		// but every unsigned POST to this public, unauthenticated endpoint
+		// logged a PHP deprecation, which is a log-flooding primitive anyone
+		// on the internet could pull.
+		$header = (string) $request->get_header( 'stripe-signature' );
+		if ( '' === $header ) {
+			$header = (string) $request->get_header( 'stripe_signature' );
 		}
-		if ( '' === (string) $header && isset( $_SERVER['HTTP_STRIPE_SIGNATURE'] ) ) {
+		if ( '' === $header && isset( $_SERVER['HTTP_STRIPE_SIGNATURE'] ) ) {
 			$header = sanitize_text_field( wp_unslash( $_SERVER['HTTP_STRIPE_SIGNATURE'] ) );
 		}
 

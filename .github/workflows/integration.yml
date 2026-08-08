@@ -104,8 +104,18 @@ jobs:
           coverage: none
           tools: composer
 
-      - name: Install PHPUnit
-        run: composer install --prefer-dist --no-progress --no-interaction
+      # PHPUnit 9, not the 10.5 composer.json pins for the unit suite. The
+      # WordPress test library calls PHPUnit\Util\Test::parseTestMethodAnnotations()
+      # from WP_UnitTestCase::set_up(), and PHPUnit 10 removed it — on 10 every
+      # test in this suite errors before its first assertion, on every WordPress
+      # version including trunk. See phpunit-integration.xml for the detail.
+      # The override lives on the runner; the committed composer.json is
+      # untouched, so the unit suite keeps PHPUnit 10.
+      - name: Install the PHPUnit 9 test stack
+        run: |
+          composer require --dev --no-progress --no-interaction --update-with-all-dependencies \
+            "phpunit/phpunit:^9.6" "yoast/phpunit-polyfills:^1.1"
+          vendor/bin/phpunit --version
 
       # PHPUnit 9.6, not the 10.5 the unit suite pins. The WordPress core test
       # library still calls PHPUnit\Util\Test::parseTestMethodAnnotations(),
@@ -184,7 +194,11 @@ jobs:
           coverage: none
           tools: composer
 
-      - run: composer install --prefer-dist --no-progress --no-interaction
+      # Same PHPUnit 9 pin as the matrix job above.
+      - name: Install the PHPUnit 9 test stack
+        run: |
+          composer require --dev --no-progress --no-interaction --update-with-all-dependencies \
+            "phpunit/phpunit:^9.6" "yoast/phpunit-polyfills:^1.1"
 
       - name: Downgrade to PHPUnit 9.6 for the WordPress test library
         run: |
