@@ -1,0 +1,99 @@
+# Tripistic — auto-deploy to the Hostinger VPS.
+#
+# Fires only after the existing `CI` workflow finishes successfully on `main`
+# (never deploys on red tests), or manually via workflow_dispatch.
+#
+# Setup: drop this at .github/workflows/deploy.yml and add these repo secrets
+# (Settings -> Secrets and variables -> Actions):
+#   VPS_HOST          VPS IP or hostname
+#   VPS_SSH_USER      SSH user with access to the deploy path + docker group
+#   VPS_SSH_KEY       Private key for a dedicated deploy keypair (not personal)
+#   VPS_SSH_PORT      SSH port (omit to default to 22)
+#   VPS_DEPLOY_PATH   Absolute path to the docker-compose.hostinger.yml directory
+#
+# Recommended: create a GitHub Environment named "production" (Settings ->
+# Environments) and add yourself as a required reviewer for a manual approval
+# gate before each auto-deploy, without editing this file.
+
+name: Deploy to VPS
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to production VPS
+    runs-on: ubuntu-latest
+    environment: production
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_SSH_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT || 22 }}
+          script_stop: true
+          command_timeout: 20m
+          script: |
+            set -euo pipefail
+            cd "${{ secrets.VPS_DEPLOY_PATH }}"
+
+            # Load HTTP_PORT (and anything else) from .env.docker for the
+            # health check below. Compose reads this file itself; this just
+            # makes the same values visible to this shell script.
+            set -a
+            # shellcheck disable=SC1091
+            [ -f .env.docker ] && . ./.env.docker
+            set +a
+
+            PREV_COMMIT="$(git rev-parse HEAD)"
+            echo "== current commit before deploy: ${PREV_COMMIT} =="
+
+            mkdir -p backups
+            echo "== pre-deploy database backup =="
+            docker compose -f docker-compose.hostinger.yml exec -T db \
+              pg_dump -U "${POSTGRES_USER:-tripistic}" "${POSTGRES_DB:-tripistic}" \
+              | gzip > "backups/pre-deploy-$(date +%F-%H%M%S).sql.gz"
+
+            echo "== fetching latest main =="
+            git fetch origin main
+            git reset --hard origin/main
+            echo "== deploying commit: $(git rev-parse HEAD) =="
+
+            echo "== building and releasing (migrate -> seed -> backfill -> app) =="
+            docker compose --env-file .env.docker -f docker-compose.hostinger.yml up -d --build
+
+            echo "== waiting for /api/health/ready =="
+            ok=false
+            for i in $(seq 1 30); do
+              if curl -fsS "http://127.0.0.1:${HTTP_PORT:-8080}/api/health/ready" >/dev/null 2>&1; then
+                ok=true
+                break
+              fi
+              sleep 5
+            done
+
+            if [ "$ok" != "true" ]; then
+              echo "!! app did not become healthy within 150s — rolling back to ${PREV_COMMIT} !!" >&2
+              docker compose -f docker-compose.hostinger.yml logs --tail=200 app || true
+              docker compose -f docker-compose.hostinger.yml logs --tail=100 release || true
+              git reset --hard "${PREV_COMMIT}"
+              docker compose --env-file .env.docker -f docker-compose.hostinger.yml up -d --build
+              echo "rolled back to ${PREV_COMMIT}" >&2
+              exit 1
+            fi
+
+            echo "== deploy successful: $(git rev-parse HEAD) =="
+            docker compose -f docker-compose.hostinger.yml ps
