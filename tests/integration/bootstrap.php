@@ -11,6 +11,25 @@
  * @package Memberistic
  */
 
+$memberistic_root = dirname( __DIR__, 2 );
+
+/**
+ * Point the WordPress bootstrap at the PHPUnit Polyfills.
+ *
+ * The WP test suite hard-requires Yoast's polyfills and refuses to boot
+ * without them. It looks for this constant, so define it before loading
+ * anything from the test library. Requiring the Composer autoloader as well
+ * covers the case where the constant path is present but the classes have not
+ * been registered.
+ */
+if ( ! defined( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH' ) ) {
+	define( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH', $memberistic_root . '/vendor/yoast/phpunit-polyfills' );
+}
+
+if ( file_exists( $memberistic_root . '/vendor/autoload.php' ) ) {
+	require_once $memberistic_root . '/vendor/autoload.php';
+}
+
 $memberistic_tests_dir = getenv( 'WP_TESTS_DIR' );
 
 if ( ! $memberistic_tests_dir ) {
@@ -58,6 +77,8 @@ foreach ( array( 'deprecated_function_run', 'deprecated_argument_run', 'deprecat
 tests_add_filter(
 	'muplugins_loaded',
 	static function () {
+		// __DIR__ resolves lexically, so this is correct inside the closure —
+		// a captured variable would need an explicit `use`.
 		require dirname( __DIR__, 2 ) . '/memberistic-membership-solutions.php';
 	}
 );
