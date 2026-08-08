@@ -55,8 +55,8 @@ jobs:
           print('\n'.join('- ' + k for k in ks[-12:]))
           "
             echo ''
-            echo 'Requested by this matrix: 6.8, 6.9, 7.0.2'
-            for want in 6.8 6.9 7.0.2; do
+            echo 'Requested by this matrix: 6.8, 6.9, 7.0.3'
+            for want in 6.8 6.9 7.0.3; do
               if python3 -c "
           import json, sys
           d = json.load(open('/tmp/stable.json'))
@@ -77,7 +77,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        wordpress: ['6.8', '6.9', '7.0.2']
+        wordpress: ['6.8', '6.9', '7.0.3']
         php: ['8.2', '8.3', '8.4']
 
     services:

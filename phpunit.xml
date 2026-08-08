@@ -14,9 +14,21 @@
       <directory>tests/unit</directory>
     </testsuite>
   </testsuites>
+  <!--
+    Coverage describes the plugin, not the one file that happened to be tested
+    first. The unit suite only exercises a fraction of this, and that is the
+    point: a coverage report scoped to the single file it already covers
+    reports 100% forever and tells nobody anything.
+
+    templates/ and assets/ stay out because they are output, not logic. Every
+    PHP file that decides something lives under includes/, plus the bootstrap
+    and the uninstaller.
+  -->
   <source>
     <include>
-      <file>includes/integrations/class-entitlement-service.php</file>
+      <directory suffix=".php">includes</directory>
+      <file>memberistic-membership-solutions.php</file>
+      <file>uninstall.php</file>
     </include>
   </source>
 </phpunit>
