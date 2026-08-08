@@ -4,7 +4,7 @@
  *
  * This plugin has no autoloader. `Plugin::load_dependencies()` is a
  * hand-ordered array of require_once paths, which means a new class file is
- * invisible until someone remembers to add it there — and the failure mode is
+ * invisible until someone remembers to add it there -- and the failure mode is
  * not a missing feature but a fatal "Class not found" the first time anything
  * touches it.
  *
@@ -58,13 +58,13 @@ final class DependencyManifestTest extends TestCase {
 		self::assertIsString( $source, 'includes/class-plugin.php is unreadable' );
 
 		$start = strpos( $source, 'function load_dependencies' );
-		self::assertNotFalse( $start, 'Plugin::load_dependencies() no longer exists — this guard needs updating' );
+		self::assertNotFalse( $start, 'Plugin::load_dependencies() no longer exists -- this guard needs updating' );
 
 		$end = strpos( $source, ');', $start );
 		self::assertNotFalse( $end, 'Could not find the end of the $files array in load_dependencies()' );
 
 		preg_match_all(
-			"#'(includes/[A-Za-z0-9/_-]+\.php)'#",
+			'#\'(includes/[A-Za-z0-9/_-]+\.php)\'#',
 			substr( $source, $start, $end - $start ),
 			$matches
 		);
