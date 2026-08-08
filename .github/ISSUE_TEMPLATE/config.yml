@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/Wordpressistic/memberistic/security/advisories/new
+    about: Report privately. Never open a public issue for a security problem.
+  - name: Question or "how do I…"
+    url: https://github.com/Wordpressistic/memberistic/discussions
+    about: Usage questions, setup help and ideas that are not yet a request.
+  - name: Documentation
+    url: https://github.com/Wordpressistic/memberistic/tree/main/docs
+    about: Install, upgrade, hooks, integrations and entitlement rules.
+  - name: Commercial enquiries
+    url: https://memberistic.com
+    about: Licensing, migration services and anything commercial.

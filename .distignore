@@ -9,8 +9,34 @@
 composer.json
 composer.lock
 phpunit.xml
+phpunit-integration.xml
 tests
+bin
 vendor
 node_modules
 build
 *.zip
+.editorconfig
+
+# Contributor- and agent-facing material. Useful in the repository, noise in a
+# customer's wp-content/plugins directory.
+CLAUDE.md
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+SUPPORT.md
+
+# Internal planning material. docs/strategy in particular contains pricing
+# models, revenue targets and competitor analysis — none of which belongs in a
+# zip that ships to customers. The product documentation directly under docs/
+# (HOOKS, INSTALL, INTEGRATIONS, UPGRADE-2.0, entitlements, guest-pass-audit)
+# still ships, as it always has.
+docs/strategy
+docs/governance
+
+# The docs index is repository navigation, not product documentation: roughly
+# two thirds of its links point into docs/strategy, docs/governance, CLAUDE.md
+# and CONTRIBUTING.md, none of which ship. In a customer's plugin directory it
+# is a page of dead links. The product docs it indexes (HOOKS, INSTALL,
+# INTEGRATIONS, UPGRADE-2.0, entitlements, guest-pass-audit) still ship, and
+# README.md at the repository root remains the reader's entry point.
+docs/README.md

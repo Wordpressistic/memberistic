@@ -34,25 +34,38 @@ jobs:
         run: find . -name '*.php' -not -path './vendor/*' -not -path './node_modules/*' -print0 | xargs -0 -n1 php -l
 
   phpunit:
-    name: PHPUnit (unit suite)
+    name: PHPUnit unit suite (PHP ${{ matrix.php-version }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      # The unit suite is the only thing that runs on every supported PHP
+      # without a database behind it, so it is the cheapest place to catch a
+      # syntax-legal-but-runtime-broken 8.4 change. `php -l` above proves the
+      # file parses; only executing it proves the behaviour survives.
+      matrix:
+        php-version: ['8.2', '8.3', '8.4']
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup PHP
+      - name: Setup PHP ${{ matrix.php-version }}
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: ${{ matrix.php-version }}
           coverage: none
           tools: composer
 
+      # Keyed on the PHP version as well as the lockfile: Composer resolves
+      # against the running platform, so a vendor/ built on 8.2 is not
+      # necessarily the tree 8.4 would have installed. Sharing one key across
+      # the matrix would let the first job to finish decide what the other two
+      # actually test.
       - name: Cache Composer packages
         uses: actions/cache@v4
         with:
           path: vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-
+          key: ${{ runner.os }}-php${{ matrix.php-version }}-composer-${{ hashFiles('composer.json') }}
+          restore-keys: ${{ runner.os }}-php${{ matrix.php-version }}-composer-
 
       # Composer is the primary install path; the phar is a fallback so a
       # Packagist outage can't hide a real test regression behind a red
@@ -128,3 +141,24 @@ jobs:
             echo "::warning::PSR-12 findings above are advisory only (this plugin's existing style predates PSR-12) and never block merges."
           fi
           exit 0
+
+  # The distributable is what customers actually install, and it is assembled
+  # by pruning the repository — so the only way to know it is correct is to
+  # build it and look inside. Running this on every pull request means a
+  # dev-only file added to the root fails here, on the PR that added it,
+  # rather than silently shipping in the next release.
+  #
+  # Same two scripts the release workflow runs, deliberately: this job is the
+  # rehearsal, and a rehearsal against different code proves nothing.
+  dist-guard:
+    name: Distributable contains no dev or internal files
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the distributable tree and archive
+        run: bin/build-dist.sh --zip ci
+
+      - name: Assert the archive is clean
+        run: bin/assert-dist-clean.sh --zip ci
