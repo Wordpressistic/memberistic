@@ -9,7 +9,9 @@
 composer.json
 composer.lock
 phpunit.xml
+phpunit-integration.xml
 tests
+bin
 vendor
 node_modules
 build
