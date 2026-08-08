@@ -12,6 +12,39 @@ Pro foundation · **P2** differentiation and SaaS.
 
 ## P0 — before serious public promotion
 
+### P0-0 · WordPress integration test harness
+**Status:** open · **Workstream:** WS-2 · **Milestone:** M0 · **Finding:** F-15
+
+Blocks P0-5, P0-6, P0-7, P0-8, P0-10 and P1-9 — every suite that needs a real
+WordPress. `tests/bootstrap.php` stubs WordPress rather than loading it, which
+is exactly right for the fast unit suite and useless for anything that has to
+exercise a route, a capability, an upload or a webhook. Only two production
+files load under it. See [`03-quality-and-release.md`](03-quality-and-release.md)
+§2, which already names this as the missing piece;
+[`00-master-plan.md`](00-master-plan.md) makes it the M1 entry condition. It has
+never had a backlog item, so the dependency surfaces on the first day someone
+picks up P0-5 instead of before.
+
+**Acceptance**
+- [ ] A real WordPress test environment (`wp-env` or equivalent) runs locally
+      and in CI
+- [ ] `integration` testsuite added to `phpunit.xml` alongside `unit`; both
+      independently runnable
+- [ ] The existing `unit` suite still runs **without** WordPress and is
+      unchanged — it is fast, it works, and the two guard tests depend on
+      scanning source rather than booting anything
+- [ ] Factories for member, plan, membership, linked person, payment, waiver,
+      check-in, corporate group, staff user, admin user
+- [ ] A role fixture covering every capability in `Capabilities::get_all()` and
+      the six roles in `Capabilities::assign_capabilities()`
+- [ ] An HTTP interception layer so no test reaches the network — prerequisite
+      for the Stripe suites (P1-9) and for the P0-10 network-silence assertion
+- [ ] `phpunit.xml` `<source>` widened beyond `class-entitlement-service.php`,
+      so coverage describes the plugin rather than one file
+- [ ] Both suites blocking in CI
+
+---
+
 ### P0-1 · Support current WordPress
 **Status:** in progress · **Workstream:** WS-1 · **Milestone:** M0 · **Finding:** F-02
 
@@ -20,6 +53,9 @@ Test and fix against the full matrix in
 declared compatibility.
 
 **Acceptance**
+- [ ] Full activation, onboarding, plan creation, join/pay, check-in, waiver and
+      import flows exercised on WordPress 6.8.x, 6.9.x and 7.0.3
+- [ ] PHP 8.2, 8.3, 8.4 all pass
 - [x] A real WordPress integration harness exists — `bin/install-wp-tests.sh`,
       `tests/integration/`, `phpunit-integration.xml`, and a CI matrix in
       `.github/workflows/integration.yml` covering WP 6.8 / 6.9 / 7.0.2 ×
@@ -94,7 +130,7 @@ Blocks the WordPress.org listing, which blocks the primary acquisition channel.
 ---
 
 ### P0-5 · REST authorization and IDOR coverage
-**Status:** open · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-03
+**Status:** blocked by P0-0 · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-03
 
 The single highest-value security item. Invariant I6.
 
@@ -112,7 +148,7 @@ The single highest-value security item. Invariant I6.
 ---
 
 ### P0-6 · Webhook fuzzing and rate limits
-**Status:** open · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-05
+**Status:** blocked by P0-0 · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-05
 
 **Acceptance**
 - [ ] Stripe webhook rejects: invalid signature, stale timestamp beyond the
@@ -126,7 +162,7 @@ The single highest-value security item. Invariant I6.
 ---
 
 ### P0-7 · Clean-install and upgrade E2E
-**Status:** open · **Workstream:** WS-1/WS-2 · **Milestone:** M0/M1
+**Status:** blocked by P0-0 · **Workstream:** WS-1/WS-2 · **Milestone:** M0/M1
 
 **Acceptance**
 - [ ] Playwright: install → activate → onboard → create plan → add member
@@ -138,7 +174,7 @@ The single highest-value security item. Invariant I6.
 ---
 
 ### P0-8 · Upload and download security matrix
-**Status:** open · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-04
+**Status:** blocked by P0-0 · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-04
 
 Member documents and signed waivers. Legally significant records.
 
@@ -168,7 +204,7 @@ Conversion assets for operationally serious buyers.
 ---
 
 ### P0-10 · Prove the fresh-activation network silence
-**Status:** open · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-07
+**Status:** blocked by P0-0 · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-07
 
 Invariant I5 is currently upheld by design, not by test.
 
@@ -303,7 +339,7 @@ nothing.
 ---
 
 ### P1-9 · Stripe contract tests and API upgrade path
-**Status:** open · **Workstream:** WS-2/WS-5 · **Milestone:** M2 · **Finding:** F-08
+**Status:** blocked by P0-0 · **Workstream:** WS-2/WS-5 · **Milestone:** M2 · **Finding:** F-08
 
 Risk R1. **Do not change the pinned version before this exists.**
 
@@ -423,6 +459,7 @@ any implementation.
 - Anything touching an invariant ([`00-master-plan.md`](00-master-plan.md) §3)
   says so in the PR.
 - Anything blocked stays blocked. P1-4 before P1-3 produces a Pro feature with
-  nothing to gate it.
+  nothing to gate it; P0-5 before P0-0 produces a security suite with no
+  WordPress to run it against.
 - Ticking an item here is part of the PR that completes it, not a follow-up.
 - An item without acceptance criteria is not ready to start — write them first.

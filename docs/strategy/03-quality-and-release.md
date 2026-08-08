@@ -118,7 +118,7 @@ minutes.
 
 | Layer | Must pass |
 |---|---|
-| WordPress | 6.8.x, 6.9.x, 7.0.2 |
+| WordPress | 6.8.x, 6.9.x, 7.0.3 |
 | Upcoming | current 7.1 pre-release/RC before it ships |
 | PHP | 8.2, 8.3, 8.4 |
 | Database | MySQL 8.x, currently supported MariaDB |

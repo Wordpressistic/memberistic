@@ -53,8 +53,13 @@ publish SHA-256.
 - Requires at least: WordPress 6.8
 - Tested up to: WordPress 6.8
 
-Current stable WordPress at audit date: **7.0.2**, released 2026-07-17. The
+Current stable WordPress at audit date: **7.0.3**, released 2026-08-06. The
 plugin is two major lines behind on its declared testing.
+
+> **Corrected 2026-08-08.** This section originally read 7.0.2 (2026-07-17),
+> which was already superseded two days before the audit was written. 7.1 ships
+> 2026-08-19, so the matrix target below has a short shelf life — re-check
+> against wordpress.org rather than trusting the number written here.
 
 This is not evidence of breakage. It is evidence that nobody has checked, which
 for a plugin handling payments and access control is the same problem with a
@@ -64,7 +69,7 @@ better mood.
 
 | Layer | Must test |
 |---|---|
-| WordPress | 6.8.x, 6.9.x, 7.0.2 |
+| WordPress | 6.8.x, 6.9.x, 7.0.3 |
 | Upcoming | the current 7.1 pre-release/RC before it ships |
 | PHP | 8.2, 8.3, 8.4 |
 | Database | MySQL 8.x, currently supported MariaDB versions |
@@ -74,6 +79,33 @@ better mood.
 
 `Tested up to` moves only after this passes. Not before, and not because a new
 WordPress shipped.
+
+### Static deprecation audit against 7.0.3 — clean
+
+Run 2026-08-08 against the 2.0.0 tree, checking every breaking change in the
+[7.0 field guide](https://make.wordpress.org/core/2026/05/14/wordpress-7-0-field-guide/)
+plus the usual 6.7→7.0 hazards:
+
+| Check | Result |
+|---|---|
+| Block-editor changes — iframed editor for Block API v3, `blockVisibility` becoming an object, `contentOnly` default for patterns | **N/A** — no `register_block_type`, `wp_script_modules` or `blockVisibility` anywhere in the plugin |
+| Interactivity API `state.navigation` deprecation | **N/A** — not used |
+| HTML5 script theme support removal | **N/A** — no `add_theme_support` calls |
+| PHP floor raised to 7.4 | **N/A** — plugin already requires 8.2 |
+| PHP 8.4 implicit nullable parameters | **Clean** — no `Type $x = null` without `?` |
+| ~20 removed/deprecated WP functions | **Clean** — the only `get_settings` hits are a method on `REST\Settings_Controller`, not the deprecated global |
+| Textdomain load timing (WP 6.7+ just-in-time translations) | **Correct** — `load_plugin_textdomain` runs on `init` |
+| REST permission callbacks | 38 routes, 48 callbacks, **zero `__return_true`** — invariant I6 holds |
+| `add_meta_box` | 3 uses, no 7.0 signature change |
+| Interpolated SQL | 29 sites, all table names from repository `table()` methods, each carrying a targeted `phpcs:ignore` — the sanctioned pattern, since table names cannot be placeholders |
+
+**No source changes are required for 7.0.3 compatibility.** This narrows P0-1 to
+running the matrix, which is why P0-0 — not a code fix — is what stands between
+here and closing it.
+
+A static audit is not a passing matrix. It rules out the *known* breaking
+changes; it says nothing about runtime behaviour on 7.0.3, which still has to be
+exercised.
 
 ---
 
@@ -260,6 +292,19 @@ logic. Four unit test classes do not cover that.
 
 Required pyramid in [`03-quality-and-release.md`](03-quality-and-release.md).
 
+### The prerequisite behind five of the P0 findings
+
+F-03, F-04, F-05 and F-07 are each written as a missing test suite. None of them
+can be written today. `tests/bootstrap.php` does not load WordPress — it stubs
+the handful of WP functions the two behavioural tests need and shadows the
+`Database\*` repositories with static fixtures. There is no request, no user, no
+capability map, no `$wpdb` beyond a stub, so there is nothing to authorise
+against, upload to, or post a webhook at.
+
+That makes the absence of a WordPress integration harness a finding in its own
+right rather than an implementation detail of the other four — tracked as F-15
+and scheduled as backlog P0-0.
+
 ---
 
 ## 9. Findings index
@@ -267,7 +312,7 @@ Required pyramid in [`03-quality-and-release.md`](03-quality-and-release.md).
 | ID | Severity | Finding | Tracked |
 |---|---|---|---|
 | F-01 | P0 | No immutable release tag or artifact | Backlog P0-2, P0-3 |
-| F-02 | P0 | WordPress 7.0.2 untested; `Tested up to` stale | Backlog P0-1 |
+| F-02 | P0 | WordPress 7.0.3 untested; `Tested up to` stale | Backlog P0-1 |
 | F-03 | P0 | No REST authorization/IDOR coverage | Backlog P0-5 |
 | F-04 | P0 | No upload/download security matrix | Backlog P0-8 |
 | F-05 | P0 | No webhook fuzzing or rate-limit tests | Backlog P0-6 |
@@ -280,3 +325,8 @@ Required pyramid in [`03-quality-and-release.md`](03-quality-and-release.md).
 | F-12 | P1 | No system-health/diagnostic export | Backlog P1-7 |
 | F-13 | P2 | Licensing seam unimplemented | Backlog P1-3 |
 | F-14 | P2 | No cloud control plane | Backlog P2-1 |
+| F-15 | P0 | No WordPress integration test harness — F-03, F-04, F-05 and F-07 are unstartable without it | Backlog P0-0 |
+
+> F-15 was identified after the original numbering and is appended rather than
+> inserted in severity order. Renumbering would break every cross-reference in
+> the backlog and the master plan.

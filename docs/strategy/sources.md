@@ -27,7 +27,9 @@ quarterly review (risk R1, risk R2).
 
 | Source | Used for |
 |---|---|
-| https://wordpress.org/news/2026/07/wordpress-7-0-2-release/ | Current stable WordPress at audit date (7.0.2, released 2026-07-17) |
+| https://wordpress.org/news/2026/08/wordpress-7-0-3-release/ | Current stable WordPress at audit date (7.0.3, released 2026-08-06) |
+| https://make.wordpress.org/core/2026/07/03/wordpress-7-1-release-party-schedule/ | 7.1 ship date (2026-08-19) — the matrix target moves when it lands |
+| https://make.wordpress.org/core/2026/05/14/wordpress-7-0-field-guide/ | 7.0 breaking changes, checked against the plugin: none apply |
 | https://wordpress.org/download/releases/ | Release history and the supported-version matrix |
 | https://developer.wordpress.org/coding-standards/wordpress-coding-standards/ | WPCS as the standards target |
 | https://developer.wordpress.org/plugins/developer-tools/helper-plugins/ | Plugin Check guidance |

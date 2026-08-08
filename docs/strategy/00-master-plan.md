@@ -115,7 +115,7 @@ run is attached to a release.
 
 | Severity | Problem |
 |---|---|
-| **P0** | `readme.txt` declares WordPress 6.8 tested; current stable is 7.0.2 (released 2026-07-17) |
+| **P0** | `readme.txt` declares WordPress 6.8 tested; current stable is 7.0.3 (released 2026-08-06), with 7.1 due 2026-08-19 |
 | **P0** | No resolvable `v2.0.0` tag, no GitHub Release, no published artifact or checksum |
 | **P0** | No route-by-route REST authorization or IDOR test coverage |
 | **P0** | No upload/download security test matrix; no webhook fuzzing; no rate-limit tests |
@@ -209,7 +209,7 @@ my machine."
 - [ ] Release built from the tag by CI, not by hand
 - [ ] Zip verified to contain no `tests/`, `vendor/`, `.github/`, `composer.*`
 - [ ] Zip smoke-installed on clean WordPress
-- [ ] Tested against WordPress 6.8.x, 6.9.x and 7.0.2 before `Tested up to`
+- [ ] Tested against WordPress 6.8.x, 6.9.x and 7.0.3 before `Tested up to`
       moves
 - [ ] Tested on PHP 8.2, 8.3, 8.4
 - [ ] WordPress Plugin Check run; every exception documented
@@ -357,7 +357,7 @@ are a V2 decision and not a V1 one.
 | ID | Risk | Trigger | Impact | Mitigation | Owner |
 |---|---|---|---|---|---|
 | R1 | **Stripe API drift.** Pinned at `2024-04-10`; current is `2026-02-25.clover`. | Stripe deprecates the pinned version, or a needed feature requires a newer one | Payments break — the highest-consequence failure in the product | Contract tests against test-mode fixtures; upgrade through a documented compatibility release; surface the pinned version in System Status; quarterly review task | Maintainer |
-| R2 | **WordPress 7.x breakage.** `Tested up to` says 6.8; stable is 7.0.2. | A user installs on 7.x and hits a regression | Reputation damage at exactly the wrong moment — during acquisition | Run the full matrix before promotion; do not raise `Tested up to` until it passes | Maintainer |
+| R2 | **WordPress 7.x breakage.** `Tested up to` says 6.8; stable is 7.0.3, and 7.1 ships 2026-08-19. | A user installs on 7.x and hits a regression | Reputation damage at exactly the wrong moment — during acquisition | Run the full matrix before promotion; do not raise `Tested up to` until it passes | Maintainer |
 | R3 | **Refactor regressions.** Splitting 178 KB, 98 KB and 85 KB classes touches payments, waivers and group billing. | A behaviour-preserving refactor silently changes behaviour | Silent data or money errors, hardest class of bug to detect | Characterisation tests **before** each move; one module per PR; no feature work inside a refactor PR | Maintainer |
 | R4 | **Lifetime licence liability.** LTD sold cheap creates permanent support cost with no renewal. | LTD becomes the default purchase rather than a launch instrument | Support load grows while revenue does not | Cap promotional LTD volume; one production domain; 12 months support included, renewable after | Maintainer |
 | R5 | **Cloud coupling.** A cloud outage taking down local memberships. | Local authorization starts depending on a cloud call | Catastrophic and unrecoverable trust loss | WordPress stays source of truth; short-lived entitlement tokens; explicit test that cloud-down leaves local access working | Maintainer |
