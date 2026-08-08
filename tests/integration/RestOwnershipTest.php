@@ -36,111 +36,27 @@
 final class RestOwnershipTest extends Memberistic_Integration_TestCase {
 
 	/**
-	 * Create a plan. Columns mirror Schema::create_tables() exactly.
+	 * Fixtures delegate to Memberistic_Record_Factory.
+	 *
+	 * These were four hand-rolled $wpdb->insert() calls, each repeating the
+	 * required-column knowledge the schema already encodes. The factory owns
+	 * that now and throws on a failed insert, so a mismatched column can no
+	 * longer leave a test addressing id 0 and passing on the resulting 404.
 	 */
 	private function create_plan(): int {
-		global $wpdb;
-
-		$now = current_time( 'mysql', true );
-
-		$inserted = $wpdb->insert(
-			$wpdb->prefix . 'memberistic_plans',
-			array(
-				'name'          => 'Ownership Test Plan',
-				'slug'          => 'ownership-test-plan-' . wp_generate_password( 8, false ),
-				'monthly_price' => '10.00',
-				'annual_price'  => '100.00',
-				'status'        => 'active',
-				'created_at'    => $now,
-			),
-			array( '%s', '%s', '%s', '%s', '%s', '%s' )
-		);
-
-		$this->assertNotFalse( $inserted, 'Plan fixture insert failed: ' . $wpdb->last_error );
-
-		return (int) $wpdb->insert_id;
+		return Memberistic_Record_Factory::plan();
 	}
 
-	/**
-	 * Create a membership owned by $user_id.
-	 *
-	 * membership_uuid and billing_cycle are NOT NULL in the schema; omitting
-	 * them makes the insert fail silently and every downstream assertion pass
-	 * against id 0.
-	 */
 	private function create_membership( int $plan_id, int $user_id ): int {
-		global $wpdb;
-
-		$now = current_time( 'mysql', true );
-
-		$inserted = $wpdb->insert(
-			$wpdb->prefix . 'memberistic_memberships',
-			array(
-				'membership_uuid' => wp_generate_uuid4(),
-				'primary_user_id' => $user_id,
-				'plan_id'         => $plan_id,
-				'billing_cycle'   => 'monthly',
-				'status'          => 'active',
-				'start_date'      => $now,
-				'created_at'      => $now,
-			),
-			array( '%s', '%d', '%d', '%s', '%s', '%s', '%s' )
-		);
-
-		$this->assertNotFalse( $inserted, 'Membership fixture insert failed: ' . $wpdb->last_error );
-
-		return (int) $wpdb->insert_id;
+		return Memberistic_Record_Factory::membership( $plan_id, $user_id );
 	}
 
-	/**
-	 * Create a linked person on a membership.
-	 */
 	private function create_person( int $membership_id ): int {
-		global $wpdb;
-
-		$now = current_time( 'mysql', true );
-
-		$inserted = $wpdb->insert(
-			$wpdb->prefix . 'memberistic_people',
-			array(
-				'membership_id' => $membership_id,
-				'full_name'     => 'Ownership Test Person',
-				'email'         => 'ownership-' . wp_generate_password( 8, false ) . '@example.test',
-				'status'        => 'active',
-				'created_at'    => $now,
-			),
-			array( '%d', '%s', '%s', '%s', '%s' )
-		);
-
-		$this->assertNotFalse( $inserted, 'Person fixture insert failed: ' . $wpdb->last_error );
-
-		return (int) $wpdb->insert_id;
+		return Memberistic_Record_Factory::person( $membership_id, array( 'full_name' => 'Ownership Test Person' ) );
 	}
 
-	/**
-	 * Create a payment on a membership.
-	 */
 	private function create_payment( int $membership_id ): int {
-		global $wpdb;
-
-		$now = current_time( 'mysql', true );
-
-		$inserted = $wpdb->insert(
-			$wpdb->prefix . 'memberistic_payments',
-			array(
-				'membership_id' => $membership_id,
-				'amount'        => '10.00',
-				'currency'      => 'USD',
-				'status'        => 'succeeded',
-				'paid_at'       => $now,
-				'created_at'    => $now,
-			),
-			array( '%d', '%s', '%s', '%s', '%s', '%s' )
-		);
-
-		$this->assertNotFalse( $inserted, 'Payment fixture insert failed: ' . $wpdb->last_error );
-
-		return (int) $wpdb->insert_id;
+		return Memberistic_Record_Factory::payment( $membership_id );
 	}
 
 	private function assertRouteExists( string $pattern ): void {

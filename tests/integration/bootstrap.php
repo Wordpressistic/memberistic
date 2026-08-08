@@ -127,3 +127,4 @@ if ( ! empty( $GLOBALS['memberistic_load_notices'] ) ) {
 }
 
 require_once __DIR__ . '/class-memberistic-integration-testcase.php';
+require_once __DIR__ . '/class-memberistic-record-factory.php';
