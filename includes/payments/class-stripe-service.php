@@ -1392,6 +1392,14 @@ final class Stripe_Service {
 	public static function verify_webhook_signature( $payload, $header ) {
 		$secret = trim( (string) memberistic_get_setting( 'stripe_webhook_secret', '' ) );
 
+		// Cast before the strict comparison rather than trusting the caller:
+		// this is a public static entry point, and a NULL header — what
+		// WP_REST_Request::get_header() returns for an absent header — would
+		// otherwise pass the '' === $header test and reach explode() below,
+		// which is deprecated for NULL on PHP 8.1+.
+		$header  = (string) $header;
+		$payload = (string) $payload;
+
 		if ( '' === $secret || '' === $header ) {
 			return false;
 		}
