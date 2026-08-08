@@ -178,7 +178,9 @@ if ( is_multisite() ) {
 	// Per-site: every subsite has its own prefixed tables, options, and
 	// roles. A network delete has to clean each of them, not just whichever
 	// site happened to be current.
-	$site_ids = get_sites(
+	// Prefixed because uninstall.php runs at file scope: these are genuine
+	// globals in WordPress's namespace, not locals.
+	$memberistic_site_ids = get_sites(
 		array(
 			'fields'                 => 'ids',
 			'number'                 => 0,
@@ -186,8 +188,8 @@ if ( is_multisite() ) {
 		)
 	);
 
-	foreach ( $site_ids as $site_id ) {
-		switch_to_blog( (int) $site_id );
+	foreach ( $memberistic_site_ids as $memberistic_site_id ) {
+		switch_to_blog( (int) $memberistic_site_id );
 		memberistic_uninstall_site();
 		restore_current_blog();
 	}

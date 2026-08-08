@@ -25,6 +25,16 @@ files load under it. See [`03-quality-and-release.md`](03-quality-and-release.md
 never had a backlog item, so the dependency surfaces on the first day someone
 picks up P0-5 instead of before.
 
+**The PHPUnit constraint.** The WordPress test library cannot run on PHPUnit 10.
+`WP_UnitTestCase::set_up()` calls `expectDeprecated()`, which reads
+`@expectedDeprecated` docblocks via `PHPUnit\Util\Test::parseTestMethodAnnotations()`
+— a method PHPUnit 10 removed. Every integration test errors before its first
+assertion, identically on WordPress 6.8, 6.9, 7.0 and trunk, so this is not
+something a newer WordPress resolves. The integration suite is therefore pinned
+to PHPUnit 9.6 in CI while the unit suite stays on 10.5; the unit suite never
+loads WordPress, so it is unaffected. Anything added to `tests/integration/`
+must be PHPUnit 9-compatible.
+
 **Acceptance**
 - [ ] A real WordPress test environment (`wp-env` or equivalent) runs locally
       and in CI

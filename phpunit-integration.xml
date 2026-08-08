@@ -4,23 +4,39 @@
   Separate from phpunit.xml because the unit suite deliberately runs with
   WordPress stubbed and must stay fast and dependency-free.
 
-  failOnWarning/failOnNotice/failOnDeprecation are on because this suite's
-  primary job is surfacing version incompatibilities, and a deprecation
-  notice is exactly that signal.
+  PHPUnit 9, NOT the 10.5 the unit suite uses. This is not a preference — the
+  WordPress test library cannot run on PHPUnit 10. Its WP_UnitTestCase::set_up()
+  calls expectDeprecated(), which calls PHPUnit\Util\Test::parseTestMethodAnnotations()
+  to read `@expectedDeprecated` docblocks, and PHPUnit 10 removed that method.
+  Every test errors before its first assertion. This is true on WordPress 6.8,
+  6.9, 7.0 and trunk alike, so it is not something a newer WordPress fixes.
+
+  The unit suite stays on PHPUnit 10 (it never loads WordPress, so nothing there
+  is affected) and CI installs the 9.x stack only for this suite. See the
+  "Install the PHPUnit 9 test stack" step in .github/workflows/integration.yml.
+
+  Failing on deprecations remains this suite's primary job, and it still does:
+
+  - WordPress-level deprecations — _deprecated_function(), _deprecated_argument(),
+    _deprecated_hook(), _doing_it_wrong() — are caught by WP_UnitTestCase itself,
+    which fails any test that triggers one unexpectedly, plus the load-time hooks
+    in tests/integration/bootstrap.php. That mechanism is entirely independent of
+    the PHPUnit version and is where version incompatibilities actually surface.
+  - PHP-level deprecations and notices are converted to exceptions below, which
+    is the 9.x equivalent of 10's failOnDeprecation / failOnNotice.
 -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.6/phpunit.xsd"
          bootstrap="tests/integration/bootstrap.php"
-         cacheDirectory=".phpunit.cache"
+         cacheResultFile=".phpunit.cache/integration.result"
          colors="true"
          beStrictAboutOutputDuringTests="true"
          failOnWarning="true"
-         failOnNotice="true"
-         failOnDeprecation="true"
-         displayDetailsOnTestsThatTriggerErrors="true"
-         displayDetailsOnTestsThatTriggerWarnings="true"
-         displayDetailsOnTestsThatTriggerNotices="true"
-         displayDetailsOnTestsThatTriggerDeprecations="true">
+         failOnRisky="true"
+         convertDeprecationsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         convertErrorsToExceptions="true">
   <testsuites>
     <testsuite name="integration">
       <directory suffix="Test.php">tests/integration</directory>
