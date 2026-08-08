@@ -1,0 +1,156 @@
+<?php
+/**
+ * Guard: every class file shipped under includes/ is in the require list.
+ *
+ * There is no autoloader. `Plugin::load_dependencies()` is a hand-ordered
+ * require_once array, and a class file that is not in it is invisible at
+ * runtime — the file ships, `php -l` passes, the unit suite passes, and the
+ * class simply does not exist when something calls it.
+ *
+ * That is not hypothetical. `class-booking-adapter.php` shipped in 2.0.0
+ * without a require entry, and `Waiver_Booking_Bridge::register()` calls
+ * `Booking_Adapter::hook()` as its first statement on `init` priority 4,
+ * gated only by the Waiver Manager toggle — one of the two integrations that
+ * default to *on*. The result was a fatal on `init` on a fresh install, on
+ * every WordPress and PHP version, which no lint and no unit test could see.
+ *
+ * This test is deliberately a source scan rather than a behavioural test, in
+ * the same spirit as FreshInstallDefaultsTest and PmproRemovalTest: it encodes
+ * a promise about the shipped package, and it runs in milliseconds without
+ * booting WordPress.
+ *
+ * @package Memberistic
+ */
+
+use PHPUnit\Framework\TestCase;
+
+/**
+ * @group guard
+ */
+class DependencyManifestTest extends TestCase {
+
+	private function plugin_root(): string {
+		return dirname( __DIR__, 2 );
+	}
+
+	/**
+	 * Paths that are legitimately absent from the require list.
+	 *
+	 * Extend this *with the reason*, the way the PMPro allow-list works. Do
+	 * not loosen the matcher.
+	 *
+	 * @return array<string, string> path => reason
+	 */
+	private function allowed_absences(): array {
+		return array(
+			// The file that owns the require list cannot require itself; the
+			// main plugin bootstrap requires it directly.
+			'includes/class-plugin.php' => 'Contains load_dependencies() and is required by the plugin bootstrap.',
+		);
+	}
+
+	/**
+	 * @return array<int, string> Paths relative to the plugin root.
+	 */
+	private function shipped_php_files(): array {
+		$root  = $this->plugin_root();
+		$found = array();
+
+		$iterator = new RecursiveIteratorIterator(
+			new RecursiveDirectoryIterator( $root . '/includes', FilesystemIterator::SKIP_DOTS )
+		);
+
+		foreach ( $iterator as $file ) {
+			if ( 'php' !== strtolower( $file->getExtension() ) ) {
+				continue;
+			}
+
+			$found[] = ltrim( str_replace( $root, '', $file->getPathname() ), '/' );
+		}
+
+		sort( $found );
+
+		return $found;
+	}
+
+	/**
+	 * @return array<int, string> Paths as written in load_dependencies().
+	 */
+	private function required_paths(): array {
+		$source = file_get_contents( $this->plugin_root() . '/includes/class-plugin.php' );
+
+		$this->assertNotFalse( $source, 'Could not read includes/class-plugin.php' );
+
+		preg_match_all( "/'(includes\/[^']+\.php)'/", $source, $matches );
+
+		return array_values( array_unique( $matches[1] ) );
+	}
+
+	public function test_require_list_is_not_empty(): void {
+		$required = $this->required_paths();
+
+		$this->assertGreaterThan(
+			50,
+			count( $required ),
+			'load_dependencies() returned suspiciously few paths — has the list moved or changed shape?'
+		);
+	}
+
+	public function test_every_shipped_class_file_is_required(): void {
+		$required = $this->required_paths();
+		$allowed  = $this->allowed_absences();
+
+		$missing = array();
+
+		foreach ( $this->shipped_php_files() as $path ) {
+			if ( in_array( $path, $required, true ) || isset( $allowed[ $path ] ) ) {
+				continue;
+			}
+
+			$missing[] = $path;
+		}
+
+		$this->assertSame(
+			array(),
+			$missing,
+			"These files ship under includes/ but are never required by Plugin::load_dependencies(),\n"
+			. "so the classes they define do not exist at runtime:\n  - "
+			. implode( "\n  - ", $missing )
+			. "\n\nAdd each to the require list next to its siblings, or allow-list it with a reason."
+		);
+	}
+
+	/**
+	 * The reverse direction: a require entry pointing at a file that no longer
+	 * exists is a fatal on load, which is worse than an unused entry.
+	 */
+	public function test_every_required_path_exists(): void {
+		$root    = $this->plugin_root();
+		$missing = array();
+
+		foreach ( $this->required_paths() as $path ) {
+			if ( ! file_exists( $root . '/' . $path ) ) {
+				$missing[] = $path;
+			}
+		}
+
+		$this->assertSame(
+			array(),
+			$missing,
+			"load_dependencies() requires files that do not exist:\n  - " . implode( "\n  - ", $missing )
+		);
+	}
+
+	/**
+	 * Booking_Adapter specifically, because its absence was a live fatal and
+	 * its three consumers are not gated by the booking toggle.
+	 */
+	public function test_booking_adapter_is_required(): void {
+		$this->assertContains(
+			'includes/integrations/class-booking-adapter.php',
+			$this->required_paths(),
+			'Booking_Adapter must load unconditionally: Waiver_Booking_Bridge, Staff_Dashboard '
+			. 'and POS_Bridge all reference it outside the booking integration toggle.'
+		);
+	}
+}

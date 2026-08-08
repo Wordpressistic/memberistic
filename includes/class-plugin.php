@@ -58,6 +58,13 @@ final class Plugin {
 			'includes/emails/class-email-service.php',
 			'includes/integrations/class-integrations-registry.php',
 			'includes/integrations/class-entitlement-service.php',
+			// Must load unconditionally, before its consumers. It is a pure
+			// name-mapping utility (foreign hook and table names), and it is
+			// referenced from three places that are NOT gated by the booking
+			// toggle: Waiver_Booking_Bridge (Waiver Manager, default on),
+			// Staff_Dashboard and POS_Bridge. Omitting it fataled `init` on
+			// every fresh install.
+			'includes/integrations/class-booking-adapter.php',
 			'includes/integrations/class-booking-engine.php',
 			'includes/integrations/class-woocommerce-bridge.php',
 			'includes/integrations/class-woocommerce-discounts.php',
