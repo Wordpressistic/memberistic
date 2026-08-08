@@ -90,7 +90,7 @@ plugin.
 ---
 
 ### P0-0 · WordPress integration test harness
-**Status:** in progress · **Workstream:** WS-2 · **Milestone:** M0 · **Finding:** F-15
+**Status:** **done** (PR #5, merged; matrix green on main) · **Workstream:** WS-2 · **Milestone:** M0 · **Finding:** F-15
 
 Blocks P0-5, P0-6, P0-7, P0-8, P0-10 and P1-9 — every suite that needs a real
 WordPress. `tests/bootstrap.php` stubs WordPress rather than loading it, which
@@ -140,7 +140,7 @@ must be PHPUnit 9-compatible.
 ---
 
 ### P0-1 · Support current WordPress
-**Status:** in progress · **Workstream:** WS-1 · **Milestone:** M0 · **Finding:** F-02
+**Status:** **done** — matrix green on WP 6.8/6.9/7.0.3 x PHP 8.2/8.3/8.4, 16 tests / 77 assertions per job · **Workstream:** WS-1 · **Milestone:** M0 · **Finding:** F-02
 
 Test and fix against the full matrix in
 [`03-quality-and-release.md`](03-quality-and-release.md) §3, then update the
