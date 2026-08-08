@@ -1,26 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Integration suite: runs against a real WordPress and a real database.
-  Separate from phpunit.xml because the unit suite deliberately runs with
-  WordPress stubbed and must stay fast and dependency-free.
 
-  failOnWarning/failOnNotice/failOnDeprecation are on because this suite's
-  primary job is surfacing version incompatibilities, and a deprecation
-  notice is exactly that signal.
+  PHPUnit 9.6, NOT the 10.5 the unit suite uses. This is forced by WordPress,
+  not chosen: the WP core test library still calls
+  PHPUnit\Util\Test::parseTestMethodAnnotations(), which PHPUnit 10 removed.
+  Every test errors with "Call to undefined method" under 10.x — verified on
+  6.8, 6.9, 7.0.3 and trunk, so it is not a matter of picking a newer branch.
+
+  Consequence: the two suites cannot share one phpunit.xml, because they cannot
+  share a PHPUnit major. The integration job installs 9.6 over the top before
+  running this config; the unit suite keeps 10.5 from composer.lock.
+
+  Re-check when WordPress adopts PHPUnit 10+ in core, at which point these two
+  configs should be merged.
 -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.6/phpunit.xsd"
          bootstrap="tests/integration/bootstrap.php"
-         cacheDirectory=".phpunit.cache"
+         cacheResultFile=".phpunit.cache/integration.result"
          colors="true"
          beStrictAboutOutputDuringTests="true"
+         convertWarningsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertErrorsToExceptions="true"
          failOnWarning="true"
-         failOnNotice="true"
-         failOnDeprecation="true"
-         displayDetailsOnTestsThatTriggerErrors="true"
-         displayDetailsOnTestsThatTriggerWarnings="true"
-         displayDetailsOnTestsThatTriggerNotices="true"
-         displayDetailsOnTestsThatTriggerDeprecations="true">
+         failOnRisky="true">
+  <!--
+    PHP-level deprecations are deliberately NOT converted to exceptions.
+    WordPress core raises its own on newer PHP, and failing the suite on those
+    would report a Memberistic incompatibility that is not one. The signal that
+    matters — deprecations WordPress itself reports about the plugin — is
+    asserted by LoadDeprecationsTest instead, which can name what triggered it.
+  -->
   <testsuites>
     <testsuite name="integration">
       <directory suffix="Test.php">tests/integration</directory>

@@ -107,6 +107,18 @@ jobs:
       - name: Install PHPUnit
         run: composer install --prefer-dist --no-progress --no-interaction
 
+      # PHPUnit 9.6, not the 10.5 the unit suite pins. The WordPress core test
+      # library still calls PHPUnit\Util\Test::parseTestMethodAnnotations(),
+      # which PHPUnit 10 removed, so every test errors under 10.x — on 6.8,
+      # 6.9, 7.0.3 and trunk alike. Installed over the top here so the
+      # integration job's vendor/ is internally consistent; composer.lock and
+      # the unit suite are untouched.
+      - name: Downgrade to PHPUnit 9.6 for the WordPress test library
+        run: |
+          composer require --dev --no-interaction --no-progress \
+            --with-all-dependencies 'phpunit/phpunit:^9.6'
+          vendor/bin/phpunit --version
+
       - name: Install WordPress ${{ matrix.wordpress }} and the test library
         run: |
           chmod +x bin/install-wp-tests.sh
@@ -173,6 +185,11 @@ jobs:
           tools: composer
 
       - run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Downgrade to PHPUnit 9.6 for the WordPress test library
+        run: |
+          composer require --dev --no-interaction --no-progress \
+            --with-all-dependencies 'phpunit/phpunit:^9.6'
 
       - name: Install WordPress trunk
         run: |
