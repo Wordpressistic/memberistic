@@ -83,27 +83,28 @@ tests_add_filter(
 	}
 );
 
+require $memberistic_tests_dir . '/includes/bootstrap.php';
+
 /**
  * Activate the plugin the way WordPress would.
  *
  * register_activation_hook() does not fire in the test environment, so the
- * activator is called directly. This runs once, before any test, so every
- * test sees a site where Memberistic has genuinely been activated rather than
- * merely included.
+ * activator is called directly.
+ *
+ * It runs *after* the WordPress bootstrap rather than on `plugins_loaded`,
+ * because Activator::activate() ends in flush_rewrite_rules() and WordPress
+ * does not instantiate $wp_rewrite until after that hook has fired — hooking
+ * it earlier fatals before a single test runs. This is not a plugin bug: a
+ * real activation happens on an admin request, long after $wp_rewrite exists.
+ *
+ * Running here also puts the tables outside the per-test transaction, so they
+ * survive the rollback WP_UnitTestCase performs between tests.
  */
-tests_add_filter(
-	'plugins_loaded',
-	static function () {
-		if ( ! class_exists( \WordPressistic\Memberistic\Activator::class ) ) {
-			require_once MEMBERISTIC_PATH . 'includes/class-activator.php';
-		}
+if ( ! class_exists( \WordPressistic\Memberistic\Activator::class ) ) {
+	require_once MEMBERISTIC_PATH . 'includes/class-activator.php';
+}
 
-		\WordPressistic\Memberistic\Activator::activate();
-	},
-	100
-);
-
-require $memberistic_tests_dir . '/includes/bootstrap.php';
+\WordPressistic\Memberistic\Activator::activate();
 
 if ( ! empty( $memberistic_load_notices ) ) {
 	fwrite(
