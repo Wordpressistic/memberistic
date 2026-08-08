@@ -203,6 +203,38 @@ jobs:
             | awk '{ printf "%6s  %-8s %s\n", $1, $2, $3 }'
 
           echo
+          echo "=================== ERRORS BY LOCATION ================"
+          # Errors are what actually has to be fixed; warnings are triaged as a
+          # class. Attributing each error to its file needs the FILE: headers,
+          # which the flat grep above throws away.
+          python3 - "$report" <<'PY'
+          import json, re, sys
+
+          current = '(unknown)'
+          rows = []
+
+          for line in open(sys.argv[1], encoding='utf-8', errors='replace'):
+              line = line.rstrip('\n')
+              if line.startswith('FILE: '):
+                  current = line[6:].strip()
+                  continue
+              stripped = line.strip()
+              if not stripped.startswith('['):
+                  continue
+              try:
+                  findings = json.loads(stripped)
+              except (ValueError, TypeError):
+                  continue
+              for f in findings:
+                  if f.get('type') == 'ERROR':
+                      rows.append((current, f.get('line', 0), f.get('code', '?')))
+
+          for path, ln, code in rows:
+              print(f'{path}:{ln}  {code}')
+          print(f'\n{len(rows)} error(s) total')
+          PY
+
+          echo
           echo "--- totals ---"
           printf 'ERROR:   %s\n' "$(grep -o '"type":"ERROR"' "$report" | wc -l)"
           printf 'WARNING: %s\n' "$(grep -o '"type":"WARNING"' "$report" | wc -l)"
