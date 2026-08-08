@@ -58,6 +58,10 @@ final class Plugin {
 			'includes/emails/class-email-service.php',
 			'includes/integrations/class-integrations-registry.php',
 			'includes/integrations/class-entitlement-service.php',
+			// Must precede every file that consults it — Booking_Engine,
+			// POS_Bridge, Staff_Dashboard and Waiver_Booking_Bridge all resolve
+			// their foreign hook and table names through the adapter.
+			'includes/integrations/class-booking-adapter.php',
 			'includes/integrations/class-booking-engine.php',
 			'includes/integrations/class-woocommerce-bridge.php',
 			'includes/integrations/class-woocommerce-discounts.php',

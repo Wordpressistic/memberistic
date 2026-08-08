@@ -55,8 +55,8 @@ jobs:
           print('\n'.join('- ' + k for k in ks[-12:]))
           "
             echo ''
-            echo 'Requested by this matrix: 6.8, 6.9, 7.0.2'
-            for want in 6.8 6.9 7.0.2; do
+            echo 'Requested by this matrix: 6.8, 6.9, 7.0.3'
+            for want in 6.8 6.9 7.0.3; do
               if python3 -c "
           import json, sys
           d = json.load(open('/tmp/stable.json'))
@@ -77,7 +77,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        wordpress: ['6.8', '6.9', '7.0.2']
+        wordpress: ['6.8', '6.9', '7.0.3']
         php: ['8.2', '8.3', '8.4']
 
     services:
@@ -104,8 +104,18 @@ jobs:
           coverage: none
           tools: composer
 
-      - name: Install PHPUnit
-        run: composer install --prefer-dist --no-progress --no-interaction
+      # PHPUnit 9, not the 10.5 composer.json pins for the unit suite. The
+      # WordPress test library calls PHPUnit\Util\Test::parseTestMethodAnnotations()
+      # from WP_UnitTestCase::set_up(), and PHPUnit 10 removed it — on 10 every
+      # test in this suite errors before its first assertion, on every WordPress
+      # version including trunk. See phpunit-integration.xml for the detail.
+      # The override lives on the runner; the committed composer.json is
+      # untouched, so the unit suite keeps PHPUnit 10.
+      - name: Install the PHPUnit 9 test stack
+        run: |
+          composer require --dev --no-progress --no-interaction --update-with-all-dependencies \
+            "phpunit/phpunit:^9.6" "yoast/phpunit-polyfills:^1.1"
+          vendor/bin/phpunit --version
 
       - name: Install WordPress ${{ matrix.wordpress }} and the test library
         run: |
@@ -160,7 +170,11 @@ jobs:
           coverage: none
           tools: composer
 
-      - run: composer install --prefer-dist --no-progress --no-interaction
+      # Same PHPUnit 9 pin as the matrix job above.
+      - name: Install the PHPUnit 9 test stack
+        run: |
+          composer require --dev --no-progress --no-interaction --update-with-all-dependencies \
+            "phpunit/phpunit:^9.6" "yoast/phpunit-polyfills:^1.1"
 
       - name: Install WordPress trunk
         run: |

@@ -25,6 +25,16 @@ files load under it. See [`03-quality-and-release.md`](03-quality-and-release.md
 never had a backlog item, so the dependency surfaces on the first day someone
 picks up P0-5 instead of before.
 
+**The PHPUnit constraint.** The WordPress test library cannot run on PHPUnit 10.
+`WP_UnitTestCase::set_up()` calls `expectDeprecated()`, which reads
+`@expectedDeprecated` docblocks via `PHPUnit\Util\Test::parseTestMethodAnnotations()`
+— a method PHPUnit 10 removed. Every integration test errors before its first
+assertion, identically on WordPress 6.8, 6.9, 7.0 and trunk, so this is not
+something a newer WordPress resolves. The integration suite is therefore pinned
+to PHPUnit 9.6 in CI while the unit suite stays on 10.5; the unit suite never
+loads WordPress, so it is unaffected. Anything added to `tests/integration/`
+must be PHPUnit 9-compatible.
+
 **Acceptance**
 - [ ] A real WordPress test environment (`wp-env` or equivalent) runs locally
       and in CI
@@ -39,9 +49,12 @@ picks up P0-5 instead of before.
       the six roles in `Capabilities::assign_capabilities()`
 - [ ] An HTTP interception layer so no test reaches the network — prerequisite
       for the Stripe suites (P1-9) and for the P0-10 network-silence assertion
-- [ ] `phpunit.xml` `<source>` widened beyond `class-entitlement-service.php`,
-      so coverage describes the plugin rather than one file
-- [ ] Both suites blocking in CI
+- [x] `phpunit.xml` `<source>` widened beyond `class-entitlement-service.php`,
+      so coverage describes the plugin rather than one file — now `includes/`
+      plus the bootstrap and uninstaller
+- [x] Both suites blocking in CI — `ci.yml` runs the unit suite on PHP 8.2 /
+      8.3 / 8.4, `integration.yml` runs the integration suite on the full
+      matrix; neither is `continue-on-error`
 
 ---
 
@@ -58,7 +71,7 @@ declared compatibility.
 - [ ] PHP 8.2, 8.3, 8.4 all pass
 - [x] A real WordPress integration harness exists — `bin/install-wp-tests.sh`,
       `tests/integration/`, `phpunit-integration.xml`, and a CI matrix in
-      `.github/workflows/integration.yml` covering WP 6.8 / 6.9 / 7.0.2 ×
+      `.github/workflows/integration.yml` covering WP 6.8 / 6.9 / 7.0.3 ×
       PHP 8.2 / 8.3 / 8.4, plus a non-blocking trunk canary
 - [x] Deprecation notices fail the suite, so incompatibilities surface without
       maintaining a per-release deprecation list
@@ -117,15 +130,20 @@ release once the integration suites exist.
 ---
 
 ### P0-4 · WordPress Plugin Check
-**Status:** open · **Workstream:** WS-1 · **Milestone:** M0 · **Finding:** F-06
+**Status:** in progress · **Workstream:** WS-1 · **Milestone:** M0 · **Finding:** F-06
 
 Blocks the WordPress.org listing, which blocks the primary acquisition channel.
 
+The job checks the **distributable tree**, not the repository: it rebuilds the
+release layout from `.distignore` the way `release.yml` does, so the check sees
+what a reviewer sees rather than reporting on `tests/`, `bin/` and
+`docs/strategy/`, none of which ship.
+
 **Acceptance**
-- [ ] Plugin Check runs in CI on every PR
+- [x] Plugin Check runs in CI on every PR — `plugin-check` job in `ci.yml`
 - [ ] All errors resolved
 - [ ] Every remaining warning documented with a reason, in-repo
-- [ ] Job is blocking
+- [x] Job is blocking — no `continue-on-error`, unlike the advisory `phpcs` job
 
 ---
 
