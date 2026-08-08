@@ -177,16 +177,36 @@ jobs:
       # costs a download and a click. Printing it puts the finding codes in the
       # log, where they are greppable and where whoever is triaging the next
       # failure can see them without leaving the page.
+      # The full report runs to a thousand lines, which is unreadable through
+      # the API and barely readable in the browser. The per-code summary is
+      # printed *last* so it lands at the end of the log, where `tail` finds
+      # it — that is the view you need to answer "what is still failing and is
+      # any of it an ERROR", which is the question P0-4 keeps asking.
       - name: Print the Plugin Check report
         if: always()
         run: |
           report="${RUNNER_TEMP}/plugin-check-results.txt"
-          if [ -s "$report" ]; then
-            echo "--- Plugin Check findings ---"
-            cat "$report"
-          else
+
+          if [ ! -s "$report" ]; then
             echo "No Plugin Check report was produced (the run failed before checks ran)."
+            exit 0
           fi
+
+          echo "--- Plugin Check findings (full) ---"
+          cat "$report"
+
+          echo
+          echo "=================== SUMMARY BY CODE ==================="
+          grep -o '"type":"[A-Z]*","code":"[^"]*"' "$report" \
+            | sed 's/"type":"//; s/","code":"/\t/; s/"$//' \
+            | sort | uniq -c | sort -rn \
+            | awk '{ printf "%6s  %-8s %s\n", $1, $2, $3 }'
+
+          echo
+          echo "--- totals ---"
+          printf 'ERROR:   %s\n' "$(grep -o '"type":"ERROR"' "$report" | wc -l)"
+          printf 'WARNING: %s\n' "$(grep -o '"type":"WARNING"' "$report" | wc -l)"
+          echo "======================================================="
 
   js-lint:
     name: JS syntax check
