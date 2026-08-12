@@ -48,6 +48,112 @@ final class Payments_Repository {
 		return $row ?: null;
 	}
 
+	/**
+	 * Normalise a gateway transaction id for storage.
+	 *
+	 * Empty becomes NULL so the unique key can distinguish "no gateway
+	 * reference" (any number of which may coexist) from "this exact charge"
+	 * (of which there may be one).
+	 *
+	 * @param mixed $txn_id Raw transaction id.
+	 * @return string|null
+	 */
+	public static function normalize_transaction_id( $txn_id ) {
+		$txn_id = trim( sanitize_text_field( (string) $txn_id ) );
+		return '' === $txn_id ? null : $txn_id;
+	}
+
+	/**
+	 * Insert a payment unless its gateway transaction id is already recorded.
+	 *
+	 * The database decides, not a preceding SELECT. Two deliveries of the same
+	 * Stripe event arriving together both see no existing row, and both
+	 * insert; the unique key on (payment_gateway, gateway_transaction_id) is
+	 * the only thing in the system that can adjudicate that race, so this
+	 * method attempts the insert and interprets the failure rather than trying
+	 * to predict it.
+	 *
+	 * A payment with no transaction id (cash, manual) has nothing to
+	 * deduplicate on and is always inserted.
+	 *
+	 * @param array<string, mixed> $data Payment data.
+	 * @return array{id:int, created:bool}|false Row id and whether this call
+	 *                                           created it; false on error.
+	 */
+	public static function create_idempotent( $data ) {
+		global $wpdb;
+
+		$txn_id  = self::normalize_transaction_id( isset( $data['gateway_transaction_id'] ) ? $data['gateway_transaction_id'] : '' );
+		$gateway = isset( $data['payment_gateway'] ) ? sanitize_key( (string) $data['payment_gateway'] ) : 'manual';
+
+		if ( null === $txn_id ) {
+			$created = self::create( $data );
+			return false === $created ? false : array(
+				'id'      => (int) $created,
+				'created' => true,
+			);
+		}
+
+		$suppress = $wpdb->suppress_errors( true );
+		$created  = self::create( $data );
+		$wpdb->suppress_errors( $suppress );
+
+		if ( false !== $created ) {
+			return array(
+				'id'      => (int) $created,
+				'created' => true,
+			);
+		}
+
+		// The insert failed. If a row with this transaction id exists, the
+		// unique key did its job and this delivery is a duplicate; anything
+		// else is a real error and must not be reported as a successful
+		// no-op, or a failed write becomes an invisible one.
+		$existing = self::get_by_provider_transaction( $gateway, $txn_id );
+		if ( $existing ) {
+			return array(
+				'id'      => (int) $existing['id'],
+				'created' => false,
+			);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Look up a payment by provider and transaction id.
+	 *
+	 * Scoped by gateway, unlike get_by_gateway_transaction_id(): provider
+	 * transaction ids are only unique within a provider, and a WooCommerce
+	 * order id colliding with a Stripe object id is not a scenario worth
+	 * betting a member's payment history on.
+	 *
+	 * @param string $gateway Payment gateway key.
+	 * @param string $txn_id  Gateway transaction id.
+	 * @return array<string,mixed>|null
+	 */
+	public static function get_by_provider_transaction( $gateway, $txn_id ) {
+		global $wpdb;
+
+		$gateway = sanitize_key( (string) $gateway );
+		$txn_id  = self::normalize_transaction_id( $txn_id );
+
+		if ( '' === $gateway || null === $txn_id ) {
+			return null;
+		}
+
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT * FROM ' . self::table() . ' WHERE payment_gateway = %s AND gateway_transaction_id = %s LIMIT 1',
+				$gateway,
+				$txn_id
+			),
+			ARRAY_A
+		);
+
+		return $row ?: null;
+	}
+
 	public static function get_all( $args = array() ) {
 		global $wpdb;
 
@@ -246,7 +352,15 @@ final class Payments_Repository {
 			'currency'               => sanitize_text_field( (string) ( isset( $data['currency'] ) ? $data['currency'] : 'USD' ) ),
 			'payment_method'         => isset( $data['payment_method'] ) ? sanitize_key( (string) $data['payment_method'] ) : 'manual',
 			'payment_gateway'        => isset( $data['payment_gateway'] ) ? sanitize_key( (string) $data['payment_gateway'] ) : 'manual',
-			'gateway_transaction_id' => isset( $data['gateway_transaction_id'] ) ? sanitize_text_field( (string) $data['gateway_transaction_id'] ) : '',
+			// NULL rather than '' when there is no gateway reference. The
+			// unique key added in DB 1.12.0 spans
+			// (payment_gateway, gateway_transaction_id) to stop a retried
+			// webhook inserting the same charge twice, and MySQL treats each
+			// NULL as distinct — so cash and manual payments, which have no
+			// transaction id at all, do not collide with each other. An empty
+			// string would make the second manual payment ever taken fail to
+			// insert.
+			'gateway_transaction_id' => self::normalize_transaction_id( isset( $data['gateway_transaction_id'] ) ? $data['gateway_transaction_id'] : '' ),
 			'woo_order_id'           => isset( $data['woo_order_id'] ) ? absint( $data['woo_order_id'] ) : null,
 			'pos_order_id'           => isset( $data['pos_order_id'] ) ? sanitize_text_field( (string) $data['pos_order_id'] ) : '',
 			'status'                 => sanitize_key( (string) ( isset( $data['status'] ) ? $data['status'] : 'pending' ) ),

@@ -55,6 +55,14 @@ final class Plugin {
 			'includes/database/class-checkins-repository.php',
 			'includes/database/class-notes-repository.php',
 			'includes/database/class-email-logs-repository.php',
+			// Payment-integrity primitives. No dependencies of their own, and
+			// Memberships_Repository resolves the state machine when
+			// sanitising a billing status, so they load ahead of the services
+			// that use them.
+			'includes/payments/class-payment-clock.php',
+			'includes/payments/class-subscription-state-machine.php',
+			'includes/payments/class-payment-event-repository.php',
+			'includes/payments/class-payment-audit-repository.php',
 			'includes/emails/class-email-service.php',
 			'includes/integrations/class-integrations-registry.php',
 			'includes/integrations/class-entitlement-service.php',
@@ -70,6 +78,14 @@ final class Plugin {
 			'includes/integrations/class-corestore-client.php',
 			'includes/integrations/class-corestore-bridge.php',
 			'includes/integrations/class-ffl-checkout-bridge.php',
+			// The interface must precede its implementations: `implements` is
+			// resolved when the class is declared, not when it is used, so a
+			// provider loaded first is a fatal error rather than a late
+			// failure. Nothing autoloads here.
+			'includes/payments/providers/interface-payment-provider.php',
+			'includes/payments/providers/class-stripe-provider.php',
+			'includes/payments/providers/class-woocommerce-provider.php',
+			'includes/payments/class-payment-integrity-gate.php',
 			'includes/payments/class-stripe-service.php',
 			'includes/cli/class-stripe-recovery-command.php',
 			'includes/cli/class-guest-pass-audit-command.php',
