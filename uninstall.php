@@ -19,7 +19,16 @@
  * @package Memberistic
  */
 
-if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
+// WP_UNINSTALL_PLUGIN is the guard that matters here: WordPress defines it
+// immediately before including this file, so its absence means the file was
+// reached some other way and nothing below should run.
+//
+// The ABSPATH check is redundant against it — WordPress is fully loaded by the
+// time an uninstall happens — but Plugin Check's direct-access rule looks for
+// ABSPATH specifically and does not accept WP_UNINSTALL_PLUGIN as equivalent.
+// That is a fair rule to enforce uniformly rather than special-case, and the
+// cost of satisfying it is three lines.
+if ( ! defined( 'ABSPATH' ) || ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 

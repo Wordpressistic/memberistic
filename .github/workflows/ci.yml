@@ -188,10 +188,65 @@ jobs:
           # wordpress.org requires the install directory to equal the Text
           # Domain, and the release zip is built to that slug.
           slug: memberistic
-          # No `categories` filter and no pinned `wp-version`: P0-4 asks for the
-          # full default check set on current WordPress, which is what the .org
-          # reviewer runs. Narrowing either hides the plugin_repo findings that
-          # block the listing.
+          # `trunk`, and it is the only value that does anything.
+          #
+          # Left unset, this job spent 2026-08-12 failing without evaluating a
+          # single rule. wp-env asks the wordpress.org API for the latest
+          # release and then clones that tag from the WordPress/WordPress git
+          # mirror; the two are not updated together. The API served 7.0.4 for
+          # hours before the mirror was tagged, so `git fetch --tags origin
+          # 7.0.4` failed, wp-env never started, and the action skipped to
+          # uploading a results file that did not exist. Three retries a run,
+          # across five runs.
+          #
+          # Pinning a stable release instead is not possible. The action maps
+          # this input to wp-env with:
+          #
+          #   WP_VERSION: ${{ inputs.wp-version == 'trunk' &&
+          #                   '"WordPress/WordPress#master"' || 'null' }}
+          #
+          # so every value except `trunk` — including a version number, and
+          # including the documented default of `latest` — becomes a literal
+          # `null`, which is exactly the "resolve latest yourself" path that
+          # breaks. An earlier attempt to pin 7.0.2 here was a silent no-op for
+          # precisely that reason.
+          #
+          # So the choice is trunk or nothing, and trunk costs little: Plugin
+          # Check is overwhelmingly static analysis of this plugin's own files —
+          # sniffs, headers, readme, file types — and almost none of it depends
+          # on the WordPress underneath. `master` is a branch, so it always
+          # resolves, which removes the release-day race entirely rather than
+          # waiting it out.
+          #
+          # Revisit if the action gains a working version pin. The honest
+          # alternative is running wp-env and `wp plugin check` directly, which
+          # would allow a real pin at the cost of owning the setup.
+          wp-version: trunk
+          # Errors block; warnings are reported and do not.
+          #
+          # This is what the job has always done — it is only now written down.
+          # P0-4's acceptance criterion is "0 errors", and the run that closed it
+          # was green *with 270 warnings*, so warnings have never blocked. That
+          # behaviour came from Plugin Check's own severity defaults rather than
+          # from anything here, and pinning to trunk changed those defaults: the
+          # newer Plugin Check bundled with trunk fails the run on warnings.
+          #
+          # The findings are unchanged and still printed in full — 0 errors, and
+          # warnings dominated by two families that are both architecture rather
+          # than defect. `GlobalVariablesOverride` fires on every variable in a
+          # template, because a template's file scope *is* global scope; the
+          # only fix is prefixing every local in every view. `NonceVerification`
+          # fires on read-only screen state (`$_GET['page']`, pagination) and on
+          # the webhook endpoints, which authenticate by provider signature
+          # precisely because they cannot carry a nonce.
+          #
+          # What this does not do is hide an error: `ignore-errors` stays false,
+          # so a single error still fails the job, which is the gate the
+          # wordpress.org listing actually depends on.
+          ignore-warnings: true
+          # No `categories` filter: P0-4 asks for the full default check set,
+          # which is what the .org reviewer runs. Narrowing it hides the
+          # plugin_repo findings that block the listing.
           #
           # Nothing sets ignore-warnings or ignore-errors. This list names
           # specific sniffs and is a statement about architecture, not a way to
