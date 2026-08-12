@@ -205,7 +205,8 @@ nobody's access.**
 
 | Suite | Result |
 |---|---|
-| Unit (PHPUnit 10.5.64, PHP 8.4.19) | **121 tests, 1104 assertions, 0 failures, 0 errors, 0 warnings** |
+| Unit (PHPUnit 10.5.64, PHP 8.2 / 8.3 / 8.4) | **121 tests, 1104 assertions, 0 failures** — green in CI on all three |
+| Integration (WP 6.8.6 / 6.9.5 / 7.0.2 x PHP 8.2 / 8.3 / 8.4, + trunk canary) | **64 tests green on every job** |
 | `php -l`, every non-vendor PHP file | clean |
 | `node --check`, every `assets/*.js` | clean |
 | `bin/build-dist.sh --zip 2.1.0` | built |
@@ -237,9 +238,12 @@ Two failures, both in the **test fixtures**, neither in the product:
 `test_manual_payments_...` and `test_duplicate_transaction_ids_...` inserted
 2.0.1-shaped payment rows while the unique key that activation had already
 created was still in place, so the second insert was rejected before the
-migration could normalise it. Both now drop the index before writing the fixture
-and restore it afterwards. Fixed in the commit following this report's first
-version; **the fix itself has not yet been through CI.**
+migration could normalise it. Both now drop the index before writing the
+fixture and restore it afterwards.
+
+**Second run, commit `0e2890d`: the entire `WordPress integration` workflow is
+green** — all nine matrix jobs (WP 6.8.6 / 6.9.5 / 7.0.2 x PHP 8.2 / 8.3 / 8.4)
+and the trunk canary, 64 tests each.
 
 ### WordPress Coding Standards
 
@@ -317,29 +321,29 @@ that one. Do not treat the value above as the release checksum.
 | PHP syntax | ✅ passed |
 | PHPUnit unit suite | ✅ 121/121 |
 | Payment-integrity regression suite (unit half) | ✅ 65 tests |
-| Payment-integrity regression suite (integration half) | ⬜ **not run** |
-| WordPress 6.8.6 / 6.9.5 / 7.0.2 integration | ⬜ **not run** |
-| PHP 8.2 / 8.3 / 8.4 | ⚠️ syntax only; suite ran on 8.4 |
-| Plugin Check — zero errors | ⬜ **not run** |
+| Payment-integrity regression suite (integration half) | ✅ 64/64 on every matrix job |
+| WordPress 6.8.6 / 6.9.5 / 7.0.2 integration | ✅ green |
+| PHP 8.2 / 8.3 / 8.4 | ✅ green on all three, both suites |
+| Plugin Check — zero errors | ⛔ **blocked upstream** — see below |
 | WordPress Coding Standards | ✅ security-relevant resolved; rest categorised |
 | Dependency manifest guard | ✅ passed |
 | Outbound HTTP allowlist guard | ✅ passed |
 | PMPro removal guard | ✅ passed |
 | Distributable leak guard | ✅ passed |
-| Database upgrade test | ⬜ **written, not run** |
-| Fresh install | ⬜ **not run** |
-| Upgrade from a 2.0.1 fixture | ⬜ **written, not run** |
-| Stripe forged-webhook test | ✅ passed (unit) |
-| Stripe duplicate-delivery test | ⬜ **written, not run** (needs the real unique key) |
-| Out-of-order event test | ⬜ **written, not run** |
-| Stale-cancellation test | ⬜ **written, not run** |
-| Trial-to-paid test | ⬜ **written, not run** |
-| Grace-period recovery test | ⬜ **written, not run** |
-| Cancellation-at-period-end test | ⬜ **written, not run** |
+| Database upgrade test | ✅ passed |
+| Fresh install | ✅ passed (activation + `FreshInstallTest`) |
+| Upgrade from a 2.0.1 fixture | ✅ passed |
+| Stripe forged-webhook test | ✅ passed |
+| Stripe duplicate-delivery test | ✅ passed, against the real unique key |
+| Out-of-order event test | ✅ passed |
+| Stale-cancellation test | ✅ passed |
+| Trial-to-paid test | ✅ passed |
+| Grace-period recovery test | ✅ passed |
+| Cancellation-at-period-end test | ✅ passed |
 | Staging smoke test | ⬜ **not run** |
 
-**Twelve gates are unrun.** Push the branch, let CI run, and fix what it finds
-before tagging.
+**Two gates remain.** Plugin Check is blocked by an upstream outage, not by this
+diff; the staging smoke test has not been attempted at all.
 
 ---
 
