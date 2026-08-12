@@ -217,18 +217,29 @@ new files are `StripeSignatureTest` (21 tests) and
 guard suites — dependency manifest, outbound-HTTP allowlist, PMPro removal,
 fresh-install defaults — all still pass, including against the new files.
 
-### Written, not run
+### Integration suite — first CI run, 2026-08-12
 
-| Suite | Tests | Why not run |
-|---|---|---|
-| `tests/integration/PaymentIntegrityGateTest.php` | 32 | needs WordPress + MySQL |
-| `tests/integration/PaymentMigrationTest.php` | 12 | needs WordPress + MySQL |
+Could not be run in the authoring environment (no MySQL; the network policy
+blocks `wordpress.org` and `github.com`, so `bin/install-wp-tests.sh` cannot
+fetch WordPress). CI ran it, and the result was **62 of 64 passing on the first
+execution**, identically across all nine matrix jobs and the trunk canary.
 
-This container has no MySQL, and the network policy blocks `wordpress.org` and
-`github.com`, so `bin/install-wp-tests.sh` cannot fetch WordPress or the core
-test library. Both files are syntax-checked and follow the existing harness's
-conventions, but **they have never executed.** Treat them as unverified until CI
-runs them.
+Everything the release exists to prove passed on the first run: the stale
+cancellation leaving a replacement subscription alone, duplicate delivery not
+charging or emailing twice, a claim held by another worker, takeover of an
+abandoned claim, a late failure not undoing a payment that succeeded, an event
+older than one already applied, wrong account, wrong environment, wrong
+customer, amount and currency mismatches, trials, cancel-at-period-end and its
+withdrawal, provider outage staying retryable, the dunning sweep, and a comped
+member surviving a cancellation event.
+
+Two failures, both in the **test fixtures**, neither in the product:
+`test_manual_payments_...` and `test_duplicate_transaction_ids_...` inserted
+2.0.1-shaped payment rows while the unique key that activation had already
+created was still in place, so the second insert was rejected before the
+migration could normalise it. Both now drop the index before writing the fixture
+and restore it afterwards. Fixed in the commit following this report's first
+version; **the fix itself has not yet been through CI.**
 
 ### WordPress Coding Standards
 
@@ -340,22 +351,37 @@ before tagging.
    written against a harness that could not be exercised. Expect failures on
    first run; they will be in the tests, the fixtures, or genuinely in the code,
    and it will not be obvious which until CI runs.
-2. **Plugin Check has not run against this tree.** The 2.0.1 work brought it to
-   zero errors. New files add i18n strings with placeholders, new `$wpdb` calls
-   and new escaping sites — all categories that produced errors last time.
+2. **Plugin Check still has not produced a result.** It ran and failed before
+   reaching the plugin: `wp-env` could not fetch the WordPress `7.0.4` tag and
+   the environment never started (`Environment not initialized`). That is
+   upstream — most likely git-mirror lag shortly after the 7.0.4 release — not
+   anything in this diff, and the job did not evaluate a single check. The 2.0.1
+   work brought Plugin Check to zero errors; new files add i18n strings with
+   placeholders, new `$wpdb` calls and new escaping sites, all categories that
+   produced errors last time. **Still unverified.** Pinning `wp-version` would
+   make the job pass but would contradict the documented P0-4 decision to run
+   the full default check set on current WordPress.
 3. **The compatibility matrix has not run**, so the `7.0.2` question below is
    open, and the resolver gate is itself untested against the live API.
-4. **The compatibility target may be wrong.** The task specified WordPress
-   `7.0.2` as current stable and `7.0.3` as invalid. The repository's own
-   evidence contradicts this: the integration matrix ran **green on 7.0.3** at
-   `f9a5499` on 2026-08-12, `bin/install-wp-tests.sh` hard-exits on a version
-   wordpress.org does not publish, and `docs/strategy/sources.md` cites a 7.0.3
-   release announcement dated 2026-08-06. `api.wordpress.org` is blocked here so
-   this could not be checked. As instructed, `6.8.6` / `6.9.5` / `7.0.2` are
-   declared in `.github/wordpress-targets.json`. If any is unpublished the
-   resolver fails the run by design, which is the intended way to find out.
-   **`6.8.6` and `6.9.5` are equally unverified.** Correcting this is a one-line
-   edit to that file.
+4. **Every compatibility target is real, and every one is stale.** Settled by
+   CI. The resolver validated all three against wordpress.org and passed, so
+   `6.8.6`, `6.9.5` and `7.0.2` are genuinely published — the concern that
+   `7.0.2` might not exist was unfounded. The advisory patch-drift check then
+   reported:
+
+   ```
+   NOTE : 6.8.6 is pinned, but 6.8.8 is the newest patch on that line.
+   NOTE : 6.9.5 is pinned, but 6.9.7 is the newest patch on that line.
+   NOTE : 7.0.2 is pinned, but 7.0.4 is the newest patch on that line.
+   ```
+
+   So current stable is **7.0.4** — neither the `7.0.2` the task named nor the
+   `7.0.3` this repository's older evidence pointed at. Certifying against an
+   older patch is a legitimate release decision and the targets were declared as
+   instructed, so they have been left alone; but three supported lines are each
+   two patches behind, which means any security patch on them is untested here.
+   **This is a decision for the maintainer**, and a one-line edit to
+   `.github/wordpress-targets.json`.
 5. **No staging smoke test.** No fresh install, activation, checkout, renewal,
    cancellation or upgrade has been exercised against a real WordPress. Section
    33 is entirely unperformed.

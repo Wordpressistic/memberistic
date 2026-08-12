@@ -209,50 +209,96 @@ final class PaymentMigrationTest extends Memberistic_Integration_TestCase {
 		self::assertSame( $first, $second );
 	}
 
+	/**
+	 * Put the payments table back into its pre-2.1.0 shape.
+	 *
+	 * Activation has already run the migration, so the unique key exists before
+	 * any test starts. A test that wants to prove what the migration does to
+	 * 2.0.1-shaped data has to remove it first — otherwise the fixture rows are
+	 * rejected by the very index under test, and the test proves nothing except
+	 * that the index works.
+	 *
+	 * ALTER TABLE implicitly commits in MySQL, so the per-test transaction is
+	 * gone from here on. Every caller cleans up its own rows and restores the
+	 * index by hand.
+	 */
+	private function drop_txn_index(): void {
+		global $wpdb;
+
+		$suppress = $wpdb->suppress_errors( true );
+		$wpdb->query( 'ALTER TABLE ' . Payments_Repository::table() . ' DROP INDEX provider_txn' );
+		$wpdb->suppress_errors( $suppress );
+	}
+
+	/**
+	 * Delete rows this test wrote, and put the schema back.
+	 */
+	private function restore_payments_table( int $membership_id ): void {
+		global $wpdb;
+
+		$wpdb->query(
+			$wpdb->prepare(
+				'DELETE FROM ' . Payments_Repository::table() . ' WHERE membership_id = %d',
+				$membership_id
+			)
+		);
+
+		delete_option( Migrations::TXN_CONFLICTS_OPTION );
+
+		Migrations::migrate_1_12_0();
+	}
+
 	public function test_manual_payments_with_no_transaction_id_become_null_not_empty(): void {
 		global $wpdb;
 
 		$plan       = Memberistic_Record_Factory::plan();
 		$membership = Memberistic_Record_Factory::membership( $plan, self::factory()->user->create() );
 
-		// Two cash payments, exactly as 2.0.1 wrote them: empty string, not
-		// NULL. A unique key would treat these as a collision, so the second
-		// manual payment ever taken would fail to insert.
-		foreach ( array( 10.00, 20.00 ) as $amount ) {
-			$wpdb->insert(
-				Payments_Repository::table(),
-				array(
-					'membership_id'          => $membership,
-					'amount'                 => $amount,
-					'currency'               => 'USD',
-					'payment_gateway'        => 'manual',
-					'gateway_transaction_id' => '',
-					'status'                 => 'completed',
-					'created_at'             => current_time( 'mysql' ),
+		$this->drop_txn_index();
+
+		try {
+			// Two cash payments, exactly as 2.0.1 wrote them: empty string, not
+			// NULL. A unique key treats those as a collision, so the second
+			// manual payment ever taken would fail to insert — which is why the
+			// migration converts them before it adds the key.
+			foreach ( array( 10.00, 20.00 ) as $amount ) {
+				$wpdb->insert(
+					Payments_Repository::table(),
+					array(
+						'membership_id'          => $membership,
+						'amount'                 => $amount,
+						'currency'               => 'USD',
+						'payment_gateway'        => 'manual',
+						'gateway_transaction_id' => '',
+						'status'                 => 'completed',
+						'created_at'             => current_time( 'mysql' ),
+					)
+				);
+			}
+
+			Migrations::migrate_1_12_0();
+
+			$empties = (int) $wpdb->get_var(
+				'SELECT COUNT(1) FROM ' . Payments_Repository::table() . " WHERE gateway_transaction_id = ''"
+			);
+
+			self::assertSame( 0, $empties );
+			self::assertTrue( $this->index_exists( 'memberistic_payments', 'provider_txn' ) );
+
+			// And a third manual payment still inserts.
+			self::assertNotFalse(
+				Payments_Repository::create(
+					array(
+						'membership_id'   => $membership,
+						'amount'          => 30.00,
+						'payment_gateway' => 'manual',
+						'status'          => 'completed',
+					)
 				)
 			);
+		} finally {
+			$this->restore_payments_table( $membership );
 		}
-
-		Migrations::migrate_1_12_0();
-
-		$empties = (int) $wpdb->get_var(
-			'SELECT COUNT(1) FROM ' . Payments_Repository::table() . " WHERE gateway_transaction_id = ''"
-		);
-
-		self::assertSame( 0, $empties );
-		self::assertTrue( $this->index_exists( 'memberistic_payments', 'provider_txn' ) );
-
-		// And a third manual payment still inserts.
-		self::assertNotFalse(
-			Payments_Repository::create(
-				array(
-					'membership_id'   => $membership,
-					'amount'          => 30.00,
-					'payment_gateway' => 'manual',
-					'status'          => 'completed',
-				)
-			)
-		);
 	}
 
 	public function test_duplicate_transaction_ids_are_reported_rather_than_deleted(): void {
@@ -260,6 +306,12 @@ final class PaymentMigrationTest extends Memberistic_Integration_TestCase {
 
 		$plan       = Memberistic_Record_Factory::plan();
 		$membership = Memberistic_Record_Factory::membership( $plan, self::factory()->user->create() );
+
+		// The index comes off *before* the fixture rows go in. Activation has
+		// already created it, so inserting the second conflicting row while it
+		// is still there simply fails — and the test would then be asserting
+		// against one row rather than the two it means to describe.
+		$this->drop_txn_index();
 
 		// Two rows claiming the same charge. That is either a double-charge
 		// the member can see on their statement or a double-insert we caused,
@@ -280,18 +332,6 @@ final class PaymentMigrationTest extends Memberistic_Integration_TestCase {
 			);
 		}
 
-		// Activation already added the unique key, so it has to come off for
-		// the conflicting-data branch to be the one under test.
-		//
-		// This test cleans up by hand rather than relying on WP_UnitTestCase's
-		// per-test rollback: ALTER TABLE causes an implicit commit in MySQL, so
-		// the transaction wrapping this test is gone the moment the index is
-		// dropped, and everything written here would otherwise leak into every
-		// test that follows.
-		$suppress = $wpdb->suppress_errors( true );
-		$wpdb->query( 'ALTER TABLE ' . Payments_Repository::table() . ' DROP INDEX provider_txn' );
-		$wpdb->suppress_errors( $suppress );
-
 		try {
 			Migrations::migrate_1_12_0();
 
@@ -310,17 +350,9 @@ final class PaymentMigrationTest extends Memberistic_Integration_TestCase {
 			self::assertSame( 'stripe', $reported['conflicts'][0]['gateway'] );
 			self::assertSame( 2, $reported['conflicts'][0]['rows'] );
 		} finally {
-			$wpdb->query(
-				$wpdb->prepare(
-					'DELETE FROM ' . Payments_Repository::table() . ' WHERE gateway_transaction_id = %s',
-					'pi_duplicated'
-				)
-			);
-			delete_option( Migrations::TXN_CONFLICTS_OPTION );
-
 			// Put the schema back the way activation left it, or every later
 			// test runs against a table the plugin does not ship.
-			Migrations::migrate_1_12_0();
+			$this->restore_payments_table( $membership );
 			self::assertTrue( $this->index_exists( 'memberistic_payments', 'provider_txn' ) );
 		}
 	}
