@@ -101,8 +101,9 @@ Some behaviours look like findings but are deliberate:
 
 ## Known gaps we are already tracking
 
-Publicly documented in `docs/strategy/01-audit-findings.md` and scheduled in
-`docs/strategy/09-execution-backlog.md`:
+Tracked in the development repository,
+[shubochandrosarker/memberistic](https://github.com/shubochandrosarker/memberistic),
+and listed here so nobody has to discover them by reading the source:
 
 - route-by-route REST authorization and IDOR test coverage is incomplete;
 - upload/download handling lacks a dedicated security test matrix;

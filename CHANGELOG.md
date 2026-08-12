@@ -2,7 +2,7 @@
 
 All notable changes are tracked here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## 2.1.0 - Payment integrity (unreleased)
+## 2.1.0 - Payment integrity - 2026-08-12
 
 Every payment-provider event now passes through a single integrity gate before
 it may change a membership. The governing rule: **payment-provider events are

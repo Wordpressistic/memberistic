@@ -141,8 +141,8 @@ jobs:
           $SUM
           \`\`\`
 
-          Before publishing this draft, confirm the release-gate checklist in
-          \`docs/governance/RELEASE-PROCESS.md\` — in particular the clean-install
-          and upgrade smoke tests." \
+          Before publishing this draft, confirm the release gate in the
+          development repository — in particular the clean-install and upgrade
+          smoke tests on a real WordPress site." \
             build/${PLUGIN_SLUG}-${VERSION}.zip \
             build/${PLUGIN_SLUG}-${VERSION}.zip.sha256
