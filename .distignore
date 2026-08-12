@@ -1,0 +1,36 @@
+# What is product, and what is repository furniture.
+#
+# bin/build-dist.sh and the release workflow both read this file, so it is the
+# only place the answer is written down. Everything listed here serves the
+# repository — versioning it, building it, or explaining it — and would be
+# noise in a site owner's wp-content/plugins directory.
+
+# Version control and repository configuration.
+.git
+.gitattributes
+.gitignore
+.distignore
+
+# Release tooling. The plugin is built by these; it does not contain them.
+.github
+bin
+build
+*.zip
+
+# Repository-facing. It routes people to the issue tracker and the docs, which
+# is a repository's job; readme.txt already carries what WordPress shows a site
+# owner inside wp-admin.
+SUPPORT.md
+
+# Not tracked in this repository, and listed anyway. Development happens in
+# shubochandrosarker/memberistic, and a maintainer packaging a build from a
+# working copy that has a vendor/ or a test cache lying around should get the
+# same archive as the release runner — not one with a Composer tree inside it.
+vendor
+node_modules
+tests
+composer.json
+composer.lock
+phpunit.xml
+phpunit-integration.xml
+.phpunit.cache

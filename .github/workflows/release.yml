@@ -1,0 +1,148 @@
+name: Release
+
+# Tag-triggered only. This never runs on push-to-branch or on a pull request,
+# so it cannot turn an ordinary PR red and cannot publish anything by accident.
+# Cutting a release is an explicit act: push a `v*` tag.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to package (dry run — no release is published)'
+        required: true
+
+permissions:
+  contents: read
+
+env:
+  # The distributed folder name, which is also the wordpress.org slug and
+  # must equal the plugin's Text Domain. The main PHP file keeps its longer
+  # historical name — WordPress derives the slug from the directory, not the
+  # filename, so there is no reason to churn plugin_basename() twice.
+  PLUGIN_SLUG: memberistic
+  PLUGIN_MAIN_FILE: memberistic-membership-solutions.php
+
+jobs:
+  package:
+    name: Build and publish release artifact
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      # The version string lives in five places and nothing else checks that
+      # they agree. A release built from a mismatched tree ships a plugin that
+      # reports the wrong version to update checks, so this fails the release
+      # rather than producing a subtly wrong artifact.
+      - name: Verify version consistency
+        run: |
+          set -euo pipefail
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          VERSION="${TAG#v}"
+          echo "Tag $TAG implies version $VERSION"
+
+          fail=0
+          check() {
+            if [ "$2" != "$VERSION" ]; then
+              echo "::error::$1 is '$2', expected '$VERSION'"
+              fail=1
+            else
+              echo "ok: $1 = $2"
+            fi
+          }
+
+          header=$(grep -m1 -oP '^\s*\*\s*Version:\s*\K[0-9][^\s]*' ${PLUGIN_MAIN_FILE})
+          constant=$(grep -m1 -oP "define\(\s*'MEMBERISTIC_VERSION',\s*'\K[^']+" ${PLUGIN_MAIN_FILE})
+          stable=$(grep -m1 -oP '^Stable tag:\s*\K[0-9][^\s]*' readme.txt)
+
+          check "plugin header Version:" "$header"
+          check "MEMBERISTIC_VERSION"    "$constant"
+          check "readme.txt Stable tag:" "$stable"
+
+          if ! grep -q "$VERSION" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no entry mentioning $VERSION"
+            fail=1
+          else
+            echo "ok: CHANGELOG.md mentions $VERSION"
+          fi
+
+          exit $fail
+
+      - name: Lint before packaging
+        run: |
+          set -euo pipefail
+          find . -name '*.php' -not -path './vendor/*' -not -path './node_modules/*' -print0 \
+            | xargs -0 -n1 php -l
+          while IFS= read -r -d '' f; do node --check "$f"; done \
+            < <(find assets -name '*.js' -not -path '*/node_modules/*' -print0)
+
+      # .distignore is the single source of truth for what is product and what
+      # is development tooling. Building the zip from it (rather than a second
+      # hand-maintained list) means adding a dev file to .distignore is enough.
+      # Both this job and the CI leak-guard call the same two scripts, so the
+      # archive a release ships is assembled by exactly the code CI proved
+      # clean on every pull request. Restating the copy-and-prune logic here
+      # would drift the first time a dev-only file was added to the root.
+      - name: Build distributable zip
+        run: |
+          set -euo pipefail
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          bin/build-dist.sh --zip "${TAG#v}"
+
+      - name: Assert no dev or internal files in the archive
+        run: |
+          set -euo pipefail
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          bin/assert-dist-clean.sh --zip "${TAG#v}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PLUGIN_SLUG }}-package
+          path: |
+            build/*.zip
+            build/*.sha256
+          retention-days: 30
+
+      # Published as a draft so a human reads the notes and confirms the
+      # smoke-install on clean WordPress before anything becomes public.
+      # Skipped entirely on workflow_dispatch, which is a dry run.
+      - name: Draft GitHub Release
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="${{ github.ref_name }}"
+          VERSION="${TAG#v}"
+          SUM=$(cut -d' ' -f1 < build/${PLUGIN_SLUG}-${VERSION}.zip.sha256)
+          gh release create "$TAG" \
+            --draft \
+            --title "Memberistic $VERSION" \
+            --notes "Release $VERSION.
+
+          See CHANGELOG.md for the full list of changes.
+
+          **SHA-256** of \`${PLUGIN_SLUG}-${VERSION}.zip\`:
+
+          \`\`\`
+          $SUM
+          \`\`\`
+
+          Before publishing this draft, confirm the release gate in the
+          development repository — in particular the clean-install and upgrade
+          smoke tests on a real WordPress site." \
+            build/${PLUGIN_SLUG}-${VERSION}.zip \
+            build/${PLUGIN_SLUG}-${VERSION}.zip.sha256

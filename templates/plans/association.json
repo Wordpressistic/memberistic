@@ -1,0 +1,61 @@
+{
+  "id": "association",
+  "label": "Association / professional body",
+  "description": "Membership grades for a professional or trade association.",
+  "template_version": 1,
+  "currency": "USD",
+  "status_on_import": "inactive",
+  "notice": "Example pricing and copy. Review every price, benefit, and included-people count against your own business before activating. Plans import as 'inactive' so nothing is offered for sale until you publish it.",
+  "plans": [
+    {
+      "name": "Student",
+      "slug": "student",
+      "description": "Reduced-rate grade for members in full-time study.",
+      "monthly_price": 5.0,
+      "annual_price": 50.0,
+      "included_people": 1,
+      "benefits": [
+        "Full member resources",
+        "Newsletter and journal access",
+        "Reduced event rates",
+        "Proof of study required"
+      ],
+      "is_featured": 0,
+      "sort_order": 10,
+      "status": "inactive"
+    },
+    {
+      "name": "Associate",
+      "slug": "associate",
+      "description": "Standard individual membership grade.",
+      "monthly_price": 15.0,
+      "annual_price": 150.0,
+      "included_people": 1,
+      "benefits": [
+        "Everything in Student",
+        "Directory listing",
+        "Member rate on certification",
+        "Voting rights"
+      ],
+      "is_featured": 1,
+      "sort_order": 20,
+      "status": "inactive"
+    },
+    {
+      "name": "Corporate",
+      "slug": "corporate",
+      "description": "Organisation membership covering several named people.",
+      "monthly_price": 120.0,
+      "annual_price": 1200.0,
+      "included_people": 5,
+      "benefits": [
+        "Everything in Associate, for up to 5 named people",
+        "Organisation listing in the directory",
+        "Named contacts managed centrally"
+      ],
+      "is_featured": 0,
+      "sort_order": 30,
+      "status": "inactive"
+    }
+  ]
+}

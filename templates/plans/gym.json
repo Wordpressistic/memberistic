@@ -1,0 +1,60 @@
+{
+  "id": "gym",
+  "label": "Gym / fitness",
+  "description": "Off-peak, full, and household tiers for a gym or fitness facility.",
+  "template_version": 1,
+  "currency": "USD",
+  "status_on_import": "inactive",
+  "notice": "Example pricing and copy. Review every price, benefit, and included-people count against your own business before activating. Plans import as 'inactive' so nothing is offered for sale until you publish it.",
+  "plans": [
+    {
+      "name": "Off-Peak",
+      "slug": "off-peak",
+      "description": "Weekday daytime access at a lower rate.",
+      "monthly_price": 19.0,
+      "annual_price": 199.0,
+      "included_people": 1,
+      "benefits": [
+        "Access during off-peak hours",
+        "Locker room access",
+        "Digital membership card"
+      ],
+      "is_featured": 0,
+      "sort_order": 10,
+      "status": "inactive"
+    },
+    {
+      "name": "Full Access",
+      "slug": "full-access",
+      "description": "Unrestricted access during all opening hours.",
+      "monthly_price": 39.0,
+      "annual_price": 399.0,
+      "included_people": 1,
+      "benefits": [
+        "Unlimited access, all hours",
+        "Group classes included",
+        "Guest passes each month",
+        "Digital membership card"
+      ],
+      "is_featured": 1,
+      "sort_order": 20,
+      "status": "inactive"
+    },
+    {
+      "name": "Household",
+      "slug": "household",
+      "description": "One membership covering everyone at the same address.",
+      "monthly_price": 69.0,
+      "annual_price": 699.0,
+      "included_people": 4,
+      "benefits": [
+        "Everything in Full Access",
+        "Primary member + up to 3 linked members",
+        "Per-person check-in history"
+      ],
+      "is_featured": 0,
+      "sort_order": 30,
+      "status": "inactive"
+    }
+  ]
+}
