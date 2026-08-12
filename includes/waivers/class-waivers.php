@@ -1577,6 +1577,7 @@ final class Waiver_Admin_Page {
 			}
 			$page++;
 		} while ( count( $rows ) === 1000 && $page < 100 );
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- $out is php://output, the HTTP response body, not a file. The export streams page by page precisely so a large archive never has to be held in memory.
 		fclose( $out );
 		exit;
 	}

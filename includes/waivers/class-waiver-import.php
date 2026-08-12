@@ -287,14 +287,18 @@ final class Waiver_Import {
 	/* ------------------------------------------------------------------ */
 
 	private static function read_csv( $path ) {
-		$rows   = array();
-		$handle = fopen( $path, 'r' );
+		$rows = array();
+		// Streamed rather than read through WP_Filesystem: it has no streaming
+		// API and no CSV parser, and get_contents_array() splits on newlines,
+		// which corrupts quoted waiver text containing one. fgetcsv() needs a
+		// handle, so a handle is what this uses.
+		$handle = fopen( $path, 'r' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- see above.
 		if ( ! $handle ) {
 			return new \WP_Error( 'memberistic_csv_open', __( 'Could not open the CSV file.', 'memberistic' ) );
 		}
 		$header = fgetcsv( $handle );
 		if ( ! $header ) {
-			fclose( $handle );
+			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- closing the stream opened above.
 			return new \WP_Error( 'memberistic_csv_empty', __( 'The CSV file is empty.', 'memberistic' ) );
 		}
 		// Strip a UTF-8 BOM from the first header cell if present.
@@ -305,7 +309,7 @@ final class Waiver_Import {
 			}
 			$rows[] = array_combine( $header, array_pad( $line, count( $header ), '' ) );
 		}
-		fclose( $handle );
+		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- closing the stream opened above.
 		return $rows;
 	}
 

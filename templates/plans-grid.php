@@ -79,7 +79,17 @@ $brand_color  = memberistic_get_setting( 'primary_brand_color', '#0F2044' );
 							<?php endforeach; ?>
 						</ul>
 					<?php endif; ?>
-					<a class="memberistic-plan-button" href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( sprintf( __( 'Choose %s', 'memberistic' ), $plan['name'] ) ); ?></a>
+					<a class="memberistic-plan-button" href="<?php echo esc_url( $url ); ?>">
+						<?php
+						echo esc_html(
+							sprintf(
+								/* translators: %s: membership plan name. */
+								__( 'Choose %s', 'memberistic' ),
+								$plan['name']
+							)
+						);
+						?>
+					</a>
 				</article>
 			<?php endforeach; ?>
 		</div>

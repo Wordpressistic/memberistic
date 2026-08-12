@@ -493,6 +493,7 @@ final class Admin_Menu {
 				)
 			);
 		}
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- $out is php://output, the HTTP response body, not a file. WP_Filesystem has nothing to offer here; the matching fopen() is not flagged because the sniff can see the stream wrapper there and cannot see it on the handle.
 		fclose( $out );
 		exit;
 	}

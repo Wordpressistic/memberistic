@@ -236,10 +236,41 @@ what a reviewer sees rather than reporting on `tests/`, `bin/` and
 `docs/strategy/`, none of which ship.
 
 **Acceptance**
-- [ ] Plugin Check runs in CI on every PR — `plugin-check` job in `ci.yml`
-- [ ] All errors resolved
-- [ ] Every remaining warning documented with a reason, in-repo
-- [ ] Job is blocking — no `continue-on-error`, unlike the advisory `phpcs` job
+- [x] Plugin Check runs in CI on every PR — `plugin-check` job in `ci.yml`,
+      building the tree with `bin/build-dist.sh`, the same script `dist-guard`
+      and the release workflow use
+- [x] All errors resolved — **0 errors**, down from 70 on first run. Nothing was
+      added to `ignore-codes` for them and no severity was downgraded: warnings
+      stood at 270 on the same run, so the errors were fixed rather than
+      reclassified
+- [ ] Every remaining warning documented with a reason, in-repo — **270
+      outstanding.** Dominated by `PrefixAllGlobals.NonPrefixedVariableFound` in
+      templates and `NonceVerification` in admin form handlers. Neither
+      obviously a defect, neither blocking the .org listing, but both need a
+      decision recorded rather than left implicit
+- [x] Job is blocking — no `continue-on-error`, unlike the advisory `phpcs` job
+
+> **The 70, and what two of them turned out to be (2026-08-09).** 44 i18n (41
+> missing `translators:` comments, 3 unordered placeholders); 15 escaping; 10
+> filesystem; 1 heredoc. Two are worth remembering:
+>
+> - Two `readfile()` calls already carried `phpcs:ignore` comments naming
+>   `file_system_read_readfile`. WPCS renamed the sniff to
+>   `file_system_operations_readfile`, so the suppressions matched nothing and
+>   the calls were reported anyway. The sibling in `class-documents.php` uses
+>   the current code and was never reported — that mismatch is what surfaced it.
+>   **A stale sniff code is a silent suppression failure**; nothing warns you.
+> - Ten of the fifteen escaping findings were the booking CSS prefix in
+>   `templates/account.php`, hard-sanitised to `[a-z0-9_-]` fifteen lines above
+>   the output, where `esc_attr()` is a no-op. Five were real, including three
+>   unescaped `wp_die()` arguments in the Stripe service.
+>
+> Bulk-inserting the translators comments put five of them into inline HTML in
+> the corporate module, where a bare `/* ... */` line is text rather than a
+> comment and would have rendered on the group admin screens. Found by
+> tokenising each file and asserting every `translators:` line is a real
+> `T_COMMENT`. **Anything inserting comments by line number needs that check** —
+> the diff looks correct either way.
 
 ---
 
@@ -363,14 +394,45 @@ Conversion assets for operationally serious buyers.
 ---
 
 ### P0-10 · Prove the fresh-activation network silence
-**Status:** blocked by P0-0 · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-07
+**Status:** **done** · **Workstream:** WS-2 · **Milestone:** M1 · **Finding:** F-07
 
-Invariant I5 is currently upheld by design, not by test.
+Invariant I5 is upheld by test, in two halves that fail for different reasons.
+
+**The runtime half** (`tests/integration/FreshInstallTest.php`) proves what
+happens: activation and `init` reach the network zero times, and the defaults
+are read from `Integrations_Registry::definitions()` rather than a fixed list,
+so a new integration shipping `'yes'` fails instead of a hard-coded list going
+quietly out of date.
+
+**The static half** (`tests/unit/OutboundHttpAllowlistTest.php`) covers what the
+runtime half structurally cannot. Activation and `init` only execute the paths
+those two moments run; a `wp_remote_post()` added behind `admin_init`, a
+shortcode, a REST callback or a cron handler leaves the integration suite green
+and still breaks the promise on a customer's site. So the files allowed to call
+out are allow-listed against the integration key that gates them — two here,
+coreSTORE and Stripe, both `'no'` — and the list is checked in both directions,
+so an entry whose call disappears has to be removed rather than left as a
+standing permission. Matching is `token_get_all()`, not a regex: a regex for
+`wp_remote_post` also matches the phpdoc describing it, which fills the
+allow-list with files that never call anything and hides the one that does.
 
 **Acceptance**
-- [ ] Test asserting a fresh activation issues zero outbound HTTP requests
-- [ ] Test asserting every third-party integration defaults to `'no'`
-- [ ] Guard test failing if a new integration ships enabled by default
+- [x] Test asserting a fresh activation issues zero outbound HTTP requests —
+      `FreshInstallTest::test_activation_makes_no_outbound_http_request`
+- [x] Test asserting every third-party integration defaults to `'no'` —
+      `FreshInstallTest::test_third_party_integrations_default_to_disabled`,
+      enumerating the registry, with Email Automation and Waiver Manager the two
+      documented built-in exceptions
+- [x] Guard test failing if a new integration ships enabled by default — the
+      same test, plus `OutboundHttpAllowlistTest` failing any *new call site*
+      regardless of whether it went through the registry at all
+
+> **Evidence in this repository (2026-08-09).** Unit suite 56 tests / 856
+> assertions green on `ci.yml`; integration matrix green on WP 6.8 / 6.9 /
+> 7.0.3 × PHP 8.2 / 8.3 / 8.4 plus the trunk canary. The static guard was
+> mutation-tested in both directions: adding a `wp_remote_get()` to an
+> unlisted file fails with the file and line, and flipping coreSTORE to
+> `'default' => 'yes'` fails the gating assertion.
 
 ---
 

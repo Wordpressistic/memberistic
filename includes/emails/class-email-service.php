@@ -341,7 +341,11 @@ final class Email_Service {
 
 	private static function build_message( $template, $context ) {
 		$defaults = self::default_template_strings();
-		$subject  = $defaults[ $template ]['subject'] ?? sprintf( __( '%s membership update', 'memberistic' ), $context['{brand_label}'] );
+		$subject  = $defaults[ $template ]['subject'] ?? sprintf(
+			/* translators: %s: the site's Memberistic brand label. */
+			__( '%s membership update', 'memberistic' ),
+			$context['{brand_label}']
+		);
 		$body     = $defaults[ $template ]['body'] ?? '';
 
 		if ( '' === $body ) {
