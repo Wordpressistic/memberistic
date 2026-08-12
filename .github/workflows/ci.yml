@@ -182,16 +182,47 @@ jobs:
       - name: Assemble the distributable tree
         run: bin/build-dist.sh
 
+      # Which WordPress to check against, taken from the same declaration the
+      # compatibility matrix uses, so the two cannot disagree about what this
+      # plugin supports.
+      #
+      # This used to be unpinned, on the reasoning that a .org reviewer runs
+      # current WordPress. That reasoning was right and the mechanism was not:
+      # wp-env resolves "latest" from the wordpress.org API and then clones that
+      # tag from the WordPress/WordPress git mirror, and the two are not updated
+      # together. On 2026-08-12 the API reported 7.0.4 hours before the mirror
+      # was tagged, so `git fetch --tags origin 7.0.4` failed, wp-env never
+      # started, and the job failed having evaluated *zero* rules — three
+      # retries, four runs, no results file. A check that reports nothing is
+      # worse than one that reports against a slightly older WordPress.
+      #
+      # Pinning to the highest blocking target is not a narrowing of the check
+      # set. Every rule still runs; `categories` is still unset. It only fixes
+      # which WordPress they run on, and ties that to the version the matrix
+      # actually certifies — so raising support in wordpress-targets.json raises
+      # this too, automatically, and neither can drift from the other.
+      - name: Resolve the WordPress version to check against
+        id: wp
+        run: |
+          set -euo pipefail
+          version=$(python3 -c "
+          import json
+          targets = json.load(open('.github/wordpress-targets.json'))
+          print(sorted(targets['blocking'], key=lambda v: [int(p) for p in v.split('.')])[-1])
+          ")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Plugin Check will run against WordPress $version"
+
       - uses: WordPress/plugin-check-action@v1
         with:
           build-dir: ./build/memberistic
           # wordpress.org requires the install directory to equal the Text
           # Domain, and the release zip is built to that slug.
           slug: memberistic
-          # No `categories` filter and no pinned `wp-version`: P0-4 asks for the
-          # full default check set on current WordPress, which is what the .org
-          # reviewer runs. Narrowing either hides the plugin_repo findings that
-          # block the listing.
+          wp-version: ${{ steps.wp.outputs.version }}
+          # No `categories` filter: P0-4 asks for the full default check set,
+          # which is what the .org reviewer runs. Narrowing it hides the
+          # plugin_repo findings that block the listing.
           #
           # Nothing sets ignore-warnings or ignore-errors. This list names
           # specific sniffs and is a statement about architecture, not a way to
