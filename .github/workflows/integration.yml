@@ -4,6 +4,13 @@ name: WordPress integration
 # WordPress and a real database, across every supported WordPress and PHP
 # version, so "tested up to" becomes a statement about what was tested rather
 # than about what shipped.
+#
+# The matrix is not written here. It is built from
+# `.github/wordpress-targets.json` by the `resolve` job, which fails the run
+# when a declared target is not published on wordpress.org. That job is a gate,
+# not a report: an earlier version of this workflow printed "NOT PUBLISHED" and
+# then ran the matrix anyway, which is how `7.0.3` — a release that does not
+# exist — sat in this file describing coverage nobody had.
 
 on:
   push:
@@ -19,55 +26,28 @@ permissions:
   contents: read
 
 jobs:
-  # Resolve the requested versions before spending nine jobs on them. When a
-  # matrix names a WordPress version that does not exist, the useful output is
-  # that fact stated once — not nine download failures.
+  # Resolve and validate the requested versions before spending nine jobs on
+  # them, and hand the matrix down as an output so the list cannot drift from
+  # the list that was checked.
   resolve:
     name: Resolve WordPress versions
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    outputs:
+      wordpress: ${{ steps.targets.outputs.wordpress }}
+      php: ${{ steps.targets.outputs.php }}
+      canary: ${{ steps.targets.outputs.canary }}
     steps:
-      - name: What wordpress.org currently publishes
+      - uses: actions/checkout@v4
+
+      # Non-zero here skips the integration jobs entirely, which is the point:
+      # a matrix that names a version wordpress.org does not publish must not
+      # be allowed to run and report anything at all.
+      - name: Validate compatibility targets against wordpress.org
+        id: targets
         run: |
-          set -euo pipefail
-          curl -sSL --retry 3 https://api.wordpress.org/core/stable-check/1.0/ -o /tmp/stable.json
-
-          # Written to stdout as well as the step summary. The summary is only
-          # readable in the web UI, and this job exists precisely so the answer
-          # is available from the logs — including to whoever is reading them
-          # through an API rather than a browser.
-          {
-            echo "### WordPress versions available"
-            echo ''
-
-            latest=$(python3 -c "
-          import json
-          d = json.load(open('/tmp/stable.json'))
-          print(next((k for k, v in d.items() if v == 'latest'), 'unknown'))
-          ")
-            echo "Latest published: **$latest**"
-            echo ''
-            echo 'Newest 12 releases:'
-            python3 -c "
-          import json
-          d = json.load(open('/tmp/stable.json'))
-          ks = sorted(d, key=lambda s: [int(x) for x in s.split('.')])
-          print('\n'.join('- ' + k for k in ks[-12:]))
-          "
-            echo ''
-            echo 'Requested by this matrix: 6.8, 6.9, 7.0.3'
-            for want in 6.8 6.9 7.0.3; do
-              if python3 -c "
-          import json, sys
-          d = json.load(open('/tmp/stable.json'))
-          sys.exit(0 if any(k == '$want' or k.startswith('$want.') for k in d) else 1)
-          "; then
-                echo "- \`$want\` — available"
-              else
-                echo "- \`$want\` — **NOT PUBLISHED — the matrix needs correcting**"
-              fi
-            done
-          } | tee -a "$GITHUB_STEP_SUMMARY"
+          chmod +x bin/check-wp-targets.py
+          bin/check-wp-targets.py --github-output
 
   integration:
     name: WP ${{ matrix.wordpress }} · PHP ${{ matrix.php }}
@@ -77,8 +57,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        wordpress: ['6.8', '6.9', '7.0.3']
-        php: ['8.2', '8.3', '8.4']
+        wordpress: ${{ fromJSON(needs.resolve.outputs.wordpress) }}
+        php: ${{ fromJSON(needs.resolve.outputs.php) }}
 
     services:
       mysql:
@@ -106,8 +86,8 @@ jobs:
 
       # PHPUnit 9.6, not the 10.5 the unit suite pins. The WordPress core test
       # library still calls PHPUnit\Util\Test::parseTestMethodAnnotations(),
-      # which PHPUnit 10 removed, so every test errors under 10.x — on 6.8,
-      # 6.9, 7.0.3 and trunk alike. Installed over the top here so the
+      # which PHPUnit 10 removed, so every test errors under 10.x — on every
+      # supported line and on trunk alike. Installed over the top here so the
       # integration job's vendor/ is internally consistent; composer.lock and
       # the unit suite are untouched.
       # The polyfills constraint is pinned alongside PHPUnit rather than left
@@ -145,9 +125,11 @@ jobs:
 
   # Forward-compatibility canary. Non-blocking by design: a failure here is
   # information about an unreleased WordPress, not a reason to stop shipping.
-  # Never treat a green canary as support for the version it tested.
+  # Never treat a green canary as support for the version it tested — support
+  # is claimed by adding a published release to `blocking` in
+  # .github/wordpress-targets.json and watching the matrix above pass.
   canary:
-    name: Canary · WordPress trunk · PHP 8.4
+    name: Canary · WordPress ${{ needs.resolve.outputs.canary }} · PHP 8.4
     runs-on: ubuntu-latest
     timeout-minutes: 25
     needs: resolve
@@ -176,22 +158,17 @@ jobs:
           coverage: none
           tools: composer
 
-      # The polyfills constraint is pinned alongside PHPUnit rather than left
-      # to resolve: composer.json allows ^1.1 || ^2.0, and the combination the
-      # matrix was actually verified green on is 9.6 with polyfills 1.x. 2.x
-      # declares support for PHPUnit 9, so it would very likely work too — but
-      # "very likely" is not what a compatibility matrix is for.
       - name: Downgrade to PHPUnit 9.6 for the WordPress test library
         run: |
           composer require --dev --no-interaction --no-progress \
             --with-all-dependencies 'phpunit/phpunit:^9.6' 'yoast/phpunit-polyfills:^1.1'
 
-      - name: Install WordPress trunk
+      - name: Install WordPress ${{ needs.resolve.outputs.canary }}
         run: |
           chmod +x bin/install-wp-tests.sh
-          bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 nightly
+          bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 ${{ needs.resolve.outputs.canary }}
 
-      - name: Run integration suite against trunk
+      - name: Run integration suite against the canary
         env:
           WP_TESTS_DIR: /tmp/wordpress-tests-lib
         run: |
@@ -208,5 +185,7 @@ jobs:
       - name: Note the canary result
         if: always()
         run: |
-          echo 'The trunk canary is advisory. Do not declare support for an' >> "$GITHUB_STEP_SUMMARY"
-          echo 'unreleased WordPress version on the strength of this job.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'The canary is advisory. Do not declare support for an' >> "$GITHUB_STEP_SUMMARY"
+          echo 'unreleased WordPress version on the strength of this job —' >> "$GITHUB_STEP_SUMMARY"
+          echo 'add the published release to .github/wordpress-targets.json' >> "$GITHUB_STEP_SUMMARY"
+          echo 'and let the blocking matrix prove it.' >> "$GITHUB_STEP_SUMMARY"
