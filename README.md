@@ -121,8 +121,17 @@ notice rather than fataling if they are not met.
 
 ## Installation
 
-1. Upload the plugin folder to `wp-content/plugins/`, or install the zip via
-   **Plugins → Add New → Upload Plugin**.
+Download `memberistic-<version>.zip` from
+[Releases](https://github.com/Wordpressistic/memberistic/releases). Each
+release also carries a `.sha256` file, so you can verify the archive before
+installing it:
+
+```
+shasum -a 256 -c memberistic-2.1.0.zip.sha256
+```
+
+1. Install the zip via **Plugins → Add New → Upload Plugin**, or unzip it into
+   `wp-content/plugins/`.
 2. Activate it.
 3. Go to **Memberistic → Settings** and set your business name, currency, and
    email sender details.
@@ -339,7 +348,7 @@ Released under the GPL-2.0-or-later. See [`LICENSE`](LICENSE).
 Bundled third-party code and its licences:
 [`THIRD-PARTY-LICENSES.md`](THIRD-PARTY-LICENSES.md).
 
-2.0.0 ships no licence key system and no auto-update client. The extension
+Memberistic ships no licence key system and no auto-update client. The extension
 points a licensing add-on would use are defined in
 `includes/class-licensing.php`, with the policy such an add-on must follow —
 notably that an expired licence must never break an existing member's access
@@ -352,3 +361,20 @@ Support: <https://memberistic.com/support>
 See [`CHANGELOG.md`](CHANGELOG.md). Upgrading from 1.x?
 [`docs/UPGRADE-2.0.md`](docs/UPGRADE-2.0.md) covers what changed and what to
 check.
+
+## About this repository
+
+This is the product repository: the tree here is the plugin as it ships, and
+every tagged release is built from it. Nothing in it is scaffolding you have to
+step around — if a file is here, it is either part of the plugin, documentation
+for using it, or the script that packages it.
+
+Development — the test suites, the CI matrices, the planning material and the
+architecture decision records — lives in
+[shubochandrosarker/memberistic](https://github.com/shubochandrosarker/memberistic).
+Work lands there first and arrives here as a release.
+
+Found a bug or a security issue? [`SECURITY.md`](SECURITY.md) covers private
+disclosure;
+[SUPPORT.md](https://github.com/Wordpressistic/memberistic/blob/main/SUPPORT.md)
+covers everything else.

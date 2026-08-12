@@ -4,7 +4,7 @@
 
 Memberistic bundles **no third-party code**. The shipped plugin contains no
 vendored PHP libraries, no bundled JavaScript frameworks, no web fonts, and no
-images. `composer.json` declares zero runtime dependencies, and there is no
+images. There are zero runtime dependencies to declare, and there is no
 `vendor/` directory in the distributed package.
 
 Everything the plugin ships is first-party code under GPL-2.0-or-later. That
@@ -29,26 +29,11 @@ font is fetched from a third-party host.
 
 ## Development dependencies
 
-These are used to test the plugin. They are **not** shipped in the
-distributable package — `vendor/` is git-ignored and excluded from the build.
-Listed for completeness.
-
-| Package | Version | Licence |
-|---|---|---|
-| phpunit/phpunit | 10.5.64 | BSD-3-Clause |
-| phpunit/php-code-coverage | 10.1.16 | BSD-3-Clause |
-| phpunit/php-file-iterator | 4.1.0 | BSD-3-Clause |
-| phpunit/php-invoker | 4.0.0 | BSD-3-Clause |
-| phpunit/php-text-template | 3.0.1 | BSD-3-Clause |
-| phpunit/php-timer | 6.0.0 | BSD-3-Clause |
-| myclabs/deep-copy | 1.13.4 | MIT |
-| nikic/php-parser | 5.8.0 | BSD-3-Clause |
-| phar-io/manifest | 2.0.4 | BSD-3-Clause |
-| phar-io/version | 3.2.1 | BSD-3-Clause |
-| sebastian/* (16 packages) | various | BSD-3-Clause |
-| theseer/tokenizer | — | BSD-3-Clause |
-
-BSD-3-Clause and MIT are both GPL-compatible.
+None in this repository. The test toolchain — PHPUnit and its transitive
+packages, all BSD-3-Clause or MIT, all GPL-compatible — lives with the test
+suites in the development repository,
+[shubochandrosarker/memberistic](https://github.com/shubochandrosarker/memberistic).
+Nothing from it is distributed, so nothing from it needs attribution here.
 
 ## Services
 

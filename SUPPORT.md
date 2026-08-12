@@ -4,10 +4,10 @@
 
 | You have | Go to |
 |---|---|
-| A bug — something behaves incorrectly | [Open a bug report](../../issues/new?template=bug_report.yml) |
-| An idea or a missing capability | [Open a feature request](../../issues/new?template=feature_request.yml) |
+| A bug — something behaves incorrectly | [Open an issue](../../issues/new) |
+| An idea or a missing capability | [Open an issue](../../issues/new) |
 | A security vulnerability | **Not an issue** — see [`SECURITY.md`](SECURITY.md) |
-| A "how do I…" question | [Discussions](../../discussions), or the docs below |
+| A "how do I…" question | The docs below, then an issue if they do not cover it |
 | A commercial/support enquiry | https://memberistic.com |
 
 ## Read these first
@@ -40,6 +40,5 @@ For anything touching payments, include whether Stripe was in **test** or
 
 This is maintained alongside other work. Issues are triaged in order of impact:
 data loss and access-control problems first, then payment correctness, then
-everything else. There is no support SLA on the free plugin. Commercial support
-tiers are described in `docs/strategy/04-business-model.md` as a plan, not as a
-currently available service — do not treat that document as an offer.
+everything else. There is no support SLA on the free plugin, and no commercial
+support tier is currently on offer.

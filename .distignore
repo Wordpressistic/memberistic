@@ -1,47 +1,36 @@
-# Files excluded from the distributable plugin zip.
-# Everything here is development tooling, not product.
+# What is product, and what is repository furniture.
+#
+# bin/build-dist.sh and the release workflow both read this file, so it is the
+# only place the answer is written down. Everything listed here serves the
+# repository — versioning it, building it, or explaining it — and would be
+# noise in a site owner's wp-content/plugins directory.
+
+# Version control and repository configuration.
 .git
 .gitattributes
 .gitignore
 .distignore
+
+# Release tooling. The plugin is built by these; it does not contain them.
 .github
-.phpunit.cache
+bin
+build
+*.zip
+
+# Repository-facing. It routes people to the issue tracker and the docs, which
+# is a repository's job; readme.txt already carries what WordPress shows a site
+# owner inside wp-admin.
+SUPPORT.md
+
+# Not tracked in this repository, and listed anyway. Development happens in
+# shubochandrosarker/memberistic, and a maintainer packaging a build from a
+# working copy that has a vendor/ or a test cache lying around should get the
+# same archive as the release runner — not one with a Composer tree inside it.
+vendor
+node_modules
+tests
 composer.json
 composer.lock
 phpunit.xml
 phpunit-integration.xml
-tests
-bin
-vendor
-node_modules
-build
-*.zip
-.editorconfig
-
-# Contributor- and agent-facing material. Useful in the repository, noise in a
-# customer's wp-content/plugins directory.
-CLAUDE.md
-CONTRIBUTING.md
-CODE_OF_CONDUCT.md
-SUPPORT.md
-
-# Per-release engineering reports. They record what was verified, what was not,
-# and what the remaining risks are — useful in the repository, and meaningless
-# in a customer's plugin directory.
-MEMBERISTIC-*-RELEASE-REPORT.md
-
-# Internal planning material. docs/strategy in particular contains pricing
-# models, revenue targets and competitor analysis — none of which belongs in a
-# zip that ships to customers. The product documentation directly under docs/
-# (HOOKS, INSTALL, INTEGRATIONS, UPGRADE-2.0, entitlements, guest-pass-audit)
-# still ships, as it always has.
-docs/strategy
-docs/governance
-
-# The docs index is repository navigation, not product documentation: roughly
-# two thirds of its links point into docs/strategy, docs/governance, CLAUDE.md
-# and CONTRIBUTING.md, none of which ship. In a customer's plugin directory it
-# is a page of dead links. The product docs it indexes (HOOKS, INSTALL,
-# INTEGRATIONS, UPGRADE-2.0, entitlements, guest-pass-audit) still ship, and
-# README.md at the repository root remains the reader's entry point.
-docs/README.md
+.phpunit.cache
