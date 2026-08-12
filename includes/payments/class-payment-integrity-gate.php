@@ -737,15 +737,8 @@ final class Payment_Integrity_Gate {
 			'provider_subscription_id' => $subscription_id,
 			'provider_customer_id'     => isset( $event['provider_customer_id'] ) ? (string) $event['provider_customer_id'] : '',
 			'provider_account_id'      => (string) $provider::expected_account_id(),
-			// Written to the legacy columns too, so a rollback to 2.0.x leaves
-			// the membership fully functional.
-			'stripe_subscription_id'   => Stripe_Provider::key() === $provider::key() ? $subscription_id : ( $membership['stripe_subscription_id'] ?? '' ),
 			'start_date'               => ! empty( $membership['start_date'] ) ? $membership['start_date'] : current_time( 'mysql' ),
 		);
-
-		if ( Stripe_Provider::key() === $provider::key() && ! empty( $event['provider_customer_id'] ) ) {
-			$fields['stripe_customer_id'] = (string) $event['provider_customer_id'];
-		}
 
 		$period_end = is_array( $subscription ) ? self::period_end( $provider, $subscription ) : null;
 		if ( $period_end ) {
@@ -844,9 +837,11 @@ final class Payment_Integrity_Gate {
 			return self::defer( Payment_Audit_Repository::REASON_PROVIDER_UNAVAILABLE, $membership_id, $invoice->get_error_message() );
 		}
 
+		// Adapters normalise `amount_paid` to major units before returning it,
+		// so nothing here needs to know how a given provider counts money.
 		$paid   = ! empty( $invoice['paid'] ) || 'paid' === ( $invoice['status'] ?? '' );
 		$amount = isset( $invoice['amount_paid'] ) && is_numeric( $invoice['amount_paid'] )
-			? Stripe_Provider::to_major_units( (int) $invoice['amount_paid'], (string) ( $invoice['currency'] ?? '' ) )
+			? (float) $invoice['amount_paid']
 			: null;
 
 		if ( ! $paid ) {

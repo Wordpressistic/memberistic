@@ -387,6 +387,34 @@ final class Stripe_Provider implements Payment_Provider {
 			'billing_reason'           => isset( $object['billing_reason'] ) ? sanitize_text_field( (string) $object['billing_reason'] ) : '',
 		);
 
+		// The legacy `stripe_*` columns are written alongside the new
+		// provider-neutral ones, so an install that upgrades and then rolls
+		// back to 2.0.x still has a fully functional membership. Declared here
+		// rather than in the gate: which columns a provider keeps for its own
+		// bookkeeping is the adapter's business, and the gate had a
+		// `if ( 'stripe' === $provider )` branch for exactly this until it was
+		// moved down here.
+		$membership_fields = array();
+
+		if ( '' !== $normalized['provider_subscription_id'] ) {
+			$membership_fields['stripe_subscription_id'] = $normalized['provider_subscription_id'];
+		}
+
+		if ( '' !== $normalized['provider_customer_id'] ) {
+			$membership_fields['stripe_customer_id'] = $normalized['provider_customer_id'];
+		}
+
+		if ( 'checkout.session.completed' === $type && ! empty( $object['id'] ) ) {
+			$membership_fields['stripe_checkout_session_id'] = sanitize_text_field( (string) $object['id'] );
+
+			if ( ! empty( $object['expires_at'] ) && is_numeric( $object['expires_at'] ) ) {
+				// Site-local, because that legacy column always was.
+				$membership_fields['stripe_checkout_expires_at'] = wp_date( 'Y-m-d H:i:s', (int) $object['expires_at'] );
+			}
+		}
+
+		$normalized['membership_fields'] = $membership_fields;
+
 		return $normalized;
 	}
 
@@ -616,7 +644,28 @@ final class Stripe_Provider implements Payment_Provider {
 			return new \WP_Error( 'memberistic_missing_invoice', __( 'No invoice id provided.', 'memberistic' ) );
 		}
 
-		return Stripe_Service::request( 'GET', '/invoices/' . rawurlencode( $invoice_id ) );
+		$invoice = Stripe_Service::request( 'GET', '/invoices/' . rawurlencode( $invoice_id ) );
+
+		if ( is_wp_error( $invoice ) ) {
+			return $invoice;
+		}
+
+		$currency = isset( $invoice['currency'] ) ? (string) $invoice['currency'] : '';
+
+		// Normalised before it leaves the adapter, `amount_paid` in major
+		// units. The gate previously did this conversion itself, which meant
+		// the one piece of code that is supposed to know nothing about Stripe
+		// knew that Stripe counts in cents — and would have divided a
+		// WooCommerce order total by a hundred if it had ever been handed one.
+		return array(
+			'id'          => isset( $invoice['id'] ) ? sanitize_text_field( (string) $invoice['id'] ) : $invoice_id,
+			'status'      => isset( $invoice['status'] ) ? sanitize_text_field( (string) $invoice['status'] ) : '',
+			'paid'        => ! empty( $invoice['paid'] ),
+			'amount_paid' => isset( $invoice['amount_paid'] ) && is_numeric( $invoice['amount_paid'] )
+				? self::to_major_units( (int) $invoice['amount_paid'], $currency )
+				: null,
+			'currency'    => strtoupper( $currency ),
+		);
 	}
 
 	/**

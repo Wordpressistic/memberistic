@@ -70,6 +70,24 @@ namespace WordPressistic\Memberistic\Database {
 
 /* ── Global WordPress stubs ── */
 
+/* ── Plugin-namespace helpers the payment units call directly ── */
+
+namespace WordPressistic\Memberistic {
+
+	/**
+	 * Settings stub.
+	 *
+	 * Backed by a plain array the tests write to, so a test that needs the
+	 * live-mode signing secret, or a seven-day grace period, says so in one
+	 * line instead of constructing an options table.
+	 */
+	function memberistic_get_setting( $key, $default = null ) {
+		$settings = $GLOBALS['memberistic_test_settings'] ?? array();
+
+		return array_key_exists( $key, $settings ) ? $settings[ $key ] : $default;
+	}
+}
+
 namespace {
 
 	use WordPressistic\Memberistic\Database\Memberships_Repository;
@@ -94,14 +112,16 @@ namespace {
 		define( 'DAY_IN_SECONDS', 86400 );
 	}
 
-	$GLOBALS['memberistic_test_filters'] = array();
-	$GLOBALS['memberistic_test_actions'] = array();
-	$GLOBALS['memberistic_test_options'] = array();
+	$GLOBALS['memberistic_test_filters']  = array();
+	$GLOBALS['memberistic_test_actions']  = array();
+	$GLOBALS['memberistic_test_options']  = array();
+	$GLOBALS['memberistic_test_settings'] = array();
 
 	function memberistic_tests_reset_state(): void {
-		$GLOBALS['memberistic_test_filters'] = array();
-		$GLOBALS['memberistic_test_actions'] = array();
-		$GLOBALS['memberistic_test_options'] = array();
+		$GLOBALS['memberistic_test_filters']  = array();
+		$GLOBALS['memberistic_test_actions']  = array();
+		$GLOBALS['memberistic_test_options']  = array();
+		$GLOBALS['memberistic_test_settings'] = array();
 		$GLOBALS['memberistic_test_user_id']  = 0;
 		$GLOBALS['memberistic_test_user_can'] = false;
 		$GLOBALS['memberistic_test_users']    = array();
@@ -234,6 +254,11 @@ namespace {
 			$code = $code ? $code : $this->get_error_code();
 			return isset( $this->errors[ $code ][0] ) ? $this->errors[ $code ][0] : '';
 		}
+
+		public function get_error_data( $code = '' ) {
+			$code = $code ? $code : $this->get_error_code();
+			return isset( $this->error_data[ $code ] ) ? $this->error_data[ $code ] : null;
+		}
 	}
 
 	function is_wp_error( $thing ) {
@@ -284,4 +309,23 @@ namespace {
 	define( 'MEMBERISTIC_TESTS_PLUGIN_DIR', dirname( __DIR__ ) . '/' );
 	require_once MEMBERISTIC_TESTS_PLUGIN_DIR . 'includes/integrations/class-entitlement-service.php';
 	require_once MEMBERISTIC_TESTS_PLUGIN_DIR . 'includes/class-membership-service.php';
+
+	/*
+	 * Payment-integrity units that hold still without WordPress.
+	 *
+	 * The state machine and the clock are pure, and Stripe signature
+	 * verification touches nothing but the settings stub — which is the point
+	 * of having it in an adapter. Everything that needs a real database (the
+	 * atomic event claim, the compare-and-swap, the unique keys) is tested in
+	 * the integration suite instead, because faking those is testing the fake.
+	 *
+	 * Stripe_Provider names Stripe_Service in a `use` statement. That is an
+	 * alias resolved when a method is called, not when the file loads, and
+	 * nothing exercised here calls one — so the whole checkout service, and
+	 * the tree of repositories behind it, stays out of the unit suite.
+	 */
+	require_once MEMBERISTIC_TESTS_PLUGIN_DIR . 'includes/payments/class-payment-clock.php';
+	require_once MEMBERISTIC_TESTS_PLUGIN_DIR . 'includes/payments/class-subscription-state-machine.php';
+	require_once MEMBERISTIC_TESTS_PLUGIN_DIR . 'includes/payments/providers/interface-payment-provider.php';
+	require_once MEMBERISTIC_TESTS_PLUGIN_DIR . 'includes/payments/providers/class-stripe-provider.php';
 }
