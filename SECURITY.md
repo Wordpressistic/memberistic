@@ -30,11 +30,16 @@ otherwise.
 
 | Version | Supported |
 |---|---|
+| 2.1.x | Yes — security fixes |
 | 2.0.x | Yes — security fixes |
 | < 2.0 | No |
 
-Only the latest 2.0.x patch is supported. Sites are expected to upgrade within
-the minor line.
+Only the latest patch of a supported minor is supported. Sites are expected to
+upgrade within the minor line.
+
+2.1.0 fixes payment-integrity issues in every earlier 2.x release, including
+renewal granted from an unverified invoice event and a stale cancellation able
+to cancel a replacement subscription. Sites taking payments should upgrade.
 
 ## What is in scope
 
@@ -72,9 +77,20 @@ Some behaviours look like findings but are deliberate:
   (`memberistic_secret_setting_keys()`, `memberistic_mask_secret()`).
 - **Webhook routes are unauthenticated by design** and authenticate by
   signature instead: Stripe via the endpoint signing secret with a timing-safe
-  compare and a 300-second replay window; WooCommerce via an HMAC shared
-  secret, which is rejected outright when unconfigured rather than treated as
-  open. Both verify before the payload is parsed.
+  compare and a 300-second replay window enforced in both directions;
+  WooCommerce via an HMAC shared secret, which is rejected outright when
+  unconfigured rather than treated as open. Both verify against the exact raw
+  request body, before the payload is parsed.
+- **A valid signature is not authority.** Since 2.1.0 an authenticated event
+  still has to pass account, environment, membership, customer, subscription,
+  plan, amount, currency, chronology and state-transition checks before it can
+  change anything, and is refused if any of them fail. An event that changes a
+  membership without those checks *is* a finding. See
+  `docs/PAYMENT-INTEGRITY.md`.
+- **Rejected events are answered `200`, not retried.** A permanently
+  unacceptable event is acknowledged so the provider stops resending it; only
+  undecidable ones (a provider outage) answer `503`. This is not a swallowed
+  error — every refusal is recorded in the audit trail with its reason.
 - **Template overrides are path-validated.** The `memberistic_locate_template`
   filter exists, but the returned path is constrained to the child theme,
   parent theme or plugin root. A bypass of that constraint *is* a finding.
@@ -90,8 +106,9 @@ Publicly documented in `docs/strategy/01-audit-findings.md` and scheduled in
 
 - route-by-route REST authorization and IDOR test coverage is incomplete;
 - upload/download handling lacks a dedicated security test matrix;
-- webhook fuzzing (bad signature, stale timestamp, duplicate, reordered,
-  malformed) is not yet automated;
+- REST route coverage is broader than webhook coverage; webhook fuzzing (bad
+  signature, stale timestamp, duplicate, reordered, malformed) is automated as
+  of 2.1.0, but fuzzing of the WooCommerce HMAC path is not;
 - no dependency/SBOM scanning in CI;
 - the Stripe API version is pinned to `2024-04-10` and its upgrade path is not
   yet covered by contract tests.

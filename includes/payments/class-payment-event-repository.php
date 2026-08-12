@@ -192,7 +192,7 @@ final class Payment_Event_Repository {
 		// an expired claim together cannot both win it.
 		$taken = $wpdb->query(
 			$wpdb->prepare(
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
 				'UPDATE `' . self::table() . '`
 				    SET status = %s, attempt_count = attempt_count + 1, updated_at = %s
 				  WHERE id = %d
@@ -256,7 +256,7 @@ final class Payment_Event_Repository {
 
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
 				'SELECT * FROM `' . self::table() . '` WHERE provider = %s AND provider_account_id = %s AND event_id = %s LIMIT 1',
 				$identity['provider'],
 				$identity['provider_account_id'],
@@ -330,7 +330,7 @@ final class Payment_Event_Repository {
 
 		return (int) $wpdb->get_var(
 			$wpdb->prepare(
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
 				'SELECT COUNT(1) FROM `' . self::table() . '` WHERE status = %s',
 				sanitize_key( $status )
 			)
@@ -348,7 +348,7 @@ final class Payment_Event_Repository {
 
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
 				'SELECT * FROM `' . self::table() . '` WHERE status = %s ORDER BY received_at DESC, id DESC LIMIT 1',
 				sanitize_key( $status )
 			),
@@ -366,7 +366,7 @@ final class Payment_Event_Repository {
 	public static function latest() {
 		global $wpdb;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix, no user input.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix, no user input.
 		$row = $wpdb->get_row( 'SELECT * FROM `' . self::table() . '` ORDER BY received_at DESC, id DESC LIMIT 1', ARRAY_A );
 
 		return $row ?: null;
@@ -383,7 +383,7 @@ final class Payment_Event_Repository {
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
 				'SELECT * FROM `' . self::table() . '` WHERE status = %s ORDER BY received_at DESC LIMIT %d',
 				self::STATUS_MANUAL_REVIEW,
 				max( 1, min( 500, (int) $limit ) )
@@ -412,7 +412,7 @@ final class Payment_Event_Repository {
 
 		return (int) $wpdb->query(
 			$wpdb->prepare(
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
 				'DELETE FROM `' . self::table() . '` WHERE status IN ( %s, %s ) AND received_at < %s',
 				self::STATUS_PROCESSED,
 				self::STATUS_DUPLICATE,

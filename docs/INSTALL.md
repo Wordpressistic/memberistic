@@ -74,10 +74,60 @@ You can edit page titles and bodies freely afterwards — Memberistic only cares
    - `checkout.session.completed`
    - `invoice.payment_succeeded`
    - `invoice.payment_failed`
+   - `customer.subscription.created`
+   - `customer.subscription.updated`
    - `customer.subscription.deleted`
-5. Copy the webhook signing secret into **Memberistic → Settings → Payments → Webhook secret**.
+   - `customer.subscription.trial_will_end` (only if you offer trials)
+5. Copy that endpoint's signing secret into the field for the mode it belongs
+   to: **Test keys → Webhook signing secret**, or **Live keys → Webhook signing
+   secret**.
 
-A signing secret is **required** — the webhook route returns `503` if it is not configured.
+Stripe issues a **different signing secret per endpoint**, so your test endpoint
+and your live endpoint have two different secrets. Fill in whichever you use,
+and both if you use both — otherwise switching the site from test to live leaves
+it verifying live events against the test secret and silently rejecting every
+one of them.
+
+The older shared **Webhook secret (shared, legacy)** field still works and is
+used only when the current mode's field is empty, so an upgrade from 2.0.x keeps
+working until you fill the new fields in.
+
+A signing secret is **required** — the webhook route returns `503` if it is not
+configured, so Stripe retries rather than dropping the event.
+
+For live sites, keep secrets out of the database entirely by defining them in
+`wp-config.php`; a constant takes precedence over the stored option and cannot
+be overwritten through the REST API:
+
+```php
+define( 'MEMBERISTIC_STRIPE_LIVE_SECRET_KEY', 'sk_live_...' );
+define( 'MEMBERISTIC_STRIPE_WEBHOOK_SECRET_LIVE', 'whsec_...' );
+```
+
+6. Check the result:
+
+```bash
+wp memberistic stripe health
+```
+
+This reports whether the API key and signing secret are present for the current
+mode, whether the Stripe account behind the credentials has been verified, and
+anything waiting for manual review. It never prints a secret.
+
+### What happens to an event that arrives
+
+Every event is verified before it can change a membership — signature, account,
+environment, membership, customer, subscription, plan, amount, currency,
+chronology and the requested state transition. A renewal is not granted because
+an invoice event arrived; the invoice is re-read from Stripe and checked. See
+[PAYMENT-INTEGRITY.md](PAYMENT-INTEGRITY.md).
+
+### Failed payments
+
+**Settings → Payments** controls what happens when a card fails: the grace
+period in days (default 7, `0` expires immediately), and whether a member keeps
+access during that window. Both default to ending access at the failed payment,
+which is what Memberistic did before 2.1.0.
 
 ## 6. (Optional) Enable WooCommerce
 

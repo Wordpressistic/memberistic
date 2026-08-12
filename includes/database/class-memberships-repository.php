@@ -489,7 +489,7 @@ final class Memberships_Repository {
 		// past_due with a live deadline → grace_period.
 		$grace = (int) $wpdb->query(
 			$wpdb->prepare(
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix; the IN list is placeholders.
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix; the IN list is placeholders.
 				"UPDATE {$table}
 				    SET billing_status = 'grace_period',
 				        status = CASE WHEN status IN ( {$placeholders} ) THEN status ELSE %s END,
@@ -504,7 +504,7 @@ final class Memberships_Repository {
 		// grace_period past its deadline → expired.
 		$expired = (int) $wpdb->query(
 			$wpdb->prepare(
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix; the IN list is placeholders.
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix; the IN list is placeholders.
 				"UPDATE {$table}
 				    SET billing_status = 'expired',
 				        status = CASE WHEN status IN ( {$placeholders} ) THEN status ELSE 'expired' END,

@@ -2,6 +2,89 @@
 
 All notable changes are tracked here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.1.0 - Payment integrity (unreleased)
+
+Every payment-provider event now passes through a single integrity gate before
+it may change a membership. The governing rule: **payment-provider events are
+evidence to verify, never commands to trust.** See
+[`docs/PAYMENT-INTEGRITY.md`](docs/PAYMENT-INTEGRITY.md).
+
+Upgrading changes nobody's access on its own. Both configurable parts of the new
+billing-to-access mapping default to the behaviour 2.0.1 already had.
+
+### Security
+- **A renewal could be granted by an unverified invoice event.** The
+  `invoice.payment_succeeded` handler found a membership by subscription id or,
+  failing that, by provider metadata; set its status to active; advanced the
+  renewal date; wrote a payment row and sent a receipt — without checking who
+  paid, how much, in what currency, on which Stripe account, or whether the
+  invoice had been paid at all. The invoice is now re-read from the provider and
+  every one of those questions is answered before a field moves. A mismatch goes
+  to manual review and does not reactivate the membership.
+- **A stale cancellation could cancel a replacement subscription.** The
+  `customer.subscription.deleted` handler fell back to `metadata.membership_id`
+  whenever the subscription lookup missed, so a cancellation for a subscription
+  a member had already replaced would find their membership through that
+  fallback and cancel it — removing access from someone who had just
+  re-subscribed and paid. The event's subscription id is now compared against
+  the membership's current authoritative subscription, and metadata can no
+  longer override a conflicting one.
+- **A late payment failure could revoke access from a member who had paid.**
+  `invoice.payment_failed` moved a membership to `past_due` without checking the
+  failure still stood. The gate re-reads the subscription and does nothing when
+  the provider says it is paid.
+- **Webhook deduplication no longer depends on a lock.** The capped 500-id
+  option is replaced by a `UNIQUE` key over `(provider, account, event_id)`;
+  the failed `INSERT` *is* the deduplication. A retry storm could previously
+  push an id off the end of the list while its retry was in flight, charging the
+  member twice and emailing them twice.
+- **Stripe signature verification hardened.** Per-mode signing secrets;
+  digits-only timestamps; tolerance enforced in both directions; every `v1`
+  candidate compared rather than the last one parsed winning (which broke
+  signing-secret rotation); a bounded header so an unauthenticated request
+  cannot buy unlimited HMAC work; one uniform error message so a forger learns
+  nothing from which check they failed.
+- **Provider account and environment are checked.** A test-mode event cannot
+  change live records, and an event from another Stripe account is refused.
+- **Payment rows are unique per provider transaction**, enforced by the
+  database rather than by a preceding `SELECT`.
+
+### Added
+- Payment Integrity Gate, subscription state machine with an explicit
+  fail-closed transition matrix, an event ledger, and an immutable audit trail
+  with reason codes (`includes/payments/`).
+- `billing_status` on memberships, separate from `status`. Payment events own
+  the first; staff decisions in the second (`comped`, `paused`, …) are never
+  overwritten by a card failure.
+- Configurable dunning: a stored grace deadline (default 7 days), a daily sweep
+  that moves `past_due → grace_period → expired`, and settings for whether a
+  trial or a grace window retains access — both defaulting to 2.0.1 behaviour.
+- `wp memberistic stripe reconcile` (report by default, `--apply` to correct)
+  and `wp memberistic stripe health`.
+- Admin payment health reporting that names the problem and the remedy, with
+  every secret masked.
+- WooCommerce order transitions routed through the same gate, with plan/basket
+  verification and order-derived event ids so repeated hook fires deduplicate.
+- `docs/PAYMENT-INTEGRITY.md`.
+
+### Changed
+- **The compatibility matrix is a gate rather than a report.** Targets are
+  declared once in `.github/wordpress-targets.json` and validated against
+  wordpress.org before any job runs; a version that is not published fails the
+  run instead of printing a note and continuing. `Tested up to` is asserted
+  against the highest blocking target, so a WordPress line cannot be claimed
+  before it is tested.
+- Emails, hooks and activity now fire only after state is committed, and never
+  for a duplicate or rejected event.
+- New datetime columns are UTC, so event ordering survives a site time-zone
+  change. Existing columns are unchanged.
+
+### Database
+- DB version `1.12.0`. Additive and idempotent: new columns and two new tables,
+  nothing renamed or dropped, `stripe_*` columns retained and still written.
+  Pre-existing duplicate transaction ids are reported rather than deleted, and
+  the unique key is skipped until they are resolved.
+
 ## 2.0.1 - Compatibility and the init fatal (2026-08-08)
 
 First release cut through the automated release pipeline, and the first whose

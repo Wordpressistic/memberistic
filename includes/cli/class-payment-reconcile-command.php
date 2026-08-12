@@ -177,7 +177,7 @@ final class Payment_Reconcile_Command {
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
 				"SELECT * FROM {$table}
 				  WHERE ( provider_subscription_id IS NOT NULL AND provider_subscription_id <> '' )
 				     OR ( stripe_subscription_id IS NOT NULL AND stripe_subscription_id <> '' )

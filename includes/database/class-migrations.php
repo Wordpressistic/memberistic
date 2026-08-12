@@ -152,7 +152,7 @@ final class Migrations {
 
 		$table = esc_sql( $memberships );
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix, no user input.
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix, no user input.
 		$wpdb->query(
 			"UPDATE `{$table}`
 			    SET provider_customer_id = stripe_customer_id
@@ -178,7 +178,7 @@ final class Migrations {
 			      OR ( stripe_customer_id IS NOT NULL AND stripe_customer_id <> '' )
 			    )"
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	}
 
 	/**
@@ -208,7 +208,7 @@ final class Migrations {
 		foreach ( $map as $status => $billing_status ) {
 			$wpdb->query(
 				$wpdb->prepare(
-					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
+					// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
 					"UPDATE `{$table}` SET billing_status = %s WHERE billing_status IS NULL AND status = %s",
 					$billing_status,
 					$status
@@ -238,11 +238,15 @@ final class Migrations {
 		$payments = $wpdb->prefix . 'memberistic_payments';
 		$table    = esc_sql( $payments );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
 		$wpdb->query( "UPDATE `{$table}` SET gateway_transaction_id = NULL WHERE gateway_transaction_id = ''" );
 
+		// A line-scoped ignore cannot reach the interpolation, which sits three
+		// lines into the string literal rather than on the line the comment
+		// precedes. Disabled around the statement and re-enabled immediately,
+		// so the suppression covers this query and nothing after it.
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix, no user input.
 		$conflicts = $wpdb->get_results(
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
 			"SELECT payment_gateway, gateway_transaction_id, COUNT(*) AS total
 			   FROM `{$table}`
 			  WHERE gateway_transaction_id IS NOT NULL
@@ -251,6 +255,7 @@ final class Migrations {
 			  LIMIT 50",
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		if ( empty( $conflicts ) ) {
 			delete_option( self::TXN_CONFLICTS_OPTION );
@@ -398,7 +403,7 @@ final class Migrations {
 
 		$offset = 0;
 		do {
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$rows = $wpdb->get_results(
 				$wpdb->prepare( "SELECT id, user_id, signer_name, signer_email, source, signed_at FROM {$sig_table} ORDER BY id ASC LIMIT 200 OFFSET %d", $offset ),
 				ARRAY_A
@@ -502,7 +507,7 @@ final class Migrations {
 		$index_name = esc_sql( $index_name );
 		$column     = esc_sql( $column );
 
-		$wpdb->query( "ALTER TABLE `{$table}` ADD INDEX `{$index_name}` (`{$column}`)" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "ALTER TABLE `{$table}` ADD INDEX `{$index_name}` (`{$column}`)" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	}
 
 	/**
@@ -551,7 +556,7 @@ final class Migrations {
 		// suppress so a duplicate-key-name error does not surface as a PHP
 		// notice during an upgrade the admin is watching.
 		$suppress = $wpdb->suppress_errors( true );
-		$wpdb->query( "ALTER TABLE `{$safe_table}` ADD UNIQUE KEY `{$safe_index}` ({$column_list})" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "ALTER TABLE `{$safe_table}` ADD UNIQUE KEY `{$safe_index}` ({$column_list})" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$wpdb->suppress_errors( $suppress );
 
 		$exists = (int) $wpdb->get_var(
@@ -591,6 +596,6 @@ final class Migrations {
 		$column     = esc_sql( $column );
 		$definition = esc_sql( $definition );
 
-		$wpdb->query( "ALTER TABLE `{$table}` ADD COLUMN `{$column}` {$definition}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "ALTER TABLE `{$table}` ADD COLUMN `{$column}` {$definition}" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	}
 }

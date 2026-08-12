@@ -223,7 +223,7 @@ final class Payment_Audit_Repository {
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
 				'SELECT * FROM `' . self::table() . '` WHERE membership_id = %d ORDER BY created_at DESC, id DESC LIMIT %d',
 				absint( $membership_id ),
 				max( 1, min( 500, (int) $limit ) )
@@ -245,7 +245,7 @@ final class Payment_Audit_Repository {
 
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
 				'SELECT * FROM `' . self::table() . '` WHERE integrity_result = %s ORDER BY created_at DESC, id DESC LIMIT 1',
 				sanitize_key( $result )
 			),
