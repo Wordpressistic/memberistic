@@ -595,25 +595,31 @@ final class Stripe_Service {
 			return;
 		}
 
-		$last_verified  = get_option( 'memberistic_stripe_webhook_last_verified_at', '' );
+		// Payment_Health owns the diagnosis; this method owns the notice. The
+		// messages it returns name what is wrong and what to do about it,
+		// rather than reporting that health is "degraded" — an administrator
+		// cannot act on an adjective.
+		$warnings = Payment_Health::problems();
+
 		$last_failed    = get_option( 'memberistic_stripe_webhook_last_failed_at', '' );
 		$last_processed = get_option( 'memberistic_stripe_webhook_last_processed_at', '' );
-		$manual_review  = get_option( 'memberistic_stripe_manual_review', array() );
-		$warnings       = array();
 
-		if ( '' === (string) $last_verified || strtotime( (string) $last_verified ) < ( time() - DAY_IN_SECONDS ) ) {
-			$warnings[] = __( 'Memberistic Stripe webhook has not verified a signed event in the last 24 hours.', 'memberistic' );
-		}
 		if ( $last_failed && ( ! $last_processed || strtotime( (string) $last_failed ) > strtotime( (string) $last_processed ) ) ) {
 			$warnings[] = __( 'The most recent Memberistic Stripe webhook attempt failed.', 'memberistic' );
 		}
-		if ( is_array( $manual_review ) && ! empty( $manual_review ) ) {
+
+		// Manual-review items recorded before 2.1.0 lived in an option. They
+		// are still surfaced so an upgrade does not hide work that was already
+		// waiting.
+		$legacy_review = get_option( 'memberistic_stripe_manual_review', array() );
+		if ( is_array( $legacy_review ) && ! empty( $legacy_review ) ) {
 			$warnings[] = sprintf(
 				/* translators: %d: manual review count */
-				_n( '%d Stripe membership item needs manual review.', '%d Stripe membership items need manual review.', count( $manual_review ), 'memberistic' ),
-				count( $manual_review )
+				_n( '%d Stripe membership item needs manual review.', '%d Stripe membership items need manual review.', count( $legacy_review ), 'memberistic' ),
+				count( $legacy_review )
 			);
 		}
+
 		if ( ! $warnings ) {
 			return;
 		}

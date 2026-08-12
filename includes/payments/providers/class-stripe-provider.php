@@ -174,6 +174,55 @@ final class Stripe_Provider implements Payment_Provider {
 	}
 
 	/**
+	 * Re-confirm the Stripe account when the credentials change.
+	 *
+	 * Hooked to the settings option update. Deliberately not called on the
+	 * webhook path: an API round trip per inbound event would put a network
+	 * dependency on the one code path that most needs to stay fast and
+	 * available, and the answer only changes when the API key does.
+	 *
+	 * Equally deliberately not called on activation. A fresh install makes no
+	 * outbound request at all, and that invariant is asserted by test; this
+	 * runs only when an administrator saves credentials, which is an explicit
+	 * act with an obvious network consequence.
+	 *
+	 * @param mixed $old Previous settings value.
+	 * @param mixed $new New settings value.
+	 */
+	public static function maybe_refresh_account_identity( $old, $new ) {
+		if ( ! is_array( $new ) ) {
+			return;
+		}
+
+		$old = is_array( $old ) ? $old : array();
+
+		$mode = self::environment();
+		$key  = 'live' === $mode ? 'stripe_live_secret_key' : 'stripe_test_secret_key';
+
+		$credential_changed = ( $old[ $key ] ?? null ) !== ( $new[ $key ] ?? null )
+			|| ( $old['stripe_mode'] ?? null ) !== ( $new['stripe_mode'] ?? null );
+
+		// Nothing changed and the account is already known: no reason to call
+		// Stripe because an unrelated setting was saved.
+		if ( ! $credential_changed && '' !== self::expected_account_id() ) {
+			return;
+		}
+
+		if ( '' === trim( (string) Stripe_Service::get_secret_key() ) ) {
+			return;
+		}
+
+		$result = self::refresh_account_identity();
+
+		if ( is_wp_error( $result ) ) {
+			// Reported through the health screen rather than thrown at whoever
+			// saved the form: Stripe being briefly unreachable is not a reason
+			// to refuse a settings save.
+			return;
+		}
+	}
+
+	/**
 	 * When the account identity for the current mode was last confirmed.
 	 *
 	 * @return string UTC datetime, or '' if never.
