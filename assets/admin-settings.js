@@ -265,7 +265,7 @@
 						h('option', { value: 'live' }, __('Live', 'memberistic'))
 					)
 				),
-				h(Field, { label: __('Webhook secret', 'memberistic'), hint: __('Required for live webhook verification.', 'memberistic') },
+				h(Field, { label: __('Webhook secret (shared, legacy)', 'memberistic'), hint: __('Used only when the signing secret for the current mode is empty. Prefer the per-mode secrets below.', 'memberistic') },
 					h(TextInput, { type: 'password', value: v.stripe_webhook_secret, onChange: update('stripe_webhook_secret') })
 				)
 			),
@@ -276,6 +276,9 @@
 				),
 				h(Field, { label: __('Secret', 'memberistic') },
 					h(TextInput, { type: 'password', value: v.stripe_test_secret_key, onChange: update('stripe_test_secret_key') })
+				),
+				h(Field, { label: __('Webhook signing secret', 'memberistic'), hint: __('From the test-mode endpoint in the Stripe dashboard.', 'memberistic') },
+					h(TextInput, { type: 'password', value: v.stripe_webhook_secret_test, onChange: update('stripe_webhook_secret_test') })
 				)
 			),
 			h('h3', { className: 'mb-form__section' }, __('Live keys', 'memberistic')),
@@ -285,6 +288,27 @@
 				),
 				h(Field, { label: __('Secret', 'memberistic') },
 					h(TextInput, { type: 'password', value: v.stripe_live_secret_key, onChange: update('stripe_live_secret_key') })
+				),
+				h(Field, { label: __('Webhook signing secret', 'memberistic'), hint: __('From the live-mode endpoint. Stripe issues a different secret per endpoint, so this is not the same value as the test one.', 'memberistic') },
+					h(TextInput, { type: 'password', value: v.stripe_webhook_secret_live, onChange: update('stripe_webhook_secret_live') })
+				)
+			),
+			h('h3', { className: 'mb-form__section' }, __('Failed payments', 'memberistic')),
+			h('div', { className: 'mb-form__grid' },
+				h(Field, { label: __('Grace period (days)', 'memberistic'), hint: __('How long a membership stays in dunning after a failed payment before it expires. 0 expires on the first failure.', 'memberistic') },
+					h(TextInput, { type: 'number', value: v.grace_period_days, onChange: update('grace_period_days') })
+				),
+				h(Field, { label: __('Access during the grace period', 'memberistic'), hint: __('Whether a member keeps access while their payment is being retried.', 'memberistic') },
+					h('select', { value: v.grace_period_grants_access || 'no', onChange: function (e) { update('grace_period_grants_access')(e.target.value); } },
+						h('option', { value: 'no' }, __('No — access ends at the failed payment', 'memberistic')),
+						h('option', { value: 'yes' }, __('Yes — access continues until the grace period ends', 'memberistic'))
+					)
+				),
+				h(Field, { label: __('Access during a trial', 'memberistic'), hint: __('Whether a trialing membership can use the service before the first payment.', 'memberistic') },
+					h('select', { value: v.trial_grants_access || 'no', onChange: function (e) { update('trial_grants_access')(e.target.value); } },
+						h('option', { value: 'no' }, __('No', 'memberistic')),
+						h('option', { value: 'yes' }, __('Yes', 'memberistic'))
+					)
 				)
 			)
 		);

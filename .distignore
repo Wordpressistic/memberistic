@@ -25,6 +25,11 @@ CONTRIBUTING.md
 CODE_OF_CONDUCT.md
 SUPPORT.md
 
+# Per-release engineering reports. They record what was verified, what was not,
+# and what the remaining risks are — useful in the repository, and meaningless
+# in a customer's plugin directory.
+MEMBERISTIC-*-RELEASE-REPORT.md
+
 # Internal planning material. docs/strategy in particular contains pricing
 # models, revenue targets and competitor analysis — none of which belongs in a
 # zip that ships to customers. The product documentation directly under docs/

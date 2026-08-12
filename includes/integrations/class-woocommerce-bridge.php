@@ -8,8 +8,9 @@
 namespace WordPressistic\Memberistic\Integrations;
 
 use WordPressistic\Memberistic\Database\Activity_Repository;
-use WordPressistic\Memberistic\Database\Memberships_Repository;
 use WordPressistic\Memberistic\Database\Payments_Repository;
+use WordPressistic\Memberistic\Payments\Payment_Integrity_Gate;
+use WordPressistic\Memberistic\Payments\Providers\WooCommerce_Provider;
 use function WordPressistic\Memberistic\memberistic_get_setting;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -82,95 +83,84 @@ final class WooCommerce_Bridge {
 	 * Refund / cancel an order — flip its membership to cancelled.
 	 */
 	public static function sync_refunded_order( $order_id ) {
+		$result = self::dispatch_order( $order_id, 'refunded' );
+
+		if ( is_wp_error( $result ) || ! is_array( $result ) ) {
+			return;
+		}
+
+		if ( 'processed' === ( $result['status'] ?? '' ) ) {
+			Activity_Repository::log(
+				array(
+					'membership_id'       => absint( $result['membership_id'] ?? 0 ),
+					'activity_type'       => 'membership_cancelled',
+					'title'               => __( 'Membership cancelled via WooCommerce refund or cancellation', 'memberistic' ),
+					'related_object_type' => 'woo_order',
+					'related_object_id'   => absint( $order_id ),
+				)
+			);
+		}
+	}
+
+	/**
+	 * Put a WooCommerce order transition through the payment integrity gate.
+	 *
+	 * A local order hook is not an unauthenticated internet request, and this
+	 * is not pretending otherwise — there is no signature to check because
+	 * there is nobody remote to have signed anything. What it does share with a
+	 * webhook is every failure mode that comes *after* authentication:
+	 *
+	 * - The status hooks fire more than once in ordinary use. A manual status
+	 *   change in the admin, a re-save, a second call from a gateway plugin:
+	 *   each one previously wrote another payment row and re-ran activation.
+	 *   The event id derived from the order makes those duplicates.
+	 * - `_memberistic_membership_id` records which membership the order was
+	 *   created for. It does not record what was paid for, and the two come
+	 *   apart when a customer edits their cart — so the gate now checks that a
+	 *   product mapping to this membership's plan was actually bought.
+	 * - Nothing checked whether the order was paid, or in what currency, or
+	 *   whether the resulting state change was one this membership was allowed
+	 *   to make.
+	 *
+	 * @param int    $order_id   WooCommerce order id.
+	 * @param string $transition `completed` or `refunded`.
+	 * @return array<string, mixed>|\WP_Error|null
+	 */
+	private static function dispatch_order( $order_id, $transition ) {
 		if ( ! self::is_enabled() || ! function_exists( 'wc_get_order' ) ) {
-			return;
+			return null;
 		}
 
-		$order = wc_get_order( $order_id );
+		$event = WooCommerce_Provider::event_from_order( $order_id, $transition );
 
-		if ( ! $order ) {
-			return;
+		if ( is_wp_error( $event ) ) {
+			return $event;
 		}
 
-		$membership_id = absint( $order->get_meta( '_memberistic_membership_id' ) );
-
-		if ( ! $membership_id ) {
-			return;
+		if ( empty( $event['membership_hint'] ) ) {
+			// Not a membership order. Nothing to do, and nothing worth
+			// recording in the payment ledger.
+			return null;
 		}
 
-		Memberships_Repository::change_status( $membership_id, 'cancelled' );
-
-		Activity_Repository::log(
-			array(
-				'membership_id'       => $membership_id,
-				'activity_type'       => 'membership_cancelled',
-				'title'               => __( 'Membership cancelled via WooCommerce refund or cancellation', 'memberistic' ),
-				'related_object_type' => 'woo_order',
-				'related_object_id'   => $order_id,
-			)
-		);
+		return Payment_Integrity_Gate::process_event( WooCommerce_Provider::key(), $event );
 	}
 
 	public static function sync_completed_order( $order_id ) {
-		if ( ! self::is_enabled() || ! function_exists( 'wc_get_order' ) ) {
+		$result = self::dispatch_order( $order_id, 'completed' );
+
+		if ( is_wp_error( $result ) || ! is_array( $result ) ) {
 			return;
 		}
 
-		$order = wc_get_order( $order_id );
-
-		if ( ! $order ) {
+		if ( 'processed' !== ( $result['status'] ?? '' ) ) {
+			// Rejected, deferred, or a duplicate delivery. The gate has
+			// recorded why; repeating the activity log here would suggest a
+			// purchase completed when it did not.
 			return;
 		}
 
-		$membership_id = absint( $order->get_meta( '_memberistic_membership_id' ) );
-
-		if ( ! $membership_id ) {
-			return;
-		}
-
-		$membership = Memberships_Repository::get( $membership_id );
-
-		if ( ! $membership ) {
-			return;
-		}
-
-		// Audit C34: previously the bridge only set status='active' but
-		// never set start_date or renewal_date, so the cron's
-		// get_renewing_in_days() / get_expired() lookups skipped these
-		// rows forever — WooCommerce-purchased memberships never
-		// auto-expired and never received the 30/7/1-day renewal
-		// reminders. Compute both fields the same way the Stripe path
-		// does, and also fire memberistic_membership_activated so the
-		// member-role sync + activation email run consistently across
-		// payment sources.
-		$was_already_active = isset( $membership['status'] ) && 'active' === $membership['status'];
-		$billing_cycle      = ! empty( $membership['billing_cycle'] ) ? $membership['billing_cycle'] : 'monthly';
-		$start_date         = current_time( 'mysql' );
-		$renewal_date       = self::compute_next_renewal( $billing_cycle, $start_date );
-
-		Memberships_Repository::update(
-			$membership_id,
-			array(
-				'status'          => 'active',
-				'start_date'      => $start_date,
-				'renewal_date'    => $renewal_date,
-				'woo_customer_id' => $order->get_customer_id(),
-			)
-		);
-
-		$payment_id = Payments_Repository::create(
-			array(
-				'membership_id'   => $membership_id,
-				'amount'          => $order->get_total(),
-				'currency'        => $order->get_currency(),
-				'payment_method'  => $order->get_payment_method(),
-				'payment_gateway' => 'woocommerce',
-				'woo_order_id'    => $order_id,
-				'status'          => 'completed',
-				'paid_at'         => current_time( 'mysql' ),
-				'raw_response'    => array( 'source' => 'woocommerce_order_completed' ),
-			)
-		);
+		$membership_id = absint( $result['membership_id'] ?? 0 );
 
 		Activity_Repository::log(
 			array(
@@ -178,17 +168,22 @@ final class WooCommerce_Bridge {
 				'activity_type'       => 'payment_completed',
 				'title'               => __( 'WooCommerce order completed', 'memberistic' ),
 				'related_object_type' => 'woo_order',
-				'related_object_id'   => $order_id,
+				'related_object_id'   => absint( $order_id ),
 			)
 		);
 
-		do_action( 'memberistic_membership_payment_recorded', $membership_id, $payment_id, 'woocommerce' );
+		// The payment row is written by the gate, which owns idempotency for
+		// it; this hook keeps its historical signature for integrations that
+		// listen to it. The id is looked up rather than assumed, because the
+		// gate may have recognised the charge as one already recorded.
+		$payment = Payments_Repository::get_by_provider_transaction( WooCommerce_Provider::key(), 'wc_order_' . absint( $order_id ) );
 
-		// Only fire activation on the FIRST completed order; on a
-		// renewal-order the role-sync + welcome email shouldn't re-run.
-		if ( ! $was_already_active ) {
-			do_action( 'memberistic_membership_activated', $membership_id );
-		}
+		do_action(
+			'memberistic_membership_payment_recorded',
+			$membership_id,
+			$payment ? (int) $payment['id'] : 0,
+			'woocommerce'
+		);
 	}
 
 	/**

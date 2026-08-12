@@ -6,7 +6,8 @@
   not chosen: the WP core test library still calls
   PHPUnit\Util\Test::parseTestMethodAnnotations(), which PHPUnit 10 removed.
   Every test errors with "Call to undefined method" under 10.x — verified on
-  6.8, 6.9, 7.0.3 and trunk, so it is not a matter of picking a newer branch.
+  every line in .github/wordpress-targets.json and on trunk, so it is not a
+  matter of picking a newer branch.
 
   Consequence: the two suites cannot share one phpunit.xml, because they cannot
   share a PHPUnit major. The integration job installs 9.6 over the top before

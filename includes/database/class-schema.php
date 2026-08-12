@@ -14,6 +14,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Schema {
 	/**
 	 * Create or update plugin tables.
+	 *
+	 * A note on time zones, because this schema now mixes two conventions and
+	 * the mixture is deliberate rather than an oversight.
+	 *
+	 * The original columns — `start_date`, `renewal_date`, `end_date`,
+	 * `paid_at`, every `created_at` — are written with `current_time( 'mysql' )`
+	 * and are therefore in the site's local time. Changing that would rewrite
+	 * the meaning of every existing row, so it stays.
+	 *
+	 * The payment-integrity columns added in 2.1.0 are UTC, without exception:
+	 * `last_provider_event_created_at`, `last_provider_synced_at`,
+	 * `current_period_end`, `grace_period_ends_at`, and every datetime in
+	 * `memberistic_payment_events`. They are compared against payment-provider
+	 * timestamps, which are UTC epochs, and against each other to decide
+	 * whether one event happened before another. Storing those in site-local
+	 * time means an admin changing the site's time zone — or a DST boundary —
+	 * silently reorders events, and event ordering is what stops a stale
+	 * cancellation from taking away a member's access. The comparison has to
+	 * be done in the provider's frame, so the storage is too.
+	 *
+	 * `Payment_Clock` in includes/payments/ is the only place that produces
+	 * these values; use it rather than reaching for `current_time()`.
 	 */
 	public static function create_tables() {
 		global $wpdb;
@@ -59,6 +81,16 @@ CREATE TABLE {$prefix}memberistic_memberships (
   stripe_subscription_id VARCHAR(191) NULL,
   stripe_checkout_session_id VARCHAR(191) NULL,
   stripe_checkout_expires_at DATETIME NULL,
+  billing_status VARCHAR(32) NULL,
+  payment_provider VARCHAR(32) NULL,
+  provider_account_id VARCHAR(64) NULL,
+  provider_customer_id VARCHAR(191) NULL,
+  provider_subscription_id VARCHAR(191) NULL,
+  last_provider_event_id VARCHAR(191) NULL,
+  last_provider_event_created_at DATETIME NULL,
+  last_provider_synced_at DATETIME NULL,
+  current_period_end DATETIME NULL,
+  grace_period_ends_at DATETIME NULL,
   woo_customer_id BIGINT UNSIGNED NULL,
   woo_subscription_id BIGINT UNSIGNED NULL,
   pos_customer_id VARCHAR(191) NULL,
@@ -71,6 +103,9 @@ CREATE TABLE {$prefix}memberistic_memberships (
   KEY primary_user_id (primary_user_id),
   KEY plan_id (plan_id),
   KEY stripe_checkout_session_id (stripe_checkout_session_id),
+  KEY provider_subscription_id (provider_subscription_id),
+  KEY billing_status (billing_status),
+  KEY grace_period_ends_at (grace_period_ends_at),
   KEY status (status)
 ) {$charset_collate};
 CREATE TABLE {$prefix}memberistic_people (
@@ -301,6 +336,53 @@ CREATE TABLE {$prefix}memberistic_waivers_archive (
   KEY dob (dob),
   KEY matched_user_id (matched_user_id),
   KEY dedupe_key (dedupe_key)
+) {$charset_collate};
+CREATE TABLE {$prefix}memberistic_payment_events (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  provider VARCHAR(32) NOT NULL,
+  provider_account_id VARCHAR(64) NOT NULL DEFAULT '',
+  event_id VARCHAR(191) NOT NULL,
+  event_type VARCHAR(100) NOT NULL DEFAULT '',
+  provider_created_at DATETIME NULL,
+  received_at DATETIME NOT NULL,
+  processed_at DATETIME NULL,
+  membership_id BIGINT UNSIGNED NULL,
+  provider_customer_id VARCHAR(191) NULL,
+  provider_subscription_id VARCHAR(191) NULL,
+  payload_hash CHAR(64) NULL,
+  status VARCHAR(32) NOT NULL DEFAULT 'received',
+  attempt_count INT UNSIGNED NOT NULL DEFAULT 0,
+  failure_code VARCHAR(64) NULL,
+  failure_message TEXT NULL,
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME NULL,
+  PRIMARY KEY  (id),
+  UNIQUE KEY provider_event (provider,provider_account_id,event_id),
+  KEY membership_id (membership_id),
+  KEY provider_subscription_id (provider_subscription_id),
+  KEY status (status),
+  KEY received_at (received_at)
+) {$charset_collate};
+CREATE TABLE {$prefix}memberistic_payment_audit (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  event_id VARCHAR(191) NULL,
+  event_type VARCHAR(100) NULL,
+  provider VARCHAR(32) NOT NULL,
+  provider_account_id VARCHAR(64) NOT NULL DEFAULT '',
+  membership_id BIGINT UNSIGNED NULL,
+  provider_subscription_id VARCHAR(191) NULL,
+  previous_billing_status VARCHAR(32) NULL,
+  new_billing_status VARCHAR(32) NULL,
+  integrity_result VARCHAR(32) NOT NULL DEFAULT '',
+  transition_result VARCHAR(32) NULL,
+  reason_code VARCHAR(64) NOT NULL DEFAULT '',
+  context LONGTEXT NULL,
+  created_at DATETIME NOT NULL,
+  PRIMARY KEY  (id),
+  KEY membership_id (membership_id),
+  KEY event_id (event_id),
+  KEY reason_code (reason_code),
+  KEY created_at (created_at)
 ) {$charset_collate};
 ";
 

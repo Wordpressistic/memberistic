@@ -6,7 +6,7 @@ Plans, members, linked family accounts, digital waivers, check-ins, payments,
 and staff workflows — in one admin, backed by its own database tables rather
 than bent out of posts and post meta.
 
-- **Version:** 2.0.0
+- **Version:** 2.1.0
 - **Requires:** WordPress 6.8+, PHP 8.2+
 - **Licence:** GPL-2.0-or-later
 - **Author:** [WordPressistic](https://www.wordpressistic.com)

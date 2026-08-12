@@ -51,7 +51,7 @@ composer install
 WordPress core test library still calls
 `PHPUnit\Util\Test::parseTestMethodAnnotations()`, which PHPUnit 10 removed, so
 every integration test errors under 10.x — verified on WordPress 6.8, 6.9,
-7.0.3 and trunk. The unit suite stays on 10.5; the integration suite runs on
+every supported line and trunk. The unit suite stays on 10.5; the integration suite runs on
 9.6. Revisit if WordPress adopts PHPUnit 10+ in core.
 
 Pass a WordPress version as the fifth argument (`6.8`, `7.0.2`, `latest`,

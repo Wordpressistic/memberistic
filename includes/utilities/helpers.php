@@ -23,11 +23,7 @@ function memberistic_get_setting( $key, $default = null ) {
 	// stored option, and refuse-overwrite logic in the settings save +
 	// REST update paths refuses to clobber the option while a constant
 	// is set. Pattern: define( 'MEMBERISTIC_STRIPE_LIVE_SECRET_KEY', '...' );
-	$constant_map = array(
-		'stripe_test_secret_key'  => 'MEMBERISTIC_STRIPE_TEST_SECRET_KEY',
-		'stripe_live_secret_key'  => 'MEMBERISTIC_STRIPE_LIVE_SECRET_KEY',
-		'stripe_webhook_secret'   => 'MEMBERISTIC_STRIPE_WEBHOOK_SECRET',
-	);
+	$constant_map = memberistic_secret_constant_map();
 	if ( isset( $constant_map[ $key ] ) && defined( $constant_map[ $key ] ) ) {
 		$const_val = constant( $constant_map[ $key ] );
 		if ( is_string( $const_val ) && '' !== $const_val ) {
@@ -54,11 +50,40 @@ function memberistic_get_setting( $key, $default = null ) {
 function memberistic_secret_setting_keys() {
 	return apply_filters(
 		'memberistic_secret_setting_keys',
-		array(
-			'stripe_test_secret_key',
-			'stripe_live_secret_key',
-			'stripe_webhook_secret',
-		)
+		array_keys( memberistic_secret_constant_map() )
+	);
+}
+
+/**
+ * Every secret setting, and the wp-config.php constant that can lock it.
+ *
+ * One declaration, read by the getter, the "is this locked" check, the REST
+ * masking list and the settings screen. It used to be three copies of the same
+ * array in this file, and adding the per-mode webhook secrets to two of them
+ * would have produced a setting that reads from a constant but can still be
+ * overwritten through the REST API — a silent downgrade of the exact
+ * protection the constants exist to provide.
+ *
+ * The webhook secrets are per-mode because Stripe issues a different signing
+ * secret for each endpoint, and a test endpoint and a live endpoint are two
+ * endpoints. Sharing one setting between them means that whichever mode was
+ * configured last is the only one that can verify a signature, and the other
+ * silently rejects every event it receives.
+ *
+ * `stripe_webhook_secret` is retained as the legacy shared key so existing
+ * installations keep working across the upgrade; the resolver prefers the
+ * mode-specific value and falls back to this one. See
+ * Payments\Providers\Stripe_Provider::webhook_secret().
+ *
+ * @return array<string, string> Setting key => constant name.
+ */
+function memberistic_secret_constant_map() {
+	return array(
+		'stripe_test_secret_key'      => 'MEMBERISTIC_STRIPE_TEST_SECRET_KEY',
+		'stripe_live_secret_key'      => 'MEMBERISTIC_STRIPE_LIVE_SECRET_KEY',
+		'stripe_webhook_secret'       => 'MEMBERISTIC_STRIPE_WEBHOOK_SECRET',
+		'stripe_webhook_secret_test'  => 'MEMBERISTIC_STRIPE_WEBHOOK_SECRET_TEST',
+		'stripe_webhook_secret_live'  => 'MEMBERISTIC_STRIPE_WEBHOOK_SECRET_LIVE',
 	);
 }
 
@@ -66,11 +91,7 @@ function memberistic_secret_setting_keys() {
  * Whether a given setting key is currently locked by a wp-config.php constant.
  */
 function memberistic_setting_is_locked_by_constant( $key ) {
-	$constant_map = array(
-		'stripe_test_secret_key' => 'MEMBERISTIC_STRIPE_TEST_SECRET_KEY',
-		'stripe_live_secret_key' => 'MEMBERISTIC_STRIPE_LIVE_SECRET_KEY',
-		'stripe_webhook_secret'  => 'MEMBERISTIC_STRIPE_WEBHOOK_SECRET',
-	);
+	$constant_map = memberistic_secret_constant_map();
 	if ( ! isset( $constant_map[ $key ] ) ) {
 		return false;
 	}

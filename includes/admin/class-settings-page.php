@@ -120,7 +120,25 @@ final class Settings_Page {
 			'stripe_test_secret_key'      => self::sanitize_secret_field( 'stripe_test_secret_key', $settings, $existing ),
 			'stripe_live_publishable_key' => isset( $settings['stripe_live_publishable_key'] ) ? memberistic_sanitize_text( $settings['stripe_live_publishable_key'] ) : '',
 			'stripe_live_secret_key'      => self::sanitize_secret_field( 'stripe_live_secret_key', $settings, $existing ),
+			// The shared signing secret, retained so an install upgrading from
+			// 2.0.x keeps verifying events until the per-mode ones are set.
 			'stripe_webhook_secret'       => self::sanitize_secret_field( 'stripe_webhook_secret', $settings, $existing ),
+			// Stripe issues one signing secret per endpoint, and a test
+			// endpoint and a live endpoint are two endpoints. One shared
+			// setting meant that whichever mode was configured last was the
+			// only one that could verify a signature — switching a site to
+			// live silently rejected every live event.
+			'stripe_webhook_secret_test'  => self::sanitize_secret_field( 'stripe_webhook_secret_test', $settings, $existing ),
+			'stripe_webhook_secret_live'  => self::sanitize_secret_field( 'stripe_webhook_secret_live', $settings, $existing ),
+			// Dunning. Zero is a legitimate choice — expire on first failure —
+			// so the floor is 0 rather than 1, and the ceiling stops a
+			// mistyped value parking a lapsed membership open for a decade.
+			'grace_period_days'           => isset( $settings['grace_period_days'] ) ? min( 365, max( 0, absint( $settings['grace_period_days'] ) ) ) : 7,
+			// Both default to 'no', which is what 2.0.1 did: neither `trial`
+			// nor `past_due` was an eligible status, so upgrading grants
+			// nobody access they did not already have.
+			'grace_period_grants_access'  => isset( $settings['grace_period_grants_access'] ) ? memberistic_sanitize_yes_no( $settings['grace_period_grants_access'] ) : 'no',
+			'trial_grants_access'         => isset( $settings['trial_grants_access'] ) ? memberistic_sanitize_yes_no( $settings['trial_grants_access'] ) : 'no',
 			'woocommerce_enabled'         => isset( $settings['woocommerce_enabled'] ) ? memberistic_sanitize_yes_no( $settings['woocommerce_enabled'] ) : 'no',
 			'woocommerce_webhook_secret'  => isset( $settings['woocommerce_webhook_secret'] ) ? memberistic_sanitize_text( $settings['woocommerce_webhook_secret'] ) : '',
 			// Email From: name on every Memberistic-sent message. Defaults

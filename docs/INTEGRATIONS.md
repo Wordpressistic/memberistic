@@ -42,6 +42,39 @@ Two consequences worth knowing:
   with an explanation rather than silently doing nothing.
 - **Any plugin can be mapped.** You are not limited to the bundled presets.
 
+### Payment providers
+
+Since 2.1.0 a payment provider is an adapter too. Stripe and WooCommerce each
+implement `Payments\Providers\Payment_Provider`, and neither decides whether a
+membership may change — that belongs to the Payment Integrity Gate, which works
+in a provider-neutral vocabulary and never sees a Stripe field name.
+
+An adapter is responsible for exactly four things: authenticating an inbound
+request, normalising a payload, fetching the provider's current truth, and
+translating the provider's status vocabulary into a billing state. Register one
+with:
+
+```php
+add_filter( 'memberistic_payment_providers', function ( array $providers ) {
+    $providers['acmepay'] = My_Acme_Pay_Provider::class;
+
+    return $providers;
+} );
+```
+
+Every registered class is checked against the interface before it is used, so a
+filter that returns something else fails at registration rather than fatally,
+mid-webhook.
+
+The split matters for testing as much as for architecture: the gate's rules can
+be tested without a network, and an adapter's parsing without a database. See
+[PAYMENT-INTEGRITY.md](PAYMENT-INTEGRITY.md).
+
+WooCommerce is worth noting as the case that is *not* a webhook. Its events are
+raised in-process from an order row, so `authenticate()` has nothing to verify
+and says so; everything after authentication — idempotency, plan verification,
+allowed transitions — runs identically to Stripe's.
+
 ### Booking engine
 
 ```php

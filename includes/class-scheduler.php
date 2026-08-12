@@ -23,6 +23,8 @@ use WordPressistic\Memberistic\Database\Email_Logs_Repository;
 use WordPressistic\Memberistic\Database\Memberships_Repository;
 use WordPressistic\Memberistic\Database\People_Repository;
 use WordPressistic\Memberistic\Emails\Email_Service;
+use WordPressistic\Memberistic\Payments\Payment_Clock;
+use WordPressistic\Memberistic\Payments\Payment_Event_Repository;
 use WordPressistic\Memberistic\Payments\Stripe_Service;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,6 +38,8 @@ final class Scheduler {
 	const HOOK_PRUNE_LOGS        = 'memberistic_daily_prune_logs';
 	const HOOK_BACKFILL_RENEWALS = 'memberistic_daily_backfill_renewals';
 	const HOOK_PRUNE_RATE_LIMITS = 'memberistic_hourly_prune_rate_limits';
+	const HOOK_DUNNING           = 'memberistic_daily_payment_dunning';
+	const HOOK_PRUNE_EVENTS      = 'memberistic_daily_prune_payment_events';
 
 	public static function register() {
 		add_action( self::HOOK_RENEWAL_REMINDERS, array( self::class, 'run_renewal_reminders' ) );
@@ -44,6 +48,8 @@ final class Scheduler {
 		add_action( self::HOOK_PRUNE_LOGS, array( self::class, 'run_prune_logs' ) );
 		add_action( self::HOOK_BACKFILL_RENEWALS, array( self::class, 'run_backfill_renewals' ) );
 		add_action( self::HOOK_PRUNE_RATE_LIMITS, array( self::class, 'run_prune_rate_limits' ) );
+		add_action( self::HOOK_DUNNING, array( self::class, 'run_payment_dunning' ) );
+		add_action( self::HOOK_PRUNE_EVENTS, array( self::class, 'run_prune_payment_events' ) );
 
 		self::ensure_scheduled();
 	}
@@ -58,6 +64,8 @@ final class Scheduler {
 				self::HOOK_WAIVER_FOLLOWUP,
 				self::HOOK_PRUNE_LOGS,
 				self::HOOK_BACKFILL_RENEWALS,
+				self::HOOK_DUNNING,
+				self::HOOK_PRUNE_EVENTS,
 			) as $hook
 		) {
 			if ( ! wp_next_scheduled( $hook ) ) {
@@ -68,6 +76,54 @@ final class Scheduler {
 		if ( ! wp_next_scheduled( self::HOOK_PRUNE_RATE_LIMITS ) ) {
 			wp_schedule_event( time() + HOUR_IN_SECONDS, 'hourly', self::HOOK_PRUNE_RATE_LIMITS );
 		}
+	}
+
+	/**
+	 * Advance memberships through the dunning lifecycle.
+	 *
+	 * A failed payment moves a membership to `past_due` and stamps a deadline.
+	 * This sweep does the two things that then have to happen on a clock rather
+	 * than in response to an event:
+	 *
+	 * 1. `past_due` with a deadline becomes `grace_period` — the record that
+	 *    the provider's retries have been noticed and the clock is running.
+	 *    It is a separate state rather than an implicit one so that "failed and
+	 *    being retried" and "failed, and we have decided how long we will carry
+	 *    it" are distinguishable on the members screen, and so a site that sets
+	 *    the grace period to zero days can be seen to expire immediately rather
+	 *    than appearing to skip a step.
+	 * 2. `grace_period` past its deadline becomes `expired`.
+	 *
+	 * Recovery is not handled here. A membership returns to `active` when a
+	 * payment succeeds, which arrives as a provider event and goes through the
+	 * gate like everything else — inferring recovery from the absence of
+	 * further failures would be guessing.
+	 */
+	public static function run_payment_dunning() {
+		$now      = Payment_Clock::now();
+		$advanced = Memberships_Repository::advance_dunning( $now );
+
+		if ( $advanced['expired'] || $advanced['grace'] ) {
+			/**
+			 * Fires after a dunning sweep changes any membership.
+			 *
+			 * @param array{grace:int, expired:int} $advanced Counts by transition.
+			 */
+			do_action( 'memberistic_payment_dunning_swept', $advanced );
+		}
+	}
+
+	/**
+	 * Prune processed payment-event ledger rows past their retention window.
+	 *
+	 * Only settled rows are removed. Rejections, manual-review items and
+	 * retryable failures are evidence about something that went wrong, and the
+	 * moment they become inconvenient to keep is not the moment to delete them.
+	 */
+	public static function run_prune_payment_events() {
+		$days = (int) apply_filters( 'memberistic_payment_event_retention_days', 180 );
+
+		Payment_Event_Repository::prune( $days );
 	}
 
 	/**
@@ -181,6 +237,8 @@ final class Scheduler {
 				self::HOOK_PRUNE_LOGS,
 				self::HOOK_BACKFILL_RENEWALS,
 				self::HOOK_PRUNE_RATE_LIMITS,
+				self::HOOK_DUNNING,
+				self::HOOK_PRUNE_EVENTS,
 			) as $hook
 		) {
 			$timestamp = wp_next_scheduled( $hook );

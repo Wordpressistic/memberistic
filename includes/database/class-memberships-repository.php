@@ -356,6 +356,172 @@ final class Memberships_Repository {
 		return $row ?: null;
 	}
 
+	/**
+	 * Find the membership a provider subscription authoritatively belongs to.
+	 *
+	 * Scoped by provider so a Stripe subscription id can never resolve a
+	 * WooCommerce-backed membership, and vice versa.
+	 *
+	 * @param string $provider        Provider key, e.g. 'stripe'.
+	 * @param string $subscription_id Provider subscription id.
+	 * @return array<string,mixed>|null
+	 */
+	public static function get_by_provider_subscription( $provider, $subscription_id ) {
+		global $wpdb;
+
+		$provider        = sanitize_key( (string) $provider );
+		$subscription_id = sanitize_text_field( (string) $subscription_id );
+
+		if ( '' === $provider || '' === $subscription_id ) {
+			return null;
+		}
+
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT * FROM ' . self::table() . ' WHERE payment_provider = %s AND provider_subscription_id = %s LIMIT 1',
+				$provider,
+				$subscription_id
+			),
+			ARRAY_A
+		);
+
+		return $row ?: null;
+	}
+
+	/**
+	 * Apply a billing-state change only if the state has not moved underneath.
+	 *
+	 * A compare-and-swap, because two webhook deliveries can be in flight at
+	 * once and the loser must lose visibly. Read-decide-write without this
+	 * guard lets a `past_due` transition computed from a stale read land on a
+	 * membership that a later payment already returned to `active`, which
+	 * takes access away from a member who paid.
+	 *
+	 * `$expected` NULL is a real expectation ("this membership has no billing
+	 * lifecycle yet"), not "don't care", so the comparison is NULL-safe.
+	 *
+	 * @param int                  $id       Membership id.
+	 * @param array<string, mixed> $fields   Columns to write; must include billing_status.
+	 * @param string|null          $expected The billing_status the caller decided against.
+	 * @return bool True when this call performed the transition.
+	 */
+	public static function update_billing_state( $id, array $fields, $expected ) {
+		global $wpdb;
+
+		$id = absint( $id );
+		if ( ! $id || ! array_key_exists( 'billing_status', $fields ) ) {
+			return false;
+		}
+
+		$clean = self::sanitize_data( $fields, false );
+		if ( empty( $clean ) ) {
+			return false;
+		}
+		$clean['updated_at'] = current_time( 'mysql' );
+
+		$set    = array();
+		$values = array();
+		foreach ( $clean as $column => $value ) {
+			$set[]    = '`' . esc_sql( $column ) . '` = ' . ( null === $value ? 'NULL' : '%s' );
+			if ( null !== $value ) {
+				$values[] = $value;
+			}
+		}
+
+		$values[] = $id;
+		$values[] = ( null === $expected || '' === $expected ) ? null : (string) $expected;
+
+		// `<=>` rather than `=` so an expectation of NULL matches a NULL row.
+		$sql = 'UPDATE ' . self::table() . ' SET ' . implode( ', ', $set ) . ' WHERE id = %d AND billing_status <=> %s';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- assembled from an internal column allowlist; every value is a placeholder.
+		$wpdb->query( $wpdb->prepare( $sql, $values ) );
+
+		// Affected-rows is the answer, and it is deliberately read strictly.
+		//
+		// MySQL reports 0 both when the guard rejected the update and when it
+		// matched a row whose columns already held these exact values. Those
+		// are different things, and this returns false for both — the caller
+		// treats false as "someone else owns this transition, do nothing",
+		// so the ambiguity costs at worst a skipped duplicate write.
+		//
+		// Resolving it by re-reading the row instead would invert the risk:
+		// two deliveries racing to apply the *same* transition would both find
+		// the state they wanted and both report success, and the caller would
+		// send two cancellation emails for one cancellation. A missed no-op is
+		// cheap; a duplicated side effect is what this release is about.
+		//
+		// The gate always writes `last_provider_event_id`, which is unique per
+		// event, so a genuine transition always changes at least one column
+		// and always reports 1.
+		return $wpdb->rows_affected > 0;
+	}
+
+	/**
+	 * Advance memberships through the dunning lifecycle.
+	 *
+	 * Two set-based updates rather than a row-by-row loop with a transition
+	 * check each: both moves are unconditional consequences of a stored
+	 * deadline and the clock, not decisions about evidence, and a site with
+	 * ten thousand lapsed memberships should not need ten thousand queries to
+	 * notice that a week has passed.
+	 *
+	 * `status` is moved alongside `billing_status`, but never for a membership
+	 * whose access status is staff-owned — a comped member does not lose
+	 * access because a card on file expired.
+	 *
+	 * @param string $now UTC datetime to evaluate against.
+	 * @return array{grace:int, expired:int}
+	 */
+	public static function advance_dunning( $now ) {
+		global $wpdb;
+
+		$table = self::table();
+		$now   = sanitize_text_field( (string) $now );
+
+		$staff_owned = \WordPressistic\Memberistic\Payments\Payment_Integrity_Gate::STAFF_OWNED_STATUSES;
+		$placeholders = implode( ',', array_fill( 0, count( $staff_owned ), '%s' ) );
+
+		$grace_access = \WordPressistic\Memberistic\Payments\Subscription_State_Machine::access_status_for(
+			\WordPressistic\Memberistic\Payments\Subscription_State_Machine::GRACE_PERIOD
+		);
+
+		// past_due with a live deadline → grace_period.
+		$grace = (int) $wpdb->query(
+			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix; the IN list is placeholders.
+				"UPDATE {$table}
+				    SET billing_status = 'grace_period',
+				        status = CASE WHEN status IN ( {$placeholders} ) THEN status ELSE %s END,
+				        updated_at = %s
+				  WHERE billing_status = 'past_due'
+				    AND grace_period_ends_at IS NOT NULL
+				    AND grace_period_ends_at > %s",
+				array_merge( $staff_owned, array( $grace_access, current_time( 'mysql' ), $now ) )
+			)
+		);
+
+		// grace_period past its deadline → expired.
+		$expired = (int) $wpdb->query(
+			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix; the IN list is placeholders.
+				"UPDATE {$table}
+				    SET billing_status = 'expired',
+				        status = CASE WHEN status IN ( {$placeholders} ) THEN status ELSE 'expired' END,
+				        updated_at = %s
+				  WHERE billing_status IN ( 'past_due', 'grace_period' )
+				    AND grace_period_ends_at IS NOT NULL
+				    AND grace_period_ends_at <= %s",
+				array_merge( $staff_owned, array( current_time( 'mysql' ), $now ) )
+			)
+		);
+
+		return array(
+			'grace'   => $grace,
+			'expired' => $expired,
+		);
+	}
+
 	public static function get_by_stripe_checkout_session_id( $session_id ) {
 		global $wpdb;
 		$session_id = sanitize_text_field( (string) $session_id );
@@ -754,12 +920,26 @@ final class Memberships_Repository {
 			$clean['status'] = memberistic_validate_status( $data['status'] ?? 'pending', 'pending' );
 		}
 
+		if ( isset( $data['billing_status'] ) ) {
+			// NULL is meaningful and must survive: it says no billing
+			// lifecycle is tracked for this membership, which is the correct
+			// state for a comped or staff-created member with no subscription.
+			$clean['billing_status'] = ( null === $data['billing_status'] || '' === $data['billing_status'] )
+				? null
+				: \WordPressistic\Memberistic\Payments\Subscription_State_Machine::validate_state( $data['billing_status'] );
+		}
+
 		$text_fields = array(
 			'payment_source',
 			'stripe_customer_id',
 			'stripe_subscription_id',
 			'stripe_checkout_session_id',
 			'pos_customer_id',
+			'payment_provider',
+			'provider_account_id',
+			'provider_customer_id',
+			'provider_subscription_id',
+			'last_provider_event_id',
 		);
 
 		foreach ( $text_fields as $field ) {
@@ -773,6 +953,26 @@ final class Memberships_Repository {
 			if ( isset( $data[ $field ] ) ) {
 				$clean[ $field ] = self::sanitize_datetime( $data[ $field ] );
 			}
+		}
+
+		// UTC datetimes. Kept apart from the list above because that list is
+		// site-local, and the two must not be confused: see the time zone note
+		// on Database\Schema::create_tables(). NULL is preserved rather than
+		// coerced to an empty date — "no grace period is running" is a state,
+		// and 0000-00-00 is not it.
+		$utc_date_fields = array(
+			'last_provider_event_created_at',
+			'last_provider_synced_at',
+			'current_period_end',
+			'grace_period_ends_at',
+		);
+		foreach ( $utc_date_fields as $field ) {
+			if ( ! array_key_exists( $field, $data ) ) {
+				continue;
+			}
+			$clean[ $field ] = ( null === $data[ $field ] || '' === $data[ $field ] )
+				? null
+				: self::sanitize_datetime( $data[ $field ] );
 		}
 
 		if ( isset( $data['billing_amount'] ) ) {

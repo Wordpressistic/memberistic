@@ -55,6 +55,14 @@ final class Plugin {
 			'includes/database/class-checkins-repository.php',
 			'includes/database/class-notes-repository.php',
 			'includes/database/class-email-logs-repository.php',
+			// Payment-integrity primitives. No dependencies of their own, and
+			// Memberships_Repository resolves the state machine when
+			// sanitising a billing status, so they load ahead of the services
+			// that use them.
+			'includes/payments/class-payment-clock.php',
+			'includes/payments/class-subscription-state-machine.php',
+			'includes/payments/class-payment-event-repository.php',
+			'includes/payments/class-payment-audit-repository.php',
 			'includes/emails/class-email-service.php',
 			'includes/integrations/class-integrations-registry.php',
 			'includes/integrations/class-entitlement-service.php',
@@ -70,8 +78,18 @@ final class Plugin {
 			'includes/integrations/class-corestore-client.php',
 			'includes/integrations/class-corestore-bridge.php',
 			'includes/integrations/class-ffl-checkout-bridge.php',
+			// The interface must precede its implementations: `implements` is
+			// resolved when the class is declared, not when it is used, so a
+			// provider loaded first is a fatal error rather than a late
+			// failure. Nothing autoloads here.
+			'includes/payments/providers/interface-payment-provider.php',
+			'includes/payments/providers/class-stripe-provider.php',
+			'includes/payments/providers/class-woocommerce-provider.php',
+			'includes/payments/class-payment-integrity-gate.php',
+			'includes/payments/class-payment-health.php',
 			'includes/payments/class-stripe-service.php',
 			'includes/cli/class-stripe-recovery-command.php',
+			'includes/cli/class-payment-reconcile-command.php',
 			'includes/cli/class-guest-pass-audit-command.php',
 			'includes/admin/class-admin-menu.php',
 			'includes/admin/class-dashboard-page.php',
@@ -116,12 +134,22 @@ final class Plugin {
 		add_action( 'init', array( $this, 'load_textdomain' ) );
 		add_action( 'init', array( Payments\Stripe_Service::class, 'maybe_handle_public_checkout_request' ) );
 		CLI\Stripe_Recovery_Command::register();
+		CLI\Payment_Reconcile_Command::register();
 		CLI\Guest_Pass_Audit_Command::register();
 		add_action( 'init', array( Payments\Stripe_Service::class, 'maybe_handle_billing_portal_request' ) );
 		// Propagate WordPress-side cancellations to Stripe so the
 		// subscription actually stops billing — previously a cancel on the
 		// site only flipped the local DB status and Stripe kept charging.
 		add_action( 'memberistic_membership_status_changed', array( Payments\Stripe_Service::class, 'maybe_cancel_remote_subscription' ), 10, 2 );
+		// Deferred user provisioning. The gate fires this for a verified
+		// activation, before any member-facing email, so the account exists by
+		// the time the welcome message points at it.
+		add_action( 'memberistic_payment_provision_member_user', array( Payments\Stripe_Service::class, 'ensure_user_for_completed_checkout' ) );
+		// Confirms which Stripe account the saved credentials belong to, so an
+		// event from a different account can be rejected. Fires on an explicit
+		// settings save only — never on activation, which stays silent on the
+		// network.
+		add_action( 'update_option_memberistic_settings', array( Payments\Providers\Stripe_Provider::class, 'maybe_refresh_account_identity' ), 10, 2 );
 		// Failed Stripe cancels retry with backoff and stay visible in
 		// wp-admin until Stripe confirms billing has stopped.
 		add_action( Payments\Stripe_Service::CANCEL_RETRY_HOOK, array( Payments\Stripe_Service::class, 'run_cancel_retry' ), 10, 2 );

@@ -1593,47 +1593,56 @@ final class Memberships_Controller extends REST_Controller {
 		return rest_ensure_response( array( 'received' => true ) );
 	}
 
+	/**
+	 * Stripe webhook endpoint.
+	 *
+	 * Unauthenticated by necessity — Stripe cannot hold a WordPress
+	 * credential — and therefore authenticated by signature instead, inside
+	 * the gate, against the exact bytes of the request body. Nothing in this
+	 * method inspects the payload: reading it here would mean interpreting
+	 * input from anyone who can reach the URL before knowing whether Stripe
+	 * sent it.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 * @return \WP_REST_Response|\WP_Error
+	 */
 	public function stripe_webhook( $request ) {
-		if ( ! \WordPressistic\Memberistic\Payments\Stripe_Service::webhook_is_configured() ) {
-			return new \WP_Error(
-				'memberistic_stripe_not_configured',
-				__( 'Stripe webhook is not configured on this site.', 'memberistic' ),
-				array( 'status' => 503 )
-			);
-		}
-
 		$payload = $request->get_body();
-		$header  = $request->get_header( 'stripe-signature' );
-		if ( '' === (string) $header ) {
-			$header = $request->get_header( 'stripe_signature' );
-		}
-		if ( '' === (string) $header && isset( $_SERVER['HTTP_STRIPE_SIGNATURE'] ) ) {
-			$header = sanitize_text_field( wp_unslash( $_SERVER['HTTP_STRIPE_SIGNATURE'] ) );
-		}
 
-		if ( '' === $payload || '' === $header ) {
-			return new \WP_Error( 'memberistic_stripe_bad_signature', __( 'Invalid Stripe webhook signature.', 'memberistic' ), array( 'status' => 400 ) );
-		}
-
-		if ( ! \WordPressistic\Memberistic\Payments\Stripe_Service::verify_webhook_signature( $payload, $header ) ) {
-			return new \WP_Error( 'memberistic_stripe_bad_signature', __( 'Invalid Stripe webhook signature.', 'memberistic' ), array( 'status' => 400 ) );
-		}
-		update_option( 'memberistic_stripe_webhook_last_verified_at', current_time( 'mysql' ), false );
-
-		$event = json_decode( $payload, true );
-
-		if ( ! is_array( $event ) ) {
-			return new \WP_Error( 'memberistic_stripe_bad_payload', __( 'Invalid Stripe webhook payload.', 'memberistic' ), array( 'status' => 400 ) );
-		}
+		// Passed through unmodified. Trimming, unslashing or sanitising the
+		// body would change the bytes the signature covers and turn every
+		// legitimate event into a rejection.
+		$headers = array(
+			'stripe-signature' => (string) $request->get_header( 'stripe-signature' ),
+			'stripe_signature' => (string) $request->get_header( 'stripe_signature' ),
+		);
 
 		update_option( 'memberistic_stripe_webhook_last_received_at', current_time( 'mysql' ), false );
-		$result = \WordPressistic\Memberistic\Payments\Stripe_Service::process_webhook_event( $event );
+
+		$result = \WordPressistic\Memberistic\Payments\Payment_Integrity_Gate::handle_webhook(
+			\WordPressistic\Memberistic\Payments\Providers\Stripe_Provider::key(),
+			$payload,
+			$headers
+		);
+
 		if ( is_wp_error( $result ) ) {
 			update_option( 'memberistic_stripe_webhook_last_failed_at', current_time( 'mysql' ), false );
+
 			return $result;
 		}
+
+		// "Verified" is recorded here rather than at the signature check
+		// because the gate is the only thing that knows the signature passed,
+		// and a health screen reporting a verified webhook for a request that
+		// was then rejected as forged would be worse than reporting nothing.
+		update_option( 'memberistic_stripe_webhook_last_verified_at', current_time( 'mysql' ), false );
 		update_option( 'memberistic_stripe_webhook_last_processed_at', current_time( 'mysql' ), false );
 
-		return rest_ensure_response( array( 'received' => true, 'result' => $result ) );
+		return rest_ensure_response(
+			array(
+				'received' => true,
+				'result'   => $result,
+			)
+		);
 	}
 }

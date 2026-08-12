@@ -4,7 +4,7 @@ Tags: membership, members, waivers, check-in, subscriptions
 Requires at least: 6.8
 Tested up to: 7.0
 Requires PHP: 8.2
-Stable tag: 2.0.1
+Stable tag: 2.1.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -151,6 +151,45 @@ Retention windows for check-in and activity history are configurable and default
 Major release. Requires PHP 8.2 and WordPress 6.8. No data migration: tables, options, hooks, and capabilities are unchanged. New installs no longer ship default plans, and every third-party integration now defaults to off. Two defaults changed for existing sites — the booking integration is restored automatically; the included-plans entitlement list needs your decision and shows a notice. See docs/UPGRADE-2.0.md.
 
 == Changelog ==
+
+= 2.1.0 =
+
+**Release focus: payment integrity. Every payment-provider event is now verified before it can change a membership.**
+
+Security:
+* A renewal could previously be granted by an unverified invoice event, with no check on who paid, how much, in what currency, or on which Stripe account. Invoices are now re-read from Stripe and fully verified; a mismatch goes to manual review instead of reactivating the membership.
+* A cancellation for a subscription a member had already replaced could cancel their new one, because the handler fell back to provider metadata when the subscription lookup missed. The event's subscription must now match the membership's current subscription.
+* A payment-failure event delayed behind a successful retry could remove access from a member who had already paid. The subscription is re-read before access is touched.
+* Webhook deduplication is now a database unique key rather than a capped list guarded by an advisory lock, so a retry storm can no longer produce a duplicate charge, payment record or receipt.
+* Stripe signature verification hardened: separate signing secrets per mode, strict timestamp parsing, tolerance enforced in both directions, support for multiple signatures during secret rotation, and a bounded signature header.
+* Events from another Stripe account, or from the wrong mode, are refused.
+
+Added:
+* A single payment integrity gate that every Stripe and WooCommerce membership change passes through
+* An explicit subscription state machine; transitions that are not declared are refused rather than guessed
+* A payment event ledger and an immutable audit trail with reason codes, so a refusal can be explained
+* Configurable grace period for failed payments, with a stored deadline that repeated failures cannot reset
+* Optional access during a trial or a grace period, both off by default
+* `wp memberistic stripe reconcile` and `wp memberistic stripe health`
+* Payment health reporting in the admin that names the problem and the remedy
+
+Changed:
+* Emails, hooks and activity records fire only after a change is committed, and never for a duplicate or rejected event
+* Membership billing state is tracked separately from access status, so a failed card can no longer overwrite a staff decision such as "comped"
+
+Upgrading: the database migration is additive and idempotent. No column is renamed or dropped, and nobody's access changes on upgrade.
+
+= 2.0.1 =
+
+Fixed:
+* Fatal error on `init` for every install: a required file shipped in 2.0.0 but was never added to the plugin's manual load list
+
+Added:
+* WordPress integration test harness and a compatibility matrix covering WordPress 6.8, 6.9 and 7.0 against PHP 8.2, 8.3 and 8.4
+* Release automation that verifies version consistency and builds the distributable
+
+Changed:
+* `Tested up to` raised to 7.0, on the evidence of the matrix above
 
 = 2.0.0 =
 

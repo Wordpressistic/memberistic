@@ -25,6 +25,15 @@ booking or POS plugin are resolved through an adapter and documented in
 | `memberistic_person_added` | `int $person_id, int $membership_id` | After a primary or linked person is inserted |
 | `memberistic_booking_recorded` | `int $membership_id, int $person_id, mixed $booking_id` | After a booking is linked to a membership |
 | `memberistic_stripe_webhook_event` | `string $type, array $object, array $event` | For each verified Stripe event, before dispatch |
+| `memberistic_payment_event_duplicate` | `string $event_id, string $type, string $provider` | A redelivery was recognised; nothing was repeated |
+| `memberistic_payment_event_rejected` | `string $reason, int $membership_id, array $event` | An event failed an integrity check |
+| `memberistic_payment_transition_rejected` | `string $from, string $to, int $membership_id, array $event` | A billing transition outside the matrix was refused |
+| `memberistic_payment_provision_member_user` | `int $membership_id` | A verified activation should create the WordPress user, before any member email |
+| `memberistic_payment_audit_recorded` | `array $row, int $id` | An audit row was written |
+| `memberistic_payment_dunning_swept` | `array $counts` | The daily dunning sweep changed memberships |
+
+Payment actions fire **after** the change is committed, and never for a
+duplicate or rejected event. See [PAYMENT-INTEGRITY.md](PAYMENT-INTEGRITY.md).
 
 ## Filters
 
@@ -69,6 +78,21 @@ booking or POS plugin are resolved through an adapter and documented in
 | `memberistic_walkin_roles` | `[]` | Roles stripped from a user when they become a member |
 | `memberistic_restriction_exempt_post` | Booking pages | Posts exempt from content restriction |
 
+### Payments
+
+| Filter | Args | Purpose |
+|---|---|---|
+| `memberistic_payment_providers` | `array $providers` | Register a payment provider adapter |
+| `memberistic_billing_transitions` | `array $transitions` | The billing state transition matrix. Widening it removes a guard |
+| `memberistic_provider_state_map` | `array $map, string $provider` | Provider status → billing state |
+| `memberistic_access_status_for_billing_status` | `string $status, string $billing_status` | Billing state → membership access status |
+| `memberistic_grace_period_days` | `int $days` | Dunning window after a failed payment |
+| `memberistic_trial_grants_access` | `bool $grants` | Whether a trialing membership has access |
+| `memberistic_grace_period_grants_access` | `bool $grants` | Whether the dunning window retains access |
+| `memberistic_payment_amount_tolerance` | `float $tolerance, array $membership` | Allowed difference between expected and paid |
+| `memberistic_payment_event_retention_days` | `int $days` | Ledger retention window |
+| `memberistic_payment_clock_timestamp` | `int $timestamp` | The payment layer's "now". For tests; shifting it shifts freshness and grace decisions |
+
 ### Integrations
 
 | Filter | Default | Purpose |
@@ -108,6 +132,8 @@ booking or POS plugin are resolved through an adapter and documented in
 | `memberistic_daily_prune_logs` | daily | Prunes the email log and applies retention windows |
 | `memberistic_daily_backfill_renewals` | daily | Backfills missing renewal dates on imported rows |
 | `memberistic_hourly_prune_rate_limits` | hourly | Clears expired rate-limit rows |
+| `memberistic_daily_payment_dunning` | daily | Moves `past_due` → `grace_period` → `expired` against the stored grace deadline |
+| `memberistic_daily_prune_payment_events` | daily | Prunes settled payment-event ledger rows; never rejections or manual-review items |
 | `memberistic_corestore_reconcile` | daily | coreSTORE reconcile. Only scheduled when that integration is on |
 
 To change a schedule, unschedule and reschedule the hook.

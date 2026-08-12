@@ -3,7 +3,7 @@
  * Plugin Name:       Memberistic Membership Solutions
  * Plugin URI:        https://memberistic.com
  * Description:       A modern, high-performance membership operations engine for service businesses. Manage plans, members, linked family accounts, digital waivers, check-ins, payments, and staff workflows from a single professional admin.
- * Version:           2.0.1
+ * Version:           2.1.0
  * Author:            WordPressistic
  * Author URI:        https://www.wordpressistic.com
  * Text Domain:       memberistic
@@ -34,8 +34,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! defined( 'MEMBERISTIC_BOOTSTRAPPED' ) ) {
 
 	define( 'MEMBERISTIC_BOOTSTRAPPED', __FILE__ );
-	define( 'MEMBERISTIC_VERSION', '2.0.1' );
-	define( 'MEMBERISTIC_DB_VERSION', '1.11.0' );
+	define( 'MEMBERISTIC_VERSION', '2.1.0' );
+	define( 'MEMBERISTIC_DB_VERSION', '1.12.0' );
 	define( 'MEMBERISTIC_FILE', __FILE__ );
 	define( 'MEMBERISTIC_PATH', plugin_dir_path( __FILE__ ) );
 	define( 'MEMBERISTIC_URL', plugin_dir_url( __FILE__ ) );
