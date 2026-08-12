@@ -41,6 +41,12 @@
 
 namespace WordPressistic\Memberistic\Payments;
 
+// Above the imports, not below them: Plugin Check reads only a file's first
+// 50 lines when looking for this guard. See DirectAccessGuardTest.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use WordPressistic\Memberistic\Database\Activity_Repository;
 use WordPressistic\Memberistic\Database\Memberships_Repository;
 use WordPressistic\Memberistic\Database\Payments_Repository;
@@ -52,10 +58,6 @@ use WordPressistic\Memberistic\Payments\Providers\WooCommerce_Provider;
 
 use function WordPressistic\Memberistic\memberistic_format_price;
 use function WordPressistic\Memberistic\memberistic_get_setting;
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 
 final class Payment_Integrity_Gate {
 	/** Membership statuses a payment event must never overwrite. */
