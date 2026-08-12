@@ -13,6 +13,7 @@ use WordPressistic\Memberistic\Database\Payments_Repository;
 use WordPressistic\Memberistic\Database\People_Repository;
 use WordPressistic\Memberistic\Database\Plans_Repository;
 use WordPressistic\Memberistic\Emails\Email_Service;
+use WordPressistic\Memberistic\Payments\Providers\Stripe_Provider;
 use function WordPressistic\Memberistic\memberistic_admin_url;
 use function WordPressistic\Memberistic\memberistic_current_user_can;
 use function WordPressistic\Memberistic\memberistic_get_page_url;
@@ -274,7 +275,13 @@ final class Stripe_Service {
 	public static function maybe_cancel_remote_subscription( $membership_id, $status ) {
 		$membership_id = (int) $membership_id;
 
-		if ( 'cancelled' !== $status || self::$processing_inbound_event || ! self::is_enabled() ) {
+		// The gate raises its own flag while applying an inbound event, and the
+		// status change that brings us here may well have come from one. Both
+		// are checked: this class still sets its own flag for the legacy
+		// process_webhook_event() entry point.
+		$inbound = self::$processing_inbound_event || \WordPressistic\Memberistic\Payments\Payment_Integrity_Gate::is_processing_inbound_event();
+
+		if ( 'cancelled' !== $status || $inbound || ! self::is_enabled() ) {
 			return;
 		}
 
@@ -964,12 +971,21 @@ final class Stripe_Service {
 	}
 
 	/**
-	 * Post-payment user provisioning. Called from handle_checkout_completed
-	 * once Stripe confirms a successful checkout. Creates the WP user if
-	 * one didn't exist at checkout time and links it back to the
-	 * membership + person rows.
+	 * Post-payment user provisioning.
+	 *
+	 * Hooked to `memberistic_payment_provision_member_user`, which the gate
+	 * fires for a verified activation before any member-facing email goes out.
+	 * Creating the user at checkout-start instead would let an unauthenticated
+	 * visitor send new-user notifications to arbitrary addresses by hitting the
+	 * public checkout endpoint, which is why it waits for a confirmed payment.
+	 *
+	 * Idempotent: a membership that already has a primary user is returned
+	 * unchanged, so a redelivered activation cannot create a second account.
+	 *
+	 * @param int $membership_id Membership id.
+	 * @return int WP user id, or 0.
 	 */
-	private static function ensure_user_for_completed_checkout( $membership_id ) {
+	public static function ensure_user_for_completed_checkout( $membership_id ) {
 		$membership = Memberships_Repository::get( $membership_id );
 		if ( ! $membership ) {
 			return 0;
@@ -1052,7 +1068,7 @@ final class Stripe_Service {
 				return $paid;
 			}
 			if ( $paid ) {
-				$result = self::handle_checkout_completed( $session );
+				$result = self::apply_checkout_session( $session );
 				if ( is_wp_error( $result ) ) {
 					return $result;
 				}
@@ -1144,11 +1160,15 @@ final class Stripe_Service {
 			);
 		}
 
-		$result = self::handle_checkout_completed( $session );
+		$result = self::apply_checkout_session( $session );
 		if ( is_wp_error( $result ) ) {
 			return array( 'state' => 'manual_review', 'title' => __( 'Manual Review Required', 'memberistic' ), 'message' => __( 'Payment was found, but local activation could not complete automatically.', 'memberistic' ) );
 		}
-		if ( false === $result || ( is_array( $result ) && 'manual_review' === (string) ( $result['status'] ?? '' ) ) ) {
+		// `rejected` covers every integrity refusal the gate can return here —
+		// a plan or amount that does not match, a subscription conflict, an
+		// event that arrived out of order. All of them mean a human should
+		// look before this membership is treated as paid.
+		if ( false === $result || ( is_array( $result ) && in_array( (string) ( $result['status'] ?? '' ), array( 'manual_review', 'rejected' ), true ) ) ) {
 			return array( 'state' => 'manual_review', 'title' => __( 'Manual Review Required', 'memberistic' ), 'message' => __( 'Payment was found, but staff must review this membership before activation can be completed.', 'memberistic' ) );
 		}
 
@@ -1385,518 +1405,146 @@ final class Stripe_Service {
 	 *
 	 * Used to short-circuit incoming webhook requests before any payload parsing.
 	 */
+	/**
+	 * Whether a signing secret exists for the mode this site is running in.
+	 *
+	 * @return bool
+	 */
 	public static function webhook_is_configured() {
-		return '' !== trim( (string) memberistic_get_setting( 'stripe_webhook_secret', '' ) );
+		return '' !== Stripe_Provider::webhook_secret();
 	}
 
+	/**
+	 * Verify a Stripe webhook signature.
+	 *
+	 * Delegates to the adapter, which holds the only implementation. The old
+	 * one lived here and had three problems worth naming, since each is easy
+	 * to reintroduce:
+	 *
+	 * - It kept only the last `v1` value in the header. Stripe sends two
+	 *   during a secret rotation, and if the valid one arrived first it was
+	 *   overwritten by the one that could not match — so rotating a signing
+	 *   secret silently rejected live traffic.
+	 * - It read the timestamp with a bare `(int)` cast, which turns
+	 *   `"1600000000junk"` into a valid-looking timestamp.
+	 * - It read a single shared secret, so a site switched from test to live
+	 *   verified every live event against the test secret and rejected all of
+	 *   them.
+	 *
+	 * @param string $payload Raw request body.
+	 * @param string $header  Stripe-Signature header.
+	 * @return bool
+	 */
 	public static function verify_webhook_signature( $payload, $header ) {
-		$secret = trim( (string) memberistic_get_setting( 'stripe_webhook_secret', '' ) );
+		$result = Stripe_Provider::authenticate(
+			(string) $payload,
+			array( 'stripe-signature' => (string) $header )
+		);
 
-		if ( '' === $secret || '' === $header ) {
-			return false;
-		}
-
-		$timestamp = '';
-		$signature = '';
-		$parts     = explode( ',', $header );
-
-		foreach ( $parts as $part ) {
-			$pair = explode( '=', $part, 2 );
-			if ( 2 !== count( $pair ) ) {
-				continue;
-			}
-			if ( 't' === $pair[0] ) {
-				$timestamp = $pair[1];
-			}
-			if ( 'v1' === $pair[0] ) {
-				$signature = $pair[1];
-			}
-		}
-
-		if ( '' === $timestamp || '' === $signature || abs( time() - (int) $timestamp ) > 300 ) {
-			return false;
-		}
-
-		$expected = hash_hmac( 'sha256', $timestamp . '.' . $payload, $secret );
-		return hash_equals( $expected, $signature );
+		return true === $result;
 	}
 
 	/**
-	 * Stripe webhook dedup: persistent processed-event-id store.
+	 * Process a Stripe webhook event.
 	 *
-	 * Backed by an option (FIFO-capped at 500 ids) so a redeploy / object-
-	 * cache flush doesn't reset dedup and cause a duplicate Payments row +
-	 * duplicate receipt email on Stripe retries.
+	 * Kept as the public entry point it has always been, but it no longer
+	 * decides anything. Everything this method used to do — dedup against a
+	 * capped option, switch on the event type, and let four handlers write
+	 * directly to the memberships table — now happens in the Payment Integrity
+	 * Gate, under checks those handlers did not perform.
+	 *
+	 * What the old handlers got wrong is worth recording, because the shapes
+	 * recur:
+	 *
+	 * - `handle_invoice_succeeded()` renewed a membership from an invoice
+	 *   event alone. It resolved the membership from the subscription id or,
+	 *   failing that, from provider metadata; set the status to active;
+	 *   advanced the renewal date; wrote a payment row; and sent a receipt —
+	 *   without checking who paid, how much, in what currency, on which
+	 *   account, or whether the invoice had actually been paid.
+	 * - `handle_subscription_deleted()` fell back to `metadata.membership_id`
+	 *   whenever the subscription lookup missed. A cancellation for a
+	 *   subscription the member had already replaced would find the membership
+	 *   through that fallback and cancel it, taking access from someone who
+	 *   had just re-subscribed and paid.
+	 * - `handle_invoice_failed()` moved a membership to past_due with no check
+	 *   that the failure still stood, so a failure event delayed behind a
+	 *   successful retry removed access from a member whose card had already
+	 *   gone through.
+	 *
+	 * @param array<string, mixed> $event Decoded Stripe event.
+	 * @return array<string, mixed>|\WP_Error
 	 */
-	private static function processed_events_option_key() {
-		return 'memberistic_stripe_processed_events';
-	}
-
-	public static function is_event_processed( $event_id ) {
-		$event_id = (string) $event_id;
-		if ( '' === $event_id ) {
-			return false;
-		}
-		$list = get_option( self::processed_events_option_key(), array() );
-		if ( ! is_array( $list ) ) {
-			$list = array();
-		}
-		return in_array( $event_id, $list, true );
-	}
-
-	public static function mark_event_processed( $event_id ) {
-		$event_id = (string) $event_id;
-		if ( '' === $event_id ) {
-			return;
-		}
-		$list = get_option( self::processed_events_option_key(), array() );
-		if ( ! is_array( $list ) ) {
-			$list = array();
-		}
-		if ( in_array( $event_id, $list, true ) ) {
-			return;
-		}
-		$list[] = $event_id;
-		// FIFO cap — keep the most recent 500 ids.
-		if ( count( $list ) > 500 ) {
-			$list = array_slice( $list, -500 );
-		}
-		update_option( self::processed_events_option_key(), $list, false );
-	}
-
 	public static function process_webhook_event( $event ) {
-		$type     = isset( $event['type'] ) ? $event['type'] : '';
-		$event_id = isset( $event['id'] ) ? sanitize_text_field( (string) $event['id'] ) : '';
-		$obj      = isset( $event['data']['object'] ) && is_array( $event['data']['object'] ) ? $event['data']['object'] : array();
-
-		// Idempotency: Stripe retries on 5xx (and occasionally double-sends
-		// on success). Without dedup, every retry creates a duplicate
-		// Payments row, a duplicate Activity row, and a duplicate
-		// membership_activated / payment_received email. We persist the
-		// processed event ids in a capped option list so dedup survives an
-		// object-cache flush (transients used to fail open after a redeploy).
-		//
-		// The check-then-mark is wrapped in the same MySQL advisory lock used
-		// elsewhere in this class (atomic_check_and_increment) — two near-
-		// simultaneous deliveries of the same event id (a documented Stripe
-		// behavior) would otherwise both read is_event_processed() as false
-		// before either finished mark_event_processed(), letting both through.
-		$lock_key = '';
-		if ( '' !== $event_id ) {
-			$lock_key = 'stripe_evt_' . $event_id;
-			$lock = self::acquire_lock( $lock_key );
-			if ( is_wp_error( $lock ) ) {
-				return $lock;
-			}
-			if ( ! $lock ) {
-				return new \WP_Error( 'memberistic_stripe_webhook_locked', __( 'Could not acquire the idempotency lock; try again.', 'memberistic' ), array( 'status' => 503 ) );
-			}
-			if ( self::is_event_processed( $event_id ) ) {
-				self::release_lock( $lock_key );
-				do_action( 'memberistic_stripe_webhook_event_duplicate', $event_id, $type );
-				return array( 'status' => 'duplicate', 'event_id' => $event_id );
-			}
+		if ( ! is_array( $event ) ) {
+			return new \WP_Error(
+				'memberistic_stripe_bad_payload',
+				__( 'Invalid Stripe webhook payload.', 'memberistic' ),
+				array( 'status' => 400 )
+			);
 		}
 
-		do_action( 'memberistic_stripe_webhook_event', $type, $obj, $event );
+		// Callers reaching this method have already authenticated the request;
+		// the payload is re-encoded only to give the ledger a content hash.
+		$normalized = Stripe_Provider::normalize_event( $event, (string) wp_json_encode( $event ) );
 
-		// Inbound events reflect state Stripe already holds; flag the window
-		// so the outbound-cancel listener on the status-changed hook doesn't
-		// call Stripe back about a cancellation Stripe just reported.
-		self::$processing_inbound_event = true;
-
-		try {
-			switch ( $type ) {
-				case 'checkout.session.completed':
-					$result = self::handle_checkout_completed( $obj );
-					break;
-				case 'customer.subscription.deleted':
-					$result = self::handle_subscription_deleted( $obj );
-					break;
-				case 'invoice.payment_failed':
-					$result = self::handle_invoice_failed( $obj );
-					break;
-				case 'invoice.payment_succeeded':
-					$result = self::handle_invoice_succeeded( $obj );
-					break;
-				case 'payment_intent.succeeded':
-				case 'payment_intent.payment_failed':
-					// Payment-intent events are handled by the invoice events for
-					// subscriptions; one-off PaymentIntents are not currently used
-					// but the hook above lets integrations extend.
-					$result = true;
-					break;
-				default:
-					$result = true;
-					break;
-			}
-
-			if ( is_wp_error( $result ) ) {
-				return $result;
-			}
-			if ( false === $result ) {
-				self::record_manual_review( 'webhook_permanent_mismatch', 0, array(
-					'event_id' => self::mask_stripe_id( $event_id ),
-					'type'     => sanitize_text_field( (string) $type ),
-				) );
-			}
-			if ( '' !== $event_id ) {
-				self::mark_event_processed( $event_id );
-			}
-			return false === $result ? array( 'status' => 'permanent_mismatch', 'type' => $type ) : $result;
-		} finally {
-			self::$processing_inbound_event = false;
-			if ( '' !== $lock_key ) {
-				self::release_lock( $lock_key );
-			}
+		if ( is_wp_error( $normalized ) ) {
+			return $normalized;
 		}
+
+		do_action( 'memberistic_stripe_webhook_event', $normalized['event_type'], $normalized['object'], $event );
+
+		return Payment_Integrity_Gate::process_event( Stripe_Provider::key(), $normalized );
 	}
 
 	/**
-	 * Recurring renewal succeeded — bump renewal_date forward and log a payment.
+	 * Apply a Checkout Session that this site fetched from Stripe itself.
 	 *
-	 * @param array<string, mixed> $invoice Invoice object payload.
+	 * The recovery paths — the browser returning from Checkout, and the resume
+	 * of a session left open — hold a session object they retrieved over the
+	 * API rather than one delivered by webhook. That is a stronger provenance
+	 * than a webhook, not a weaker one, but it still has to satisfy the same
+	 * membership, plan, amount and transition checks, so it is wrapped in an
+	 * event envelope and put through the same gate.
+	 *
+	 * The synthetic event id is derived from the session id, never generated.
+	 * A member who refreshes the return page produces the same id, which the
+	 * ledger recognises as a duplicate — and the gate would treat it as an
+	 * already-completed activation even if it did not.
+	 *
+	 * @param array<string, mixed> $session Stripe Checkout Session.
+	 * @return array<string, mixed>|\WP_Error
 	 */
-	private static function invoice_subscription_id( $invoice ) {
-		if ( ! empty( $invoice['subscription'] ) && is_string( $invoice['subscription'] ) ) {
-			return sanitize_text_field( (string) $invoice['subscription'] );
-		}
-		if ( ! empty( $invoice['parent']['subscription_details']['subscription'] ) ) {
-			return sanitize_text_field( (string) $invoice['parent']['subscription_details']['subscription'] );
-		}
-		if ( ! empty( $invoice['subscription_details']['subscription'] ) ) {
-			return sanitize_text_field( (string) $invoice['subscription_details']['subscription'] );
-		}
-		return '';
-	}
-
-	private static function handle_invoice_succeeded( $invoice ) {
-		$subscription_id = self::invoice_subscription_id( $invoice );
-
-		if ( '' === $subscription_id && empty( $invoice['metadata']['membership_id'] ) ) {
-			return false;
-		}
-
-		$membership = '' !== $subscription_id ? Memberships_Repository::get_by_stripe_subscription_id( $subscription_id ) : null;
-		if ( ! $membership && ! empty( $invoice['metadata']['membership_id'] ) ) {
-			$membership = Memberships_Repository::get( absint( $invoice['metadata']['membership_id'] ) );
-		}
-
-		if ( ! $membership ) {
-			return false;
-		}
-
-		$membership_id = (int) $membership['id'];
-		$billing_cycle = $membership['billing_cycle'];
-		// Anchor the new renewal off the EXISTING renewal_date if the
-		// member is being renewed before their current term ends — so
-		// they keep the paid time. Falls back to "now" for first-time
-		// invoices or expired memberships. Site-local time throughout.
-		$now_local     = current_time( 'mysql' );
-		$current_rd    = ! empty( $membership['renewal_date'] ) ? $membership['renewal_date'] : '';
-		$anchor        = ( $current_rd && $current_rd > $now_local ) ? $current_rd : $now_local;
-		$renewal_date  = \WordPressistic\Memberistic\Integrations\WooCommerce_Bridge::compute_next_renewal( $billing_cycle, $anchor );
-
-		// Skip the very first invoice that fires on checkout completion — that path is
-		// already handled by checkout.session.completed and creates the start_date row.
-		$is_first_invoice = ! empty( $invoice['billing_reason'] ) && 'subscription_create' === $invoice['billing_reason'];
-
-		Memberships_Repository::update(
-			$membership_id,
-			array(
-				'status'       => 'active',
-				'renewal_date' => $renewal_date,
-			)
-		);
-
-		// The very first invoice fires alongside checkout.session.completed,
-		// which already writes the Payments row + sends the receipt. Skip
-		// the create() here to avoid a duplicate Payments row + duplicate
-		// receipt for the same initial charge. A secondary safety guards
-		// against any other path that might double-write the same txn id.
-		if ( ! $is_first_invoice ) {
-			$txn_id = isset( $invoice['payment_intent'] )
-				? sanitize_text_field( (string) $invoice['payment_intent'] )
-				: sanitize_text_field( (string) ( $invoice['id'] ?? '' ) );
-			$already = '' !== $txn_id ? Payments_Repository::get_by_gateway_transaction_id( $txn_id ) : null;
-			if ( ! $already ) {
-				Payments_Repository::create(
-					array(
-						'membership_id'          => $membership_id,
-						'amount'                 => ! empty( $invoice['amount_paid'] ) ? ( (float) $invoice['amount_paid'] / 100 ) : 0,
-						'currency'               => ! empty( $invoice['currency'] ) ? strtoupper( $invoice['currency'] ) : 'USD',
-						'payment_method'         => 'stripe_subscription',
-						'payment_gateway'        => 'stripe',
-						'gateway_transaction_id' => $txn_id,
-						'status'                 => 'completed',
-						'paid_at'                => current_time( 'mysql' ),
-						'raw_response'           => $invoice,
-					)
-				);
-			}
-		}
-
-		// On renewals (every invoice after the first) send two distinct
-		// messages: a transactional charge receipt, then a renewal
-		// confirmation. The very first invoice fires on subscription create
-		// alongside checkout.session.completed, which already sends the
-		// initial receipt + activation email — so we skip it here to avoid a
-		// duplicate receipt for the same charge.
-		if ( ! $is_first_invoice ) {
-			$amount_paid = ! empty( $invoice['amount_paid'] ) ? ( (float) $invoice['amount_paid'] / 100 ) : 0;
-			$currency    = ! empty( $invoice['currency'] ) ? strtoupper( $invoice['currency'] ) : 'USD';
-			$txn         = isset( $invoice['payment_intent'] ) ? (string) $invoice['payment_intent'] : (string) ( $invoice['id'] ?? '' );
-
-			Email_Service::send_membership_email(
-				$membership_id,
-				'payment_receipt',
-				array(
-					'amount'         => \WordPressistic\Memberistic\memberistic_format_price( $amount_paid, $currency ),
-					// Actual transaction amount — the receipt template renders
-					// {paid_amount} so partial/deposit charges never show the
-					// full plan value.
-					'paid_amount'    => \WordPressistic\Memberistic\memberistic_format_price( $amount_paid, $currency ),
-					'transaction_id' => $txn,
-					'payment_date'   => date_i18n( get_option( 'date_format' ) ),
-					'payment_method' => __( 'Card on file (Stripe)', 'memberistic' ),
-				)
-			);
-
-			Activity_Repository::log(
-				array(
-					'membership_id' => $membership_id,
-					'activity_type' => 'membership_renewed',
-					'title'         => __( 'Membership renewed via Stripe', 'memberistic' ),
-				)
-			);
-
-			// Renewal confirmation — a second, distinct message from the receipt.
-			Email_Service::send_membership_email( $membership_id, 'membership_renewed' );
-		}
-
-		do_action( 'memberistic_membership_activated', $membership_id );
-
-		return true;
-	}
-
-	private static function handle_checkout_completed( $session ) {
-		$metadata      = isset( $session['metadata'] ) && is_array( $session['metadata'] ) ? $session['metadata'] : array();
-		$membership_id = ! empty( $metadata['membership_id'] ) ? absint( $metadata['membership_id'] ) : 0;
-
-		if ( ! $membership_id ) {
-			return false;
-		}
-
-		$lock_key = 'membership_activate_' . $membership_id;
-		$lock = self::acquire_lock( $lock_key );
-		if ( is_wp_error( $lock ) ) {
-			return $lock;
-		}
-		if ( ! $lock ) {
-			return new \WP_Error( 'memberistic_membership_locked', __( 'Membership activation is already processing.', 'memberistic' ), array( 'status' => 503 ) );
-		}
-
-		try {
-		$membership = Memberships_Repository::get( $membership_id );
-
-		if ( ! $membership ) {
-			return false;
-		}
-
-		$plan = Plans_Repository::get( (int) $membership['plan_id'] );
-		if ( ! $plan ) {
-			return false;
-		}
-
-		$person = People_Repository::get_primary_by_membership( $membership_id );
-		$email  = ! empty( $person['email'] ) ? (string) $person['email'] : '';
-		$valid  = self::validate_checkout_session_for_membership( $session, $membership_id, $plan, (string) $membership['billing_cycle'], $email );
-		if ( is_wp_error( $valid ) ) {
-			self::record_manual_review( 'checkout_completed_validation_failed', $membership_id, array(
-				'session_id' => self::mask_stripe_id( (string) ( $session['id'] ?? '' ) ),
-				'message'    => $valid->get_error_message(),
-			) );
-			return false;
-		}
-
-		$paid = self::checkout_session_is_paid( $session );
-		if ( is_wp_error( $paid ) ) {
-			return $paid;
-		}
-		if ( ! $paid ) {
-			return false;
-		}
-
+	public static function apply_checkout_session( array $session ) {
 		$session_id = isset( $session['id'] ) ? sanitize_text_field( (string) $session['id'] ) : '';
-		$subscription_id = '';
-		if ( isset( $session['subscription'] ) && is_array( $session['subscription'] ) ) {
-			$subscription_id = sanitize_text_field( (string) ( $session['subscription']['id'] ?? '' ) );
-		} elseif ( isset( $session['subscription'] ) ) {
-			$subscription_id = sanitize_text_field( (string) $session['subscription'] );
-		}
 
-		if ( 'active' === (string) ( $membership['status'] ?? '' ) ) {
-			$same_session = '' !== $session_id && $session_id === (string) ( $membership['stripe_checkout_session_id'] ?? '' );
-			$same_sub     = '' !== $subscription_id && $subscription_id === (string) ( $membership['stripe_subscription_id'] ?? '' );
-			if ( $same_session || $same_sub ) {
-				return true;
-			}
-			self::record_manual_review( 'active_membership_subscription_conflict', $membership_id, array(
-				'existing_subscription_id' => self::mask_stripe_id( (string) ( $membership['stripe_subscription_id'] ?? '' ) ),
-				'incoming_subscription_id' => self::mask_stripe_id( $subscription_id ),
-				'incoming_session_id'      => self::mask_stripe_id( $session_id ),
-			) );
-			return array( 'status' => 'manual_review', 'reason' => 'active_subscription_conflict' );
-		}
-
-		// User creation is deferred from checkout-start to here so an
-		// unauthenticated visitor can't spray wp_new_user_notification
-		// at arbitrary emails by hitting the checkout endpoint.
-		self::ensure_user_for_completed_checkout( $membership_id );
-
-		$billing_cycle = $membership['billing_cycle'];
-		$start_date    = current_time( 'mysql' );
-		// Site-local renewal compute (was UTC-via-gmdate which mis-drifted
-		// on non-UTC sites like Mesa AZ).
-		$renewal_date  = \WordPressistic\Memberistic\Integrations\WooCommerce_Bridge::compute_next_renewal( $billing_cycle, $start_date );
-
-		Memberships_Repository::update(
-			$membership_id,
-			array(
-				'status'                 => 'active',
-				'start_date'             => $start_date,
-				'renewal_date'           => $renewal_date,
-				'stripe_customer_id'      => isset( $session['customer'] ) ? sanitize_text_field( (string) $session['customer'] ) : '',
-				'stripe_subscription_id'  => $subscription_id,
-				'stripe_checkout_session_id' => $session_id,
-				'stripe_checkout_expires_at' => ! empty( $session['expires_at'] ) ? wp_date( 'Y-m-d H:i:s', (int) $session['expires_at'] ) : null,
-			)
-		);
-
-		$checkout_txn_id = isset( $session['payment_intent'] )
-			? sanitize_text_field( (string) $session['payment_intent'] )
-			: sanitize_text_field( (string) ( isset( $session['id'] ) ? $session['id'] : '' ) );
-		$existing_payment = '' !== $checkout_txn_id ? Payments_Repository::get_by_gateway_transaction_id( $checkout_txn_id ) : null;
-		if ( ! $existing_payment ) {
-			Payments_Repository::create(
-				array(
-					'membership_id'          => $membership_id,
-					'amount'                 => ! empty( $session['amount_total'] ) ? ( (float) $session['amount_total'] / 100 ) : 0,
-					'currency'               => ! empty( $session['currency'] ) ? strtoupper( $session['currency'] ) : 'USD',
-					'payment_method'         => 'stripe_checkout',
-					'payment_gateway'        => 'stripe',
-					'gateway_transaction_id' => $checkout_txn_id,
-					'status'                 => 'completed',
-					'paid_at'                => current_time( 'mysql' ),
-					'raw_response'           => $session,
-				)
+		if ( '' === $session_id ) {
+			return new \WP_Error(
+				'memberistic_session_missing_id',
+				__( 'Stripe Checkout Session is missing an id.', 'memberistic' ),
+				array( 'status' => 400 )
 			);
 		}
 
-		Activity_Repository::log(
-			array(
-				'membership_id' => $membership_id,
-				'activity_type' => 'membership_activated',
-				'title'         => __( 'Membership activated by Stripe checkout', 'memberistic' ),
-			)
+		$envelope = array(
+			'id'       => 'chks_' . $session_id,
+			'type'     => 'checkout.session.completed',
+			'created'  => isset( $session['created'] ) && is_numeric( $session['created'] )
+				? (int) $session['created']
+				: Payment_Clock::timestamp(),
+			'livemode' => array_key_exists( 'livemode', $session )
+				? (bool) $session['livemode']
+				: ( 'live' === Stripe_Provider::environment() ),
+			'data'     => array( 'object' => $session ),
 		);
 
-		Email_Service::send_membership_email( $membership_id, 'membership_activated' );
+		$normalized = Stripe_Provider::normalize_event( $envelope, (string) wp_json_encode( $envelope ) );
 
-		// Receipt for the initial charge (amount / reference) alongside the
-		// welcome/activation email.
-		$amount_total = ! empty( $session['amount_total'] ) ? ( (float) $session['amount_total'] / 100 ) : 0;
-		if ( $amount_total > 0 ) {
-			$currency = ! empty( $session['currency'] ) ? strtoupper( $session['currency'] ) : 'USD';
-			$txn      = isset( $session['payment_intent'] ) ? (string) $session['payment_intent'] : (string) ( $session['id'] ?? '' );
-			Email_Service::send_membership_email(
-				$membership_id,
-				'payment_receipt',
-				array(
-					'amount'         => \WordPressistic\Memberistic\memberistic_format_price( $amount_total, $currency ),
-					// Actual transaction amount — the receipt template renders
-					// {paid_amount} so partial/deposit charges never show the
-					// full plan value.
-					'paid_amount'    => \WordPressistic\Memberistic\memberistic_format_price( $amount_total, $currency ),
-					'transaction_id' => $txn,
-					'payment_date'   => date_i18n( get_option( 'date_format' ) ),
-					'payment_method' => __( 'Card on file (Stripe)', 'memberistic' ),
-				)
-			);
+		if ( is_wp_error( $normalized ) ) {
+			return $normalized;
 		}
 
-		do_action( 'memberistic_membership_activated', $membership_id );
-
-		return true;
-		} finally {
-			self::release_lock( $lock_key );
-		}
-	}
-
-	private static function handle_subscription_deleted( $subscription ) {
-		// Trust the subscription_id over metadata: metadata can be stale (the
-		// subscription may have been edited in the Stripe dashboard, or the
-		// metadata.membership_id may point at a different row after a
-		// re-subscribe), but stripe_subscription_id is authoritative on our
-		// side. Fall back to metadata only when no row maps to the sub id.
-		$membership_id = 0;
-		if ( ! empty( $subscription['id'] ) ) {
-			$existing = Memberships_Repository::get_by_stripe_subscription_id( sanitize_text_field( (string) $subscription['id'] ) );
-			if ( $existing ) {
-				$membership_id = (int) $existing['id'];
-			}
-		}
-
-		if ( ! $membership_id && ! empty( $subscription['metadata']['membership_id'] ) ) {
-			$membership_id = absint( $subscription['metadata']['membership_id'] );
-		}
-
-		if ( ! $membership_id ) {
-			return false;
-		}
-
-		Memberships_Repository::change_status( $membership_id, 'cancelled' );
-		Activity_Repository::log(
-			array(
-				'membership_id' => $membership_id,
-				'activity_type' => 'membership_cancelled',
-				'title'         => __( 'Stripe subscription cancelled', 'memberistic' ),
-			)
-		);
-
-		Email_Service::send_membership_email( $membership_id, 'membership_cancelled' );
-
-		return true;
-	}
-
-	private static function handle_invoice_failed( $invoice ) {
-		$subscription_id = self::invoice_subscription_id( $invoice );
-
-		if ( '' === $subscription_id && empty( $invoice['metadata']['membership_id'] ) ) {
-			return false;
-		}
-
-		$membership = '' !== $subscription_id ? Memberships_Repository::get_by_stripe_subscription_id( $subscription_id ) : null;
-		if ( ! $membership && ! empty( $invoice['metadata']['membership_id'] ) ) {
-			$membership = Memberships_Repository::get( absint( $invoice['metadata']['membership_id'] ) );
-		}
-
-		if ( ! $membership ) {
-			return false;
-		}
-
-		Memberships_Repository::change_status( (int) $membership['id'], 'past_due' );
-		Activity_Repository::log(
-			array(
-				'membership_id' => (int) $membership['id'],
-				'activity_type' => 'payment_failed',
-				'title'         => __( 'Stripe invoice payment failed', 'memberistic' ),
-			)
-		);
-
-		Email_Service::send_membership_email( (int) $membership['id'], 'payment_failed' );
-
-		return true;
+		return Payment_Integrity_Gate::process_event( Stripe_Provider::key(), $normalized );
 	}
 
 	/**

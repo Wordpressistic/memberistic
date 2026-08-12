@@ -138,6 +138,10 @@ final class Plugin {
 		// subscription actually stops billing — previously a cancel on the
 		// site only flipped the local DB status and Stripe kept charging.
 		add_action( 'memberistic_membership_status_changed', array( Payments\Stripe_Service::class, 'maybe_cancel_remote_subscription' ), 10, 2 );
+		// Deferred user provisioning. The gate fires this for a verified
+		// activation, before any member-facing email, so the account exists by
+		// the time the welcome message points at it.
+		add_action( 'memberistic_payment_provision_member_user', array( Payments\Stripe_Service::class, 'ensure_user_for_completed_checkout' ) );
 		// Failed Stripe cancels retry with backoff and stay visible in
 		// wp-admin until Stripe confirms billing has stopped.
 		add_action( Payments\Stripe_Service::CANCEL_RETRY_HOOK, array( Payments\Stripe_Service::class, 'run_cancel_retry' ), 10, 2 );

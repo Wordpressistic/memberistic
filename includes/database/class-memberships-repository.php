@@ -457,6 +457,71 @@ final class Memberships_Repository {
 		return $wpdb->rows_affected > 0;
 	}
 
+	/**
+	 * Advance memberships through the dunning lifecycle.
+	 *
+	 * Two set-based updates rather than a row-by-row loop with a transition
+	 * check each: both moves are unconditional consequences of a stored
+	 * deadline and the clock, not decisions about evidence, and a site with
+	 * ten thousand lapsed memberships should not need ten thousand queries to
+	 * notice that a week has passed.
+	 *
+	 * `status` is moved alongside `billing_status`, but never for a membership
+	 * whose access status is staff-owned — a comped member does not lose
+	 * access because a card on file expired.
+	 *
+	 * @param string $now UTC datetime to evaluate against.
+	 * @return array{grace:int, expired:int}
+	 */
+	public static function advance_dunning( $now ) {
+		global $wpdb;
+
+		$table = self::table();
+		$now   = sanitize_text_field( (string) $now );
+
+		$staff_owned = \WordPressistic\Memberistic\Payments\Payment_Integrity_Gate::STAFF_OWNED_STATUSES;
+		$placeholders = implode( ',', array_fill( 0, count( $staff_owned ), '%s' ) );
+
+		$grace_access = \WordPressistic\Memberistic\Payments\Subscription_State_Machine::access_status_for(
+			\WordPressistic\Memberistic\Payments\Subscription_State_Machine::GRACE_PERIOD
+		);
+
+		// past_due with a live deadline → grace_period.
+		$grace = (int) $wpdb->query(
+			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix; the IN list is placeholders.
+				"UPDATE {$table}
+				    SET billing_status = 'grace_period',
+				        status = CASE WHEN status IN ( {$placeholders} ) THEN status ELSE %s END,
+				        updated_at = %s
+				  WHERE billing_status = 'past_due'
+				    AND grace_period_ends_at IS NOT NULL
+				    AND grace_period_ends_at > %s",
+				array_merge( $staff_owned, array( $grace_access, current_time( 'mysql' ), $now ) )
+			)
+		);
+
+		// grace_period past its deadline → expired.
+		$expired = (int) $wpdb->query(
+			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix; the IN list is placeholders.
+				"UPDATE {$table}
+				    SET billing_status = 'expired',
+				        status = CASE WHEN status IN ( {$placeholders} ) THEN status ELSE 'expired' END,
+				        updated_at = %s
+				  WHERE billing_status IN ( 'past_due', 'grace_period' )
+				    AND grace_period_ends_at IS NOT NULL
+				    AND grace_period_ends_at <= %s",
+				array_merge( $staff_owned, array( current_time( 'mysql' ), $now ) )
+			)
+		);
+
+		return array(
+			'grace'   => $grace,
+			'expired' => $expired,
+		);
+	}
+
 	public static function get_by_stripe_checkout_session_id( $session_id ) {
 		global $wpdb;
 		$session_id = sanitize_text_field( (string) $session_id );
