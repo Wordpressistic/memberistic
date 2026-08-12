@@ -182,44 +182,46 @@ jobs:
       - name: Assemble the distributable tree
         run: bin/build-dist.sh
 
-      # Which WordPress to check against, taken from the same declaration the
-      # compatibility matrix uses, so the two cannot disagree about what this
-      # plugin supports.
-      #
-      # This used to be unpinned, on the reasoning that a .org reviewer runs
-      # current WordPress. That reasoning was right and the mechanism was not:
-      # wp-env resolves "latest" from the wordpress.org API and then clones that
-      # tag from the WordPress/WordPress git mirror, and the two are not updated
-      # together. On 2026-08-12 the API reported 7.0.4 hours before the mirror
-      # was tagged, so `git fetch --tags origin 7.0.4` failed, wp-env never
-      # started, and the job failed having evaluated *zero* rules — three
-      # retries, four runs, no results file. A check that reports nothing is
-      # worse than one that reports against a slightly older WordPress.
-      #
-      # Pinning to the highest blocking target is not a narrowing of the check
-      # set. Every rule still runs; `categories` is still unset. It only fixes
-      # which WordPress they run on, and ties that to the version the matrix
-      # actually certifies — so raising support in wordpress-targets.json raises
-      # this too, automatically, and neither can drift from the other.
-      - name: Resolve the WordPress version to check against
-        id: wp
-        run: |
-          set -euo pipefail
-          version=$(python3 -c "
-          import json
-          targets = json.load(open('.github/wordpress-targets.json'))
-          print(sorted(targets['blocking'], key=lambda v: [int(p) for p in v.split('.')])[-1])
-          ")
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "Plugin Check will run against WordPress $version"
-
       - uses: WordPress/plugin-check-action@v1
         with:
           build-dir: ./build/memberistic
           # wordpress.org requires the install directory to equal the Text
           # Domain, and the release zip is built to that slug.
           slug: memberistic
-          wp-version: ${{ steps.wp.outputs.version }}
+          # `trunk`, and it is the only value that does anything.
+          #
+          # Left unset, this job spent 2026-08-12 failing without evaluating a
+          # single rule. wp-env asks the wordpress.org API for the latest
+          # release and then clones that tag from the WordPress/WordPress git
+          # mirror; the two are not updated together. The API served 7.0.4 for
+          # hours before the mirror was tagged, so `git fetch --tags origin
+          # 7.0.4` failed, wp-env never started, and the action skipped to
+          # uploading a results file that did not exist. Three retries a run,
+          # across five runs.
+          #
+          # Pinning a stable release instead is not possible. The action maps
+          # this input to wp-env with:
+          #
+          #   WP_VERSION: ${{ inputs.wp-version == 'trunk' &&
+          #                   '"WordPress/WordPress#master"' || 'null' }}
+          #
+          # so every value except `trunk` — including a version number, and
+          # including the documented default of `latest` — becomes a literal
+          # `null`, which is exactly the "resolve latest yourself" path that
+          # breaks. An earlier attempt to pin 7.0.2 here was a silent no-op for
+          # precisely that reason.
+          #
+          # So the choice is trunk or nothing, and trunk costs little: Plugin
+          # Check is overwhelmingly static analysis of this plugin's own files —
+          # sniffs, headers, readme, file types — and almost none of it depends
+          # on the WordPress underneath. `master` is a branch, so it always
+          # resolves, which removes the release-day race entirely rather than
+          # waiting it out.
+          #
+          # Revisit if the action gains a working version pin. The honest
+          # alternative is running wp-env and `wp plugin check` directly, which
+          # would allow a real pin at the cost of owning the setup.
+          wp-version: trunk
           # No `categories` filter: P0-4 asks for the full default check set,
           # which is what the .org reviewer runs. Narrowing it hides the
           # plugin_repo findings that block the listing.
