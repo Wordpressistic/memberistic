@@ -4,7 +4,7 @@ Tags: membership, members, waivers, check-in, subscriptions
 Requires at least: 6.8
 Tested up to: 7.0
 Requires PHP: 8.2
-Stable tag: 2.1.0
+Stable tag: 2.1.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -151,6 +151,11 @@ Retention windows for check-in and activity history are configurable and default
 Major release. Requires PHP 8.2 and WordPress 6.8. No data migration: tables, options, hooks, and capabilities are unchanged. New installs no longer ship default plans, and every third-party integration now defaults to off. Two defaults changed for existing sites — the booking integration is restored automatically; the included-plans entitlement list needs your decision and shows a notice. See docs/UPGRADE-2.0.md.
 
 == Changelog ==
+
+= 2.1.1 =
+
+* Added the shared WPistic license client with encrypted activation state, signed validation, offline grace, secure update authorization, and a nonce-protected license screen.
+* Fixed interoperability when more than one WPistic plugin provides the shared SDK.
 
 = 2.1.0 =
 

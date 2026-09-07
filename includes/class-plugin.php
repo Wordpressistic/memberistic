@@ -131,6 +131,7 @@ final class Plugin {
 	 * Register WordPress hooks.
 	 */
 	private function register_hooks() {
+		Licensing::register();
 		add_action( 'init', array( $this, 'load_textdomain' ) );
 		add_action( 'init', array( Payments\Stripe_Service::class, 'maybe_handle_public_checkout_request' ) );
 		CLI\Stripe_Recovery_Command::register();

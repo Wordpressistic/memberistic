@@ -1,41 +1,19 @@
 <?php
 /**
- * Licensing and update-channel seam.
+ * WPistic licensing integration for Memberistic.
  *
- * Memberistic 2.0.0 ships NO licence enforcement and NO update client.
- * Nothing in this file makes a network request, reads a licence key, or
- * contacts any server. It exists so that a licensing add-on (Licenseistic
- * or otherwise) can be dropped in later without patching the plugin core,
- * and so the policy that add-on must follow is written down and testable
- * before anyone implements it.
- *
- * WHY A SEAM RATHER THAN THE FEATURE
- *
- * 2.0.0 is a de-brand, harden, and package release. A licence client is a
- * new subsystem with its own failure modes — it phones home, it caches, it
- * decides whether the plugin works — and bolting one on in the same release
- * that changes defaults and branding makes both harder to verify. The
- * contract lands now; the implementation lands in 2.1.0.
- *
- * THE POLICY A LICENCE CLIENT MUST FOLLOW
- *
- * 1. Fail OPEN on updates, CLOSED on premium features. An expired licence
- *    must never take a site down, break an existing member's access, block
- *    a check-in, or stop a renewal charge. It disables premium modules and
- *    shows a renewal notice. People's memberships are not the leverage.
- * 2. Never block a page load on a remote call. Licence state is read from
- *    a cached transient; refreshes happen on cron or on an explicit admin
- *    action, never inline in a request the visitor is waiting on.
- * 3. No phone-home before consent. Nothing contacts a licence server until
- *    the site owner has entered a key. A fresh activation is silent.
- * 4. Degrade to "licensed" when the server is unreachable. A network
- *    outage at the vendor must not read as "this site is unlicensed".
+ * The shared SDK exchanges a raw key for encrypted activation state, verifies
+ * signed license responses locally, refreshes on WP-Cron, and provides the
+ * secure update channel. Core membership operations remain available when a
+ * license expires; only explicitly premium features are gated.
  *
  * @package Memberistic
- * @since   2.0.0
+ * @since   2.1.1
  */
 
 namespace WordPressistic\Memberistic;
+
+use WPistic\Sdk\WpisticClient;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -43,106 +21,133 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Licensing {
 
-	/**
-	 * Licence states.
-	 *
-	 * UNLICENSED is the shipped default and is NOT a failure state — it is
-	 * simply "no licensing add-on is installed", which is the normal
-	 * condition for a GPL build distributed without a licence server.
-	 */
 	const STATUS_UNLICENSED = 'unlicensed';
 	const STATUS_VALID      = 'valid';
 	const STATUS_EXPIRED    = 'expired';
 	const STATUS_INVALID    = 'invalid';
 
+	/** @var WpisticClient|null */
+	private static $client = null;
+
 	/**
-	 * Register the seam.
+	 * Load one shared SDK copy and register validation, updates, and admin UI.
+	 *
+	 * Multiple WPistic plugins may be active together. The class guard prevents
+	 * a second vendored copy from redeclaring the shared SDK namespace.
 	 *
 	 * @return void
 	 */
 	public static function register() {
-		// Intentionally empty. Registering nothing is the point: with no
-		// licensing add-on present, this class adds zero hooks, zero
-		// queries, and zero requests. The methods below are the API that
-		// an add-on filters into.
+		if ( ! class_exists( WpisticClient::class, false ) ) {
+			$base  = MEMBERISTIC_PATH . 'includes/wpistic-sdk/';
+			$files = array(
+				'Activation.php',
+				'DomainNormalizer.php',
+				'EntitlementChecker.php',
+				'GracePeriodManager.php',
+				'Api/ApiClientInterface.php',
+				'Api/RetryHandler.php',
+				'Api/WpisticApi.php',
+				'Security/TokenStorage.php',
+				'Security/HmacVerifier.php',
+				'LicenseManager.php',
+				'UpdateClient.php',
+				'WpisticClient.php',
+				'Admin/SettingsPage.php',
+				'Admin/OnboardingWizard.php',
+			);
+
+			foreach ( $files as $file ) {
+				require_once $base . $file;
+			}
+		}
+
+		self::client()->boot();
 	}
 
 	/**
-	 * Current licence status.
+	 * The Memberistic SDK client.
 	 *
-	 * Returns STATUS_UNLICENSED unless a licensing add-on answers the
-	 * filter. Callers must treat UNLICENSED as fully functional for every
-	 * core feature — see the fail-open policy in the class docblock.
-	 *
-	 * @since 2.0.0
+	 * @return WpisticClient
+	 */
+	public static function client() {
+		if ( null === self::$client ) {
+			self::$client = new WpisticClient(
+				array(
+					'product_slug'    => 'memberistic',
+					'product_version' => MEMBERISTIC_VERSION,
+					'plugin_file'     => MEMBERISTIC_FILE,
+				)
+			);
+		}
+
+		return self::$client;
+	}
+
+	/**
+	 * Current license status, read only from the SDK's cached local state.
 	 *
 	 * @return string One of the STATUS_* constants.
 	 */
 	public static function status() {
-		$valid = array(
-			self::STATUS_UNLICENSED,
-			self::STATUS_VALID,
-			self::STATUS_EXPIRED,
-			self::STATUS_INVALID,
-		);
+		$status = self::client()->status();
 
-		/**
-		 * Filters the current licence status.
-		 *
-		 * A licensing add-on answers this from its own cached transient.
-		 * It must NOT make a remote request inside this filter — it is
-		 * called during page rendering.
-		 *
-		 * @since 2.0.0
-		 *
-		 * @param string $status One of the Licensing::STATUS_* constants.
-		 */
-		$status = (string) apply_filters( 'memberistic_licence_status', self::STATUS_UNLICENSED );
+		if ( empty( $status['connected'] ) ) {
+			return self::STATUS_UNLICENSED;
+		}
+		if ( ! empty( $status['active'] ) ) {
+			return self::STATUS_VALID;
+		}
+		if ( 'expired' === ( $status['status'] ?? '' ) ) {
+			return self::STATUS_EXPIRED;
+		}
 
-		return in_array( $status, $valid, true ) ? $status : self::STATUS_UNLICENSED;
+		return self::STATUS_INVALID;
 	}
 
 	/**
-	 * Is a premium (licence-gated) feature available?
+	 * Is a premium, license-gated feature available?
 	 *
-	 * Nothing in 2.0.0 calls this — every feature in this release is part
-	 * of the base product. It exists so that when a premium module is
-	 * added, the gate is already defined and already fails open.
+	 * Base functionality remains usable with no key. Once a site connects to
+	 * the commercial license service, explicit entitlements are authoritative.
 	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $feature Feature slug, e.g. 'multi_location'.
-	 * @return bool True when the feature may run.
+	 * @param string $feature Feature or entitlement slug.
+	 * @return bool
 	 */
 	public static function can_use( $feature ) {
 		$feature = sanitize_key( (string) $feature );
 		$status  = self::status();
 
-		// UNLICENSED means no licensing layer is installed at all, so
-		// nothing is gated. Only an add-on that reports EXPIRED or INVALID
-		// actually closes a gate.
-		$allowed = in_array( $status, array( self::STATUS_UNLICENSED, self::STATUS_VALID ), true );
+		if ( self::STATUS_UNLICENSED === $status ) {
+			$allowed = true;
+		} elseif ( self::STATUS_VALID !== $status ) {
+			$allowed = false;
+		} else {
+			$key          = 0 === strpos( $feature, 'memberistic.' ) ? $feature : 'memberistic.' . $feature;
+			$entitlements = self::client()->entitlements();
+			$all          = $entitlements->all();
+			$allowed      = array_key_exists( $key, $all )
+				? $entitlements->allows( $key )
+				: $entitlements->allows( 'memberistic.pro.enabled' );
+		}
 
 		/**
-		 * Filters whether a licence-gated feature may run.
-		 *
-		 * @since 2.0.0
+		 * Filters whether a license-gated feature may run.
 		 *
 		 * @param bool   $allowed Whether the feature is available.
 		 * @param string $feature Feature slug.
-		 * @param string $status  Current licence status.
+		 * @param string $status  Current license status.
 		 */
 		return (bool) apply_filters( 'memberistic_licence_can_use', $allowed, $feature, $status );
 	}
 
+	/** Whether this site has exchanged a license key for activation state. */
+	public static function is_connected() {
+		return self::client()->is_connected();
+	}
+
 	/**
-	 * Metadata an update client needs to identify this build.
-	 *
-	 * Provided so an add-on does not have to re-derive the slug, basename,
-	 * and version — mismatches there are the usual cause of update clients
-	 * that silently never offer an update.
-	 *
-	 * @since 2.0.0
+	 * Metadata used by the secure update client.
 	 *
 	 * @return array{slug:string,basename:string,version:string,php:string,wp:string}
 	 */

@@ -2,6 +2,13 @@
 
 All notable changes are tracked here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.1.1 - WPistic licensing - 2026-09-03
+
+- Added the shared WPistic WordPress SDK as the Memberistic license and secure-update client.
+- Raw keys are exchanged once and are not stored; activation tokens and verification keys are encrypted at rest.
+- Added signed offline validation, a bounded grace period, twice-daily refresh, and nonce/capability-protected license management under **Settings → Memberistic License**.
+- Preserved the safety policy: license failures never interrupt existing memberships, renewals, check-ins, or other base operations; only explicitly premium features are gated.
+
 ## 2.1.0 - Payment integrity - 2026-08-12
 
 Every payment-provider event now passes through a single integrity gate before
