@@ -1,0 +1,20 @@
+name: Verify licensing
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['8.0', '8.3']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+      - run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+      - run: php tests/licensing.php
+      - run: bash bin/build-dist.sh --zip 2.1.1
+      - run: bash bin/assert-dist-clean.sh --zip 2.1.1

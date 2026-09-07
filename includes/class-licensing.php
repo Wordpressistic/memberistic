@@ -108,8 +108,8 @@ final class Licensing {
 	/**
 	 * Is a premium, license-gated feature available?
 	 *
-	 * Base functionality remains usable with no key. Once a site connects to
-	 * the commercial license service, explicit entitlements are authoritative.
+	 * Base functionality does not call this premium-only gate. Missing or
+	 * inactive licenses must not grant premium access.
 	 *
 	 * @param string $feature Feature or entitlement slug.
 	 * @return bool
@@ -118,9 +118,7 @@ final class Licensing {
 		$feature = sanitize_key( (string) $feature );
 		$status  = self::status();
 
-		if ( self::STATUS_UNLICENSED === $status ) {
-			$allowed = true;
-		} elseif ( self::STATUS_VALID !== $status ) {
+		if ( self::STATUS_VALID !== $status || '' === $feature ) {
 			$allowed = false;
 		} else {
 			$key          = 0 === strpos( $feature, 'memberistic.' ) ? $feature : 'memberistic.' . $feature;
