@@ -700,6 +700,14 @@ final class Stripe_Provider implements Payment_Provider {
 		}
 
 		$currency = isset( $invoice['currency'] ) ? (string) $invoice['currency'] : '';
+		$discount_minor = 0;
+		if ( ! empty( $invoice['total_discount_amounts'] ) && is_array( $invoice['total_discount_amounts'] ) ) {
+			foreach ( $invoice['total_discount_amounts'] as $discount_row ) {
+				if ( is_array( $discount_row ) && isset( $discount_row['amount'] ) && is_numeric( $discount_row['amount'] ) ) {
+					$discount_minor += (int) $discount_row['amount'];
+				}
+			}
+		}
 
 		// Normalised before it leaves the adapter, `amount_paid` in major
 		// units. The gate previously did this conversion itself, which meant
@@ -713,6 +721,7 @@ final class Stripe_Provider implements Payment_Provider {
 			'amount_paid' => isset( $invoice['amount_paid'] ) && is_numeric( $invoice['amount_paid'] )
 				? self::to_major_units( (int) $invoice['amount_paid'], $currency )
 				: null,
+			'discount_total' => $discount_minor > 0 ? self::to_major_units( $discount_minor, $currency ) : 0,
 			'currency'    => strtoupper( $currency ),
 		);
 	}

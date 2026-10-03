@@ -4,7 +4,7 @@ Tags: membership, members, waivers, check-in, subscriptions
 Requires at least: 6.8
 Tested up to: 7.0
 Requires PHP: 8.2
-Stable tag: 2.1.1
+Stable tag: 2.2.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,6 +47,7 @@ It is a poor fit for content-only paywalls. If all you need is "subscribers can 
 
 * Stripe Checkout for subscriptions, with a hosted billing portal for members
 * Signature-verified webhooks with replay protection and idempotent handling
+* Optional Stripe-backed discount codes with plan/cycle rules, caps, expiry, and redemption history
 * WooCommerce order sync as an alternative path, HPOS compatible
 * Manual and counter payment recording
 * Per-plan WooCommerce member discounts
@@ -151,6 +152,13 @@ Retention windows for check-in and activity history are configurable and default
 Major release. Requires PHP 8.2 and WordPress 6.8. No data migration: tables, options, hooks, and capabilities are unchanged. New installs no longer ship default plans, and every third-party integration now defaults to off. Two defaults changed for existing sites — the booking integration is restored automatically; the included-plans entitlement list needs your decision and shows a notice. See docs/UPGRADE-2.0.md.
 
 == Changelog ==
+
+= 2.2.0 =
+
+* Added optional Stripe-backed discount codes with percent/fixed discounts, plan and billing-cycle rules, expiry, global/per-person limits, Stripe promotion-code sync, payment-gated redemption records, and an admin management panel.
+* Added non-destructive member email deduplication with a WP-CLI audit/apply command and a unique email migration.
+* Added account tab/panel extension hooks for add-ons and linked the standalone plugin release to the Memberistic hosted platform plan.
+* Preserved the newer payment-integrity gate, provider account checks, privacy layer, and shared WPistic licensing client.
 
 = 2.1.1 =
 

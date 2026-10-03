@@ -60,7 +60,54 @@ final class Migrations {
 			'1.10.0' => array( self::class, 'migrate_1_10_0' ),
 			'1.11.0' => array( self::class, 'migrate_1_11_0' ),
 			'1.12.0' => array( self::class, 'migrate_1_12_0' ),
+			'1.13.0' => array( self::class, 'migrate_1_13_0' ),
 		);
+	}
+
+	/**
+	 * 1.13.0 — discount-code tables plus globally unique member emails.
+	 *
+	 * Existing installs are deduplicated before the email index changes. The
+	 * operation is non-destructive: the newest row keeps the email and losing
+	 * rows keep every field except the duplicate email, with an activity audit
+	 * entry for each cleared row.
+	 */
+	public static function migrate_1_13_0() {
+		global $wpdb;
+
+		Schema::create_tables();
+
+		if ( class_exists( '\WordPressistic\Memberistic\Database\People_Repository' ) ) {
+			People_Repository::dedupe_by_email( true );
+		}
+
+		$table = $wpdb->prefix . 'memberistic_people';
+		$is_unique = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(1) FROM information_schema.statistics WHERE table_schema = DATABASE() AND table_name = %s AND index_name = 'email' AND non_unique = 0",
+				$table
+			)
+		);
+
+		if ( 0 === $is_unique ) {
+			$has_index = (int) $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(1) FROM information_schema.statistics WHERE table_schema = DATABASE() AND table_name = %s AND index_name = 'email'",
+					$table
+				)
+			);
+			$table_esc = esc_sql( $table );
+			if ( $has_index > 0 ) {
+				$wpdb->query( "ALTER TABLE `{$table_esc}` DROP INDEX `email`" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			}
+			$wpdb->query( "ALTER TABLE `{$table_esc}` ADD UNIQUE INDEX `email` (`email`)" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+			if ( $wpdb->last_error ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**

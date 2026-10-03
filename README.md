@@ -6,7 +6,7 @@ Plans, members, linked family accounts, digital waivers, check-ins, payments,
 and staff workflows — in one admin, backed by its own database tables rather
 than bent out of posts and post meta.
 
-- **Version:** 2.1.1
+- **Version:** 2.2.0
 - **Requires:** WordPress 6.8+, PHP 8.2+
 - **Licence:** GPL-2.0-or-later
 - **Author:** [WordPressistic](https://www.wordpressistic.com)
@@ -30,6 +30,7 @@ than bent out of posts and post meta.
 13. [Privacy and data](#privacy-and-data)
 14. [Licensing and support](#licensing-and-support)
 15. [Changelog](#changelog)
+16. [Hosted platform plan](docs/APP-PLATFORM-PLAN.md)
 
 ---
 
@@ -91,6 +92,7 @@ can read this post", a content-restriction plugin will be simpler.
 **Payments**
 - Stripe Checkout for subscriptions, with a hosted billing portal for members
 - Signature-verified webhooks with replay protection and idempotent handling
+- Optional Stripe-backed discount codes with plan/cycle rules, caps, expiry, and redemption history
 - WooCommerce order sync as an alternative path
 - Manual and counter payment recording
 - Per-plan WooCommerce member discounts
@@ -127,7 +129,7 @@ release also carries a `.sha256` file, so you can verify the archive before
 installing it:
 
 ```
-shasum -a 256 -c memberistic-2.1.1.zip.sha256
+shasum -a 256 -c memberistic-2.2.0.zip.sha256
 ```
 
 1. Install the zip via **Plugins → Add New → Upload Plugin**, or unzip it into

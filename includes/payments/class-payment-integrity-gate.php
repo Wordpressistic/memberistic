@@ -51,6 +51,8 @@ use WordPressistic\Memberistic\Database\Activity_Repository;
 use WordPressistic\Memberistic\Database\Memberships_Repository;
 use WordPressistic\Memberistic\Database\Payments_Repository;
 use WordPressistic\Memberistic\Database\Plans_Repository;
+use WordPressistic\Memberistic\Database\Discount_Codes_Repository;
+use WordPressistic\Memberistic\Discounts\Discount_Code_Service;
 use WordPressistic\Memberistic\Emails\Email_Service;
 use WordPressistic\Memberistic\Payments\Providers\Payment_Provider;
 use WordPressistic\Memberistic\Payments\Providers\Stripe_Provider;
@@ -640,6 +642,21 @@ final class Payment_Integrity_Gate {
 		$currency      = isset( $event['currency'] ) ? (string) $event['currency'] : '';
 		$subscription  = null;
 		$amount_policy = 'exact';
+		$discount_id   = absint( $object['metadata']['discount_code_id'] ?? 0 );
+		$discount_expected = null;
+
+		if ( $discount_id ) {
+			$discount = Discount_Codes_Repository::get( $discount_id );
+			if ( ! $discount || 'active' !== (string) ( $discount['status'] ?? '' ) ) {
+				return self::reject(
+					Payment_Audit_Repository::REASON_MANUAL_REVIEW,
+					array( 'detail' => 'discount_code_cannot_be_verified', 'discount_code_id' => $discount_id ),
+					$membership_id,
+					Payment_Event_Repository::STATUS_MANUAL_REVIEW
+				);
+			}
+			$discount_expected = Discount_Code_Service::preview_amount( self::expected_amount( $membership, $plan ), $discount );
+		}
 
 		if ( '' !== $subscription_id ) {
 			// The checkout says a subscription was created. Whether that
@@ -727,8 +744,8 @@ final class Payment_Integrity_Gate {
 		// correct here rather than a mismatch. Any non-zero amount must match.
 		$is_trial = Subscription_State_Machine::TRIALING === $target;
 
-		if ( ! $is_trial && null !== $amount && $amount > 0 ) {
-			$financial = self::verify_financials( $membership, $plan, $amount, $currency, $amount_policy );
+		if ( ! $is_trial && null !== $amount && ( $amount > 0 || null !== $discount_expected ) ) {
+			$financial = self::verify_financials( $membership, $plan, $amount, $currency, $amount_policy, $discount_expected );
 			if ( null !== $financial ) {
 				return $financial;
 			}
@@ -772,6 +789,11 @@ final class Payment_Integrity_Gate {
 			'args'     => array(),
 		);
 
+		$hooks = array( array( 'memberistic_membership_activated', array( $membership_id ) ) );
+		if ( $discount_id ) {
+			$hooks[] = array( 'memberistic_payment_discount_confirmed', array( $membership_id, $event ) );
+		}
+
 		return self::accept(
 			$membership_id,
 			$target,
@@ -792,7 +814,7 @@ final class Payment_Integrity_Gate {
 						? __( 'Membership trial started', 'memberistic' )
 						: __( 'Membership activated after payment', 'memberistic' ),
 				),
-				'hooks'          => array( array( 'memberistic_membership_activated', array( $membership_id ) ) ),
+				'hooks'          => $hooks,
 			)
 		);
 	}
@@ -860,7 +882,12 @@ final class Payment_Integrity_Gate {
 
 		$currency = isset( $invoice['currency'] ) ? strtoupper( (string) $invoice['currency'] ) : '';
 
-		$financial = self::verify_financials( $membership, $plan, $amount, $currency );
+		$discount_expected = null;
+		if ( isset( $invoice['discount_total'] ) && is_numeric( $invoice['discount_total'] ) && (float) $invoice['discount_total'] > 0 ) {
+			$discount_expected = max( 0, round( self::expected_amount( $membership, $plan ) - (float) $invoice['discount_total'], 2 ) );
+		}
+
+		$financial = self::verify_financials( $membership, $plan, $amount, $currency, 'exact', $discount_expected );
 		if ( null !== $financial ) {
 			return $financial;
 		}
@@ -1184,9 +1211,10 @@ final class Payment_Integrity_Gate {
 	 * @param float|null           $amount     Amount paid, major units.
 	 * @param string               $currency   ISO code.
 	 * @param string               $policy     `exact` or `at_least`.
+	 * @param float|null           $expected_override Verified discounted amount.
 	 * @return array<string, mixed>|null Rejection decision, or null when sound.
 	 */
-	private static function verify_financials( array $membership, array $plan, $amount, $currency, $policy = 'exact' ) {
+	private static function verify_financials( array $membership, array $plan, $amount, $currency, $policy = 'exact', $expected_override = null ) {
 		$membership_id = (int) $membership['id'];
 
 		$site_currency = strtoupper( (string) memberistic_get_setting( 'currency', 'USD' ) );
@@ -1207,7 +1235,7 @@ final class Payment_Integrity_Gate {
 			return null;
 		}
 
-		$expected = self::expected_amount( $membership, $plan );
+		$expected = null !== $expected_override ? round( (float) $expected_override, 2 ) : self::expected_amount( $membership, $plan );
 
 		/**
 		 * Filters the tolerance allowed between the expected and paid amount.

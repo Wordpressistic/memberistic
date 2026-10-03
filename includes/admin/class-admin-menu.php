@@ -156,6 +156,13 @@ final class Admin_Menu {
 				<p class="submit"><button type="submit" class="button button-primary"><?php esc_html_e( 'Save Integrations', 'memberistic' ); ?></button></p>
 			</form>
 
+			<div id="discount-codes"></div>
+			<?php
+			if ( class_exists( '\\WordPressistic\\Memberistic\\Admin\\Discount_Codes_Page' ) ) {
+				\WordPressistic\Memberistic\Admin\Discount_Codes_Page::render();
+			}
+			?>
+
 			<?php self::render_corestore_log(); ?>
 		</div>
 		<?php

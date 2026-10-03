@@ -47,6 +47,8 @@ final class Activity_Repository {
 			'booking_cancelled',
 			'email_sent',
 			'staff_note_added',
+			'person_email_deduped',
+			'discount_code_redeemed',
 		);
 
 		$type = sanitize_key( (string) ( $data['activity_type'] ?? '' ) );
@@ -157,6 +159,7 @@ final class Activity_Repository {
 			'checkin_created', 'waiver_signed', 'waiver_expired',
 			'booking_created', 'booking_completed', 'booking_cancelled',
 			'email_sent', 'staff_note_added',
+			'person_email_deduped', 'discount_code_redeemed',
 		);
 	}
 }

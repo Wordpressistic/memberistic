@@ -105,6 +105,111 @@ final class People_Repository {
 		return $row ?: null;
 	}
 
+	/**
+	 * Normalize empty-string emails and collapse duplicate emails to the
+	 * newest row, matching get_by_email()'s existing resolution behavior.
+	 * Losing rows are never deleted: only their duplicate email is cleared and
+	 * the change is logged for staff review before the unique index is added.
+	 *
+	 * @param bool $apply      Actually write changes. Default false.
+	 * @param int  $batch_size Duplicate groups written per transaction.
+	 * @return array{normalized_empty:int,duplicate_groups:int,rows_cleared:int,groups:array}
+	 */
+	public static function dedupe_by_email( $apply = false, $batch_size = 200 ) {
+		global $wpdb;
+		$table = self::table();
+
+		$report = array(
+			'normalized_empty' => 0,
+			'duplicate_groups' => 0,
+			'rows_cleared'     => 0,
+			'groups'           => array(),
+		);
+
+		$empty_count                = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE email = ''" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$report['normalized_empty'] = $empty_count;
+		if ( $apply && $empty_count > 0 ) {
+			$wpdb->query( $wpdb->prepare( "UPDATE {$table} SET email = NULL, updated_at = %s WHERE email = ''", current_time( 'mysql' ) ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		}
+
+		$duplicate_emails = $wpdb->get_col( "SELECT email FROM {$table} WHERE email IS NOT NULL AND email <> '' GROUP BY email HAVING COUNT(*) > 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$batch            = array();
+
+		foreach ( (array) $duplicate_emails as $email ) {
+			$rows = $wpdb->get_results( $wpdb->prepare( "SELECT id FROM {$table} WHERE email = %s ORDER BY id DESC", $email ), ARRAY_A );
+			if ( count( $rows ) < 2 ) {
+				continue;
+			}
+
+			$keep_id     = (int) $rows[0]['id'];
+			$cleared_ids = array_map( 'intval', array_column( array_slice( $rows, 1 ), 'id' ) );
+			++$report['duplicate_groups'];
+			$report['rows_cleared'] += count( $cleared_ids );
+			$report['groups'][]      = array(
+				'email'       => $email,
+				'keep_id'     => $keep_id,
+				'cleared_ids' => $cleared_ids,
+			);
+
+			if ( $apply ) {
+				$batch[] = $report['groups'][ count( $report['groups'] ) - 1 ];
+				if ( count( $batch ) >= max( 1, (int) $batch_size ) ) {
+					self::apply_dedupe_batch( $batch );
+					$batch = array();
+				}
+			}
+		}
+
+		if ( $apply && $batch ) {
+			self::apply_dedupe_batch( $batch );
+		}
+
+		return $report;
+	}
+
+	/**
+	 * Apply one dedupe batch atomically and leave a per-person audit trail.
+	 *
+	 * @param array<int, array{email:string,keep_id:int,cleared_ids:int[]}> $batch
+	 */
+	private static function apply_dedupe_batch( array $batch ) {
+		global $wpdb;
+		$table = self::table();
+		$now   = current_time( 'mysql' );
+
+		$wpdb->query( 'START TRANSACTION' );
+		try {
+			foreach ( $batch as $group ) {
+				foreach ( $group['cleared_ids'] as $id ) {
+					$wpdb->update(
+						$table,
+						array( 'email' => null, 'updated_at' => $now ),
+						array( 'id' => $id ),
+						array( '%s', '%s' ),
+						array( '%d' )
+					);
+					Activity_Repository::log(
+						array(
+							'person_id'     => $id,
+							'activity_type' => 'person_email_deduped',
+							'title'         => __( 'Duplicate email cleared', 'memberistic' ),
+							'description'   => sprintf(
+								/* translators: 1: email address, 2: canonical person id */
+								__( 'The duplicate email "%1$s" was cleared from this person. Person #%2$d remains the canonical record. No other field was changed.', 'memberistic' ),
+								$group['email'],
+								$group['keep_id']
+							),
+						)
+					);
+				}
+			}
+			$wpdb->query( 'COMMIT' );
+		} catch ( \Throwable $e ) {
+			$wpdb->query( 'ROLLBACK' );
+			throw $e;
+		}
+	}
+
 	public static function count_active_by_membership( $membership_id ) {
 		global $wpdb;
 		return (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . self::table() . ' WHERE membership_id = %d AND status = %s', $membership_id, 'active' ) );
