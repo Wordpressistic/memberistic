@@ -5,6 +5,7 @@
  * @package Memberistic
  */
 
+use WordPressistic\Memberistic\Integrations\Integrations_Registry;
 use WordPressistic\Memberistic\Payments\Stripe_Service;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -102,9 +103,16 @@ if ( is_user_logged_in() ) {
 				<input id="memberistic_phone" name="phone" type="tel" placeholder="(602) 555 1234">
 			</div>
 
+			<?php if ( class_exists( '\\WordPressistic\\Memberistic\\Integrations\\Integrations_Registry' ) && Integrations_Registry::is_enabled( 'discount_codes' ) ) : ?>
+				<div class="memberistic-co-section">
+					<label class="memberistic-co-label" for="memberistic_discount_code"><?php esc_html_e( 'Discount Code (optional)', 'memberistic' ); ?></label>
+					<input id="memberistic_discount_code" name="discount_code" type="text" style="text-transform:uppercase;" placeholder="<?php esc_attr_e( 'e.g. SUMMER20', 'memberistic' ); ?>">
+				</div>
+			<?php endif; ?>
+
 			<div class="memberistic-co-section">
 				<h3><span class="n">3</span> <?php esc_html_e( 'Payment', 'memberistic' ); ?></h3>
-				<p class="memberistic-co-note"><?php esc_html_e( 'Payment is processed securely on Stripe in the next step.', 'memberistic' ); ?></p>
+				<p class="memberistic-co-note"><?php esc_html_e( 'Payment is processed securely on Stripe in the next step. A valid discount code is applied automatically.', 'memberistic' ); ?></p>
 			</div>
 
 			<div class="memberistic-co-section memberistic-co-section--terms">

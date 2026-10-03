@@ -12,6 +12,8 @@ use WordPressistic\Memberistic\Database\Memberships_Repository;
 use WordPressistic\Memberistic\Database\Payments_Repository;
 use WordPressistic\Memberistic\Database\People_Repository;
 use WordPressistic\Memberistic\Database\Plans_Repository;
+use WordPressistic\Memberistic\Database\Discount_Codes_Repository;
+use WordPressistic\Memberistic\Discounts\Discount_Code_Service;
 use WordPressistic\Memberistic\Emails\Email_Service;
 use WordPressistic\Memberistic\Payments\Providers\Stripe_Provider;
 use function WordPressistic\Memberistic\memberistic_admin_url;
@@ -740,6 +742,21 @@ final class Stripe_Service {
 			$billing_cycle = 'monthly';
 		}
 
+		$discount = null;
+		$discount_raw = isset( $_POST['discount_code'] ) ? sanitize_text_field( wp_unslash( $_POST['discount_code'] ) ) : '';
+		if ( '' !== $discount_raw ) {
+			$discount_result = Discount_Code_Service::validate_for_checkout( $discount_raw, $plan, $billing_cycle, $email );
+			if ( empty( $discount_result['ok'] ) || empty( $discount_result['code'] ) ) {
+				self::checkout_error(
+					'memberistic_checkout_invalid_discount',
+					! empty( $discount_result['message'] ) ? (string) $discount_result['message'] : __( 'That discount code could not be applied. No payment was taken.', 'memberistic' ),
+					400,
+					__( 'Invalid discount code', 'memberistic' )
+				);
+			}
+			$discount = $discount_result['code'];
+		}
+
 		$user_id = self::resolve_checkout_user( $email, $full_name );
 
 		// Re-entrance guard: a refresh, back-button, or double-click on the
@@ -749,7 +766,7 @@ final class Stripe_Service {
 		// duplicate.
 		$pending_existing = Memberships_Repository::get_pending_by_person_email( $email );
 		if ( $pending_existing && ! empty( $pending_existing['id'] ) ) {
-			$existing_session = self::resume_pending_checkout_session( $pending_existing, $plan, $billing_cycle, $email );
+			$existing_session = self::resume_pending_checkout_session( $pending_existing, $plan, $billing_cycle, $email, $discount );
 			if ( is_wp_error( $existing_session ) ) {
 				self::checkout_error( $existing_session->get_error_code(), self::checkout_public_message_for_error( $existing_session ), self::checkout_status_for_error( $existing_session ), __( 'Checkout temporarily unavailable', 'memberistic' ) );
 			}
@@ -808,7 +825,7 @@ final class Stripe_Service {
 			)
 		);
 
-		$session = self::create_checkout_session( $membership_id, $plan, $billing_cycle, $email );
+		$session = self::create_checkout_session( $membership_id, $plan, $billing_cycle, $email, $discount );
 
 		if ( is_wp_error( $session ) ) {
 			self::record_manual_review( 'checkout_session_create_failed', $membership_id, array( 'message' => $session->get_error_message() ) );
@@ -1046,7 +1063,7 @@ final class Stripe_Service {
 		return (int) $user_id;
 	}
 
-	private static function resume_pending_checkout_session( $pending, $plan, $billing_cycle, $email ) {
+	private static function resume_pending_checkout_session( $pending, $plan, $billing_cycle, $email, $discount = null ) {
 		$membership_id = isset( $pending['id'] ) ? (int) $pending['id'] : 0;
 		if ( ! $membership_id ) {
 			return new \WP_Error( 'memberistic_missing_membership', __( 'Pending membership could not be found.', 'memberistic' ) );
@@ -1060,7 +1077,7 @@ final class Stripe_Service {
 			}
 
 			$customer_id = isset( $session['customer'] ) ? sanitize_text_field( (string) $session['customer'] ) : '';
-			$valid = self::validate_checkout_session_for_membership( $session, $membership_id, $plan, $billing_cycle, $email );
+			$valid = self::validate_checkout_session_for_membership( $session, $membership_id, $plan, $billing_cycle, $email, $discount );
 			if ( is_wp_error( $valid ) ) {
 				self::record_manual_review( 'checkout_session_mismatch', $membership_id, array(
 					'session_id' => self::mask_stripe_id( (string) $pending['stripe_checkout_session_id'] ),
@@ -1107,7 +1124,7 @@ final class Stripe_Service {
 			return new \WP_Error( 'memberistic_duplicate_subscription_review', __( 'A Stripe subscription already appears to exist for this pending membership. Staff must review before creating another checkout.', 'memberistic' ) );
 		}
 
-		return self::create_checkout_session( $membership_id, $plan, $billing_cycle, $email );
+		return self::create_checkout_session( $membership_id, $plan, $billing_cycle, $email, $discount );
 	}
 
 	public static function confirm_checkout_return( $membership_id, $session_id ) {
@@ -1181,7 +1198,7 @@ final class Stripe_Service {
 		return array( 'state' => 'active', 'title' => __( 'Membership Active', 'memberistic' ), 'message' => __( 'Your payment is confirmed and your membership is active.', 'memberistic' ) );
 	}
 
-	public static function create_checkout_session( $membership_id, $plan, $billing_cycle, $email ) {
+	public static function create_checkout_session( $membership_id, $plan, $billing_cycle, $email, $discount = null ) {
 		$amount   = 'annual' === $billing_cycle ? (float) $plan['annual_price'] : (float) $plan['monthly_price'];
 		$interval = 'annual' === $billing_cycle ? 'year' : 'month';
 
@@ -1221,11 +1238,17 @@ final class Stripe_Service {
 			'subscription_data[metadata][billing_cycle]'=> $billing_cycle,
 		);
 
+		if ( is_array( $discount ) && ! empty( $discount['stripe_promotion_code_id'] ) ) {
+			$payload['discounts[0][promotion_code]'] = sanitize_text_field( (string) $discount['stripe_promotion_code_id'] );
+			$payload['metadata[discount_code_id]'] = absint( $discount['id'] ?? 0 );
+			$payload['subscription_data[metadata][discount_code_id]'] = absint( $discount['id'] ?? 0 );
+		}
+
 		$session = self::request(
 			'POST',
 			'/checkout/sessions',
 			$payload,
-			array( 'Idempotency-Key' => 'memberistic_checkout_' . absint( $membership_id ) . '_' . sanitize_key( $billing_cycle ) . '_' . md5( strtolower( (string) $email ) ) )
+			array( 'Idempotency-Key' => 'memberistic_checkout_' . absint( $membership_id ) . '_' . sanitize_key( $billing_cycle ) . '_' . ( is_array( $discount ) ? absint( $discount['id'] ?? 0 ) : 0 ) . '_' . md5( strtolower( (string) $email ) ) )
 		);
 
 		if ( ! is_wp_error( $session ) && ! empty( $session['id'] ) ) {
@@ -1272,7 +1295,7 @@ final class Stripe_Service {
 		return is_array( $body ) ? $body : array();
 	}
 
-	private static function validate_checkout_session_for_membership( $session, $membership_id, $plan, $billing_cycle, $email = '' ) {
+	private static function validate_checkout_session_for_membership( $session, $membership_id, $plan, $billing_cycle, $email = '', $discount = null ) {
 		if ( empty( $session['id'] ) ) {
 			return new \WP_Error( 'memberistic_session_missing_id', __( 'Stripe Checkout Session is missing an id.', 'memberistic' ) );
 		}
@@ -1291,12 +1314,25 @@ final class Stripe_Service {
 			return new \WP_Error( 'memberistic_session_cycle_mismatch', __( 'Stripe Checkout Session billing cycle does not match the membership.', 'memberistic' ) );
 		}
 
+		$session_discount_id  = absint( $metadata['discount_code_id'] ?? 0 );
+		$requested_discount_id = is_array( $discount ) ? absint( $discount['id'] ?? 0 ) : 0;
+		if ( is_array( $discount ) && $session_discount_id !== $requested_discount_id ) {
+			return new \WP_Error( 'memberistic_session_discount_mismatch', __( 'Stripe Checkout Session discount does not match this checkout request.', 'memberistic' ) );
+		}
+
 		$site_live = 'live' === memberistic_get_setting( 'stripe_mode', 'test' );
 		if ( array_key_exists( 'livemode', $session ) && (bool) $session['livemode'] !== $site_live ) {
 			return new \WP_Error( 'memberistic_session_mode_mismatch', __( 'Stripe Checkout Session mode does not match this site.', 'memberistic' ) );
 		}
 
 		$expected_amount = 'annual' === sanitize_key( (string) $billing_cycle ) ? (float) ( $plan['annual_price'] ?? 0 ) : (float) ( $plan['monthly_price'] ?? 0 );
+		if ( $session_discount_id ) {
+			$session_discount = Discount_Codes_Repository::get( $session_discount_id );
+			if ( ! $session_discount ) {
+				return new \WP_Error( 'memberistic_session_discount_unknown', __( 'The discount attached to this checkout could not be verified.', 'memberistic' ) );
+			}
+			$expected_amount = Discount_Code_Service::preview_amount( $expected_amount, $session_discount );
+		}
 		$amount_total    = isset( $session['amount_total'] ) ? (int) $session['amount_total'] : 0;
 		if ( $amount_total > 0 && (int) round( $expected_amount * 100 ) !== $amount_total ) {
 			return new \WP_Error( 'memberistic_session_amount_mismatch', __( 'Stripe Checkout Session amount does not match the selected plan.', 'memberistic' ) );

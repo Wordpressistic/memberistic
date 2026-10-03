@@ -129,7 +129,7 @@ CREATE TABLE {$prefix}memberistic_people (
   PRIMARY KEY  (id),
   KEY membership_id (membership_id),
   KEY wp_user_id (wp_user_id),
-  KEY email (email),
+  UNIQUE KEY email (email),
   KEY phone (phone),
   KEY waiver_status (waiver_status)
 ) {$charset_collate};
@@ -336,6 +336,55 @@ CREATE TABLE {$prefix}memberistic_waivers_archive (
   KEY dob (dob),
   KEY matched_user_id (matched_user_id),
   KEY dedupe_key (dedupe_key)
+) {$charset_collate};
+CREATE TABLE {$prefix}memberistic_discount_codes (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  code VARCHAR(64) NOT NULL,
+  description VARCHAR(255) NULL,
+  discount_type VARCHAR(20) NOT NULL DEFAULT 'percent',
+  discount_value DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  applies_to VARCHAR(20) NOT NULL DEFAULT 'all',
+  plan_ids LONGTEXT NULL,
+  billing_cycles VARCHAR(20) NOT NULL DEFAULT 'all',
+  duration_type VARCHAR(20) NOT NULL DEFAULT 'once',
+  duration_in_months INT UNSIGNED NULL,
+  max_redemptions INT UNSIGNED NULL,
+  max_redemptions_per_user INT UNSIGNED NOT NULL DEFAULT 1,
+  current_redemptions INT UNSIGNED NOT NULL DEFAULT 0,
+  starts_at DATETIME NULL,
+  expires_at DATETIME NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'active',
+  stripe_coupon_id VARCHAR(191) NULL,
+  stripe_promotion_code_id VARCHAR(191) NULL,
+  sync_error TEXT NULL,
+  created_by BIGINT UNSIGNED NULL,
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME NULL,
+  PRIMARY KEY  (id),
+  UNIQUE KEY code (code),
+  KEY status (status)
+) {$charset_collate};
+CREATE TABLE {$prefix}memberistic_discount_redemptions (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  discount_code_id BIGINT UNSIGNED NOT NULL,
+  membership_id BIGINT UNSIGNED NULL,
+  plan_id BIGINT UNSIGNED NULL,
+  email VARCHAR(191) NULL,
+  billing_cycle VARCHAR(20) NULL,
+  discount_type VARCHAR(20) NULL,
+  discount_value DECIMAL(10,2) NULL,
+  amount_before DECIMAL(10,2) NULL,
+  amount_discounted DECIMAL(10,2) NULL,
+  amount_after DECIMAL(10,2) NULL,
+  currency VARCHAR(10) DEFAULT 'USD',
+  stripe_checkout_session_id VARCHAR(191) NULL,
+  redeemed_at DATETIME NOT NULL,
+  created_at DATETIME NOT NULL,
+  PRIMARY KEY  (id),
+  KEY discount_code_id (discount_code_id),
+  KEY membership_id (membership_id),
+  KEY email (email),
+  KEY stripe_checkout_session_id (stripe_checkout_session_id)
 ) {$charset_collate};
 CREATE TABLE {$prefix}memberistic_payment_events (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,

@@ -187,6 +187,18 @@ $lane_url    = memberistic_get_page_url( 'booking_page_id', 'book', home_url( '/
 					<a href="#shop"  data-tab="shop"><span class="memberistic-acct-ic">▣</span><?php esc_html_e( 'Shop Orders', 'memberistic' ); ?></a>
 				<?php endif; ?>
 				<a href="#card"      data-tab="card"><span class="memberistic-acct-ic">▤</span><?php esc_html_e( 'Digital Member Card', 'memberistic' ); ?></a>
+				<?php
+				$memberistic_extra_tabs = (array) apply_filters( 'memberistic_account_tabs', array(), get_current_user_id() );
+				foreach ( $memberistic_extra_tabs as $memberistic_tab ) :
+					$memberistic_slug = sanitize_key( $memberistic_tab['slug'] ?? '' );
+					if ( '' === $memberistic_slug ) {
+						continue;
+					}
+					?>
+					<a href="#<?php echo esc_attr( $memberistic_slug ); ?>" data-tab="<?php echo esc_attr( $memberistic_slug ); ?>"><span class="memberistic-acct-ic"><?php echo esc_html( $memberistic_tab['icon'] ?? '◈' ); ?></span><?php echo esc_html( $memberistic_tab['label'] ?? $memberistic_slug ); ?></a>
+					<?php
+				endforeach;
+				?>
 				<span class="memberistic-acct-navsep"></span>
 				<a href="<?php echo esc_url( wp_logout_url( home_url( '/' ) ) ); ?>" class="memberistic-acct-signout"><span class="memberistic-acct-ic">⤶</span><?php esc_html_e( 'Sign Out', 'memberistic' ); ?></a>
 			</nav>
@@ -613,6 +625,27 @@ $lane_url    = memberistic_get_page_url( 'booking_page_id', 'book', home_url( '/
 					</div>
 				</div>
 			</section>
+
+			<?php
+			$memberistic_extra_panels = (array) apply_filters( 'memberistic_account_panels', array(), get_current_user_id() );
+			foreach ( $memberistic_extra_panels as $memberistic_slug => $memberistic_panel ) :
+				$memberistic_slug = sanitize_key( $memberistic_slug );
+				if ( '' === $memberistic_slug || ( ! is_callable( $memberistic_panel ) && '' === trim( (string) $memberistic_panel ) ) ) {
+					continue;
+				}
+				?>
+				<section class="memberistic-acct-view" data-panel="<?php echo esc_attr( $memberistic_slug ); ?>">
+					<?php
+					if ( is_callable( $memberistic_panel ) ) {
+						call_user_func( $memberistic_panel, get_current_user_id() );
+					} else {
+						echo wp_kses_post( (string) $memberistic_panel );
+					}
+					?>
+				</section>
+				<?php
+			endforeach;
+			?>
 
 		</div>
 	</div>

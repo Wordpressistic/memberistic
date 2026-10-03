@@ -2,6 +2,20 @@
 
 All notable changes are tracked here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2.2.0 - Standalone Memberistic foundation - 2026-10-04
+
+### Added
+
+- Optional Stripe-backed discount codes with percent/fixed discounts, plan and billing-cycle restrictions, expiry, global/per-person limits, promotion-code synchronization, and redemption history.
+- Payment-integrity integration for discounted activations and recurring invoice discounts; redemptions are recorded only after verified payment evidence.
+- Non-destructive people email deduplication, a unique email migration, and `wp memberistic people-dedupe-audit` preview/apply diagnostics.
+- `memberistic_account_tabs` and `memberistic_account_panels` extension filters for add-ons.
+- [`docs/AUDIT-2026-10-04.md`](docs/AUDIT-2026-10-04.md) and [`docs/APP-PLATFORM-PLAN.md`](docs/APP-PLATFORM-PLAN.md) for the repository audit and hosted Memberistic roadmap.
+
+### Release boundary
+
+- The Guns2Ammo-specific `g2a-suite` entitlement is not coupled to the standalone org product. Memberistic keeps its generic WPistic licensing layer; client-specific entitlements belong in WPistic/Licenseistic configuration.
+
 ## 2.1.1 - WPistic licensing - 2026-09-03
 
 - Added the shared WPistic WordPress SDK as the Memberistic license and secure-update client.
