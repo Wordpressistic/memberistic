@@ -83,6 +83,24 @@ final class WooCommerce_Bridge {
 	 * Refund / cancel an order — flip its membership to cancelled.
 	 */
 	public static function sync_refunded_order( $order_id ) {
+		// G2A-CRIT-001 follow-up: the integrity gate applies local
+		// cancelled status and then fires memberistic_membership_status_changed
+		// with the inbound-event flag set, which skips the post-hoc Stripe
+		// cancel listener. Attempt Stripe first here so a membership that is
+		// also billed on Stripe stops remote billing when Woo refunds/cancels.
+		// The WooCommerce refund has already happened, so local cancel via
+		// dispatch_order always proceeds regardless of the Stripe result
+		// (failure is logged and retried by cancel_remote_first).
+		if ( function_exists( 'wc_get_order' ) ) {
+			$order = wc_get_order( $order_id );
+			if ( $order ) {
+				$membership_id = absint( $order->get_meta( '_memberistic_membership_id' ) );
+				if ( $membership_id ) {
+					\WordPressistic\Memberistic\Payments\Stripe_Service::cancel_remote_first( $membership_id );
+				}
+			}
+		}
+
 		$result = self::dispatch_order( $order_id, 'refunded' );
 
 		if ( is_wp_error( $result ) || ! is_array( $result ) ) {
