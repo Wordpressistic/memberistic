@@ -16,8 +16,8 @@ jobs:
           coverage: none
       - run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
       - run: php tests/licensing.php
-      - run: bash bin/build-dist.sh --zip 2.1.1
-      - run: bash bin/assert-dist-clean.sh --zip 2.1.1
+      - run: bash bin/build-dist.sh --zip 2.2.0
+      - run: bash bin/assert-dist-clean.sh --zip 2.2.0
   wordpress:
     name: WordPress clean install and upgrade
     runs-on: ubuntu-latest
@@ -39,7 +39,7 @@ jobs:
           extensions: mysqli, mbstring, zip, sodium, openssl, gd
           tools: wp-cli
           coverage: none
-      - run: bash bin/build-dist.sh --zip 2.1.1
+      - run: bash bin/build-dist.sh --zip 2.2.0
       - name: Install WordPress
         run: |
           mkdir -p /tmp/memberistic-wp
@@ -50,9 +50,9 @@ jobs:
       - name: Clean install from distribution ZIP
         working-directory: /tmp/memberistic-wp
         run: |
-          wp plugin install "$GITHUB_WORKSPACE/build/memberistic-2.1.1.zip" --activate
+          wp plugin install "$GITHUB_WORKSPACE/build/memberistic-2.2.0.zip" --activate
           test "$(wp plugin get memberistic --field=status)" = active
-          test "$(wp plugin get memberistic --field=version)" = 2.1.1
+          test "$(wp plugin get memberistic --field=version)" = 2.2.0
           wp eval 'if (WordPressistic\Memberistic\Licensing::can_use("reports")) { throw new Exception("Unlicensed premium access"); } echo "Licensing gate active\n";'
           wp db query 'SELECT COUNT(*) FROM wp_memberistic_plans'
       - name: Upgrade from public 2.1.0 without losing existing state
@@ -62,9 +62,9 @@ jobs:
           wp plugin install https://github.com/Wordpressistic/memberistic/releases/download/v2.1.0/memberistic-2.1.0.zip --force --activate
           test "$(wp plugin get memberistic --field=version)" = 2.1.0
           wp option update memberistic_upgrade_smoke preserved
-          wp plugin install "$GITHUB_WORKSPACE/build/memberistic-2.1.1.zip" --force --activate
+          wp plugin install "$GITHUB_WORKSPACE/build/memberistic-2.2.0.zip" --force --activate
           test "$(wp plugin get memberistic --field=status)" = active
-          test "$(wp plugin get memberistic --field=version)" = 2.1.1
+          test "$(wp plugin get memberistic --field=version)" = 2.2.0
           test "$(wp option get memberistic_upgrade_smoke)" = preserved
           wp db query 'SELECT COUNT(*) FROM wp_memberistic_memberships'
           wp eval 'if (WordPressistic\Memberistic\Licensing::can_use("reports")) { throw new Exception("Unlicensed premium access"); } echo "Upgrade licensing gate active\n";'

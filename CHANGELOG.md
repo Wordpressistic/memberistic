@@ -6,6 +6,7 @@ All notable changes are tracked here. The format follows [Keep a Changelog](http
 
 ### Fixed
 
+- **CI:** `verify.yml` WordPress clean-install/upgrade job still pinned distribution ZIP and expected version to `2.1.1` after the 2.2.0 release, so the version assertion failed on main and on this branch. Pins updated to `2.2.0` (upgrade path still starts from public `v2.1.0`).
 - **G2A-CRIT-001 follow-up — cancel preflight on remaining paths.** `PATCH /memberships/{id}` with `status=cancelled` and WooCommerce refund/cancel now call `Stripe_Service::cancel_remote_first()` before flipping local status (same Stripe-first gate as the dedicated cancel endpoint and wp-admin cancel). PATCH accepts optional `force=true` to cancel locally when Stripe fails (retries still run). WooCommerce always proceeds with the local cancel after the attempt because the refund has already happened.
 
 ## 2.2.0 - Standalone Memberistic foundation - 2026-10-04
