@@ -2,6 +2,12 @@
 
 All notable changes are tracked here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## Unreleased
+
+### Fixed
+
+- **G2A-CRIT-001 follow-up — cancel preflight on remaining paths.** `PATCH /memberships/{id}` with `status=cancelled` and WooCommerce refund/cancel now call `Stripe_Service::cancel_remote_first()` before flipping local status (same Stripe-first gate as the dedicated cancel endpoint and wp-admin cancel). PATCH accepts optional `force=true` to cancel locally when Stripe fails (retries still run). WooCommerce always proceeds with the local cancel after the attempt because the refund has already happened.
+
 ## 2.2.0 - Standalone Memberistic foundation - 2026-10-04
 
 ### Added
